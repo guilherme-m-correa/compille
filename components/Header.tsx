@@ -18,7 +18,7 @@ const Header: React.FC = () => {
       name: 'Para correspondentes',
       link: '/cadastro-advogados-correspondentes-juridicos'
     },
-    { name: 'Para escritório e empresas', link: '/demandas/solicitar' },
+    { name: 'Para departamentos jurídicos', link: '/demandas/solicitar' },
     { name: 'Blog', link: '/' },
     { name: 'Diretório', link: '/profissionais' }
   ]
