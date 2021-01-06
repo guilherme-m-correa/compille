@@ -39,7 +39,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <a className="text-white hover:text-gray-200">
-                  Para escritórios e empresas
+                  Para departamentos júridico
                 </a>
               </li>
               <li>
