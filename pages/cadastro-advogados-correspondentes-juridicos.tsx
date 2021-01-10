@@ -56,12 +56,20 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
             const { username, email, password } = values
 
             try {
-              const { data } = await api.post('/authperm/register', {
-                username,
-                email,
-                password,
-                type: 'P'
-              })
+              const { data } = await api.post(
+                '/authperm/register',
+                {
+                  username,
+                  email,
+                  password,
+                  type: 'P'
+                },
+                {
+                  headers: {
+                    Authorization: 'o2qg8bh423bsmoekr5f4l0v54evaf8wy'
+                  }
+                }
+              )
 
               router.push({
                 pathname: '/verificar-cadastro',
