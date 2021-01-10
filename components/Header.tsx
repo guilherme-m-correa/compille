@@ -60,8 +60,8 @@ const Header: React.FC = () => {
       link: '/cadastro-advogados-correspondentes-juridicos'
     },
     { name: 'Para departamentos jurídico', link: '/demandas/solicitar' },
-    { name: 'Blog', link: '/' },
-    { name: 'Diretório', link: '/profissionais' }
+    { name: 'Blog', link: '/' }
+    // { name: 'Diretório', link: '/profissionais' }
   ]
 
   const [state, setState] = useState({ active: 'Home' })
@@ -186,7 +186,7 @@ const Header: React.FC = () => {
                       Agenda Jurídica
                     </button>
                   </Link>
-                  <Link href="/painel/minha-conta">
+                  <Link href="/painel/contabilidade">
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
@@ -204,6 +204,16 @@ const Header: React.FC = () => {
                       role="menuitem"
                     >
                       Minha Conta
+                    </button>
+                  </Link>
+                  <Link href="/painel/minha-assinatura">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
+                      role="menuitem"
+                    >
+                      Minha Assinatura
                     </button>
                   </Link>
                   <Link href="/painel/editar-perfil">

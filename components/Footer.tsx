@@ -80,11 +80,11 @@ const Footer: React.FC = () => {
               FERRAMENTAS
             </h2>
             <nav className="list-none mb-10">
-              <li>
+              {/* <li>
                 <a className="text-white hover:text-gray-200">
                   Diretório de profissionais
                 </a>
-              </li>
+              </li> */}
               <li>
                 <a className="text-white hover:text-gray-200">Contabilidade</a>
               </li>
