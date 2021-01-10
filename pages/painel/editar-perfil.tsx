@@ -830,7 +830,7 @@ export default function Painel() {
                       </h2>
                     </div>
 
-                    <div className="mt-2 max-w-3xl flex flex-col lg:flex-row">
+                    <div className="mt-2 max-w-2xl flex flex-col lg:flex-row">
                       <div className="flex-1 lg:mr-2">
                         <label htmlFor="phone_type" className="sr-only">
                           Tipo de telefone
@@ -870,8 +870,8 @@ export default function Painel() {
                           placeholder="DDD"
                           className={
                             errors.phone_ddd && touched.phone_ddd
-                              ? 'input border-red-500'
-                              : 'input'
+                              ? 'input border-red-500 w-16'
+                              : 'input w-16'
                           }
                         />
                         {errors.phone_ddd && touched.phone_ddd && (
@@ -879,7 +879,7 @@ export default function Painel() {
                         )}
                       </div>
 
-                      <div className="flex-1 lg:mr-2">
+                      <div className="lg:mr-2">
                         <label htmlFor="phone_number" className="sr-only">
                           DDD
                         </label>
@@ -891,8 +891,8 @@ export default function Painel() {
                           placeholder="Número"
                           className={
                             errors.phone_number && touched.phone_number
-                              ? 'input border-red-500'
-                              : 'input'
+                              ? 'input border-red-500 w-40'
+                              : 'input w-40'
                           }
                         />
                         {errors.phone_number && touched.phone_number && (
@@ -1346,6 +1346,10 @@ export default function Painel() {
                         className="block w-full border-gray-300 rounded-md"
                       />
                     </div>
+
+                    {errors.curriculum && touched.curriculum && (
+                      <ErrorMessage>{errors.curriculum}</ErrorMessage>
+                    )}
 
                     <div className="flex justify-center">
                       <button
