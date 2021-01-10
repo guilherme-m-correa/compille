@@ -1276,10 +1276,10 @@ export default function Painel() {
                               : 'input mt-2'
                           }
                         />
-                        {errors.profile_link && touched.profile_link && (
-                          <ErrorMessage>{errors.profile_link}</ErrorMessage>
-                        )}
                       </div>
+                      {errors.profile_link && touched.profile_link && (
+                        <ErrorMessage>{errors.profile_link}</ErrorMessage>
+                      )}
                     </div>
 
                     <div className="py-4 border-b-2 border-gray-100">
