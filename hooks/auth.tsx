@@ -50,18 +50,10 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const signIn = useCallback(
     async ({ email, password }) => {
-      const response = await api.post<AuthState>(
-        '/authperm/authenticate',
-        {
-          email,
-          password
-        },
-        {
-          headers: {
-            Authorization: 'o2qg8bh423bsmoekr5f4l0v54evaf8wy'
-          }
-        }
-      )
+      const response = await api.post<AuthState>('/authperm/authenticate', {
+        email,
+        password
+      })
       const { token, user } = response.data
 
       if (typeof window !== 'undefined') {

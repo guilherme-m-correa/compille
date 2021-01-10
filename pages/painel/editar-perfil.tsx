@@ -973,7 +973,6 @@ export default function Painel() {
                                   className="focus:outline-none py-3 flex items-center justify-center w-full h-full"
                                   onClick={() => {
                                     handleAddCity(city)
-                                    setFieldValue('acting_state', '')
                                     setFieldValue('acting_city', '')
                                     setCities([])
                                   }}

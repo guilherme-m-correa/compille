@@ -35,6 +35,7 @@ const Header: React.FC = () => {
   const { user, signOut } = useAuth()
   const [openMenu, setOpenMenu] = useState(false)
   const [person, setPerson] = useState<Person>({} as Person)
+  const [showDropdown, setShowDropdown] = useState(false)
 
   useEffect(() => {
     async function loadData() {
@@ -68,11 +69,6 @@ const Header: React.FC = () => {
   const handleMenuItemChange = useCallback(menuItem => {
     setState({ active: menuItem.name })
   }, [])
-
-  const handleSignOut = useCallback(() => {
-    signOut()
-    router.push('/')
-  }, [router, signOut])
 
   const LoggedOutHeader: React.FC = () => {
     return (
@@ -136,33 +132,103 @@ const Header: React.FC = () => {
           </Link>
 
           <Menu />
-
-          <div className="relative hidden lg:block">
-            <button
-              type="button"
-              onClick={() => {
-                setOpenMenu(!openMenu)
-              }}
-              className="secondary-btn max-w-max"
-            >
-              CENTRAL DO CORRESPONDENTE
-            </button>
-
-            <div
-              className={`${
-                openMenu
-                  ? 'absolute bg-white top-12 py-6 rounded w-full flex justify-center items-center'
-                  : 'hidden'
-              }`}
-            >
+          <div className="relative inline-block text-left">
+            <div>
               <button
                 type="button"
-                onClick={() => handleSignOut()}
-                className="primary-btn"
+                className="secondary-btn max-w-max"
+                onClick={() => setShowDropdown(s => !s)}
+                id="options-menu"
+                aria-haspopup="true"
+                aria-expanded="true"
               >
-                LOGOUT
+                CENTRAL DO CORRESPONDENTE
               </button>
             </div>
+            {showDropdown && (
+              <div
+                className="absolute left-0 right-0 mt-2 w-full rounded-md shadow-lg bg-white divide-y divide-gray-100"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="options-menu"
+              >
+                <div className="py-1">
+                  <Link href="/painel">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Painel do correspondente
+                    </button>
+                  </Link>
+                </div>
+                <div className="py-1">
+                  <Link href="/painel/demandas">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Demandas
+                    </button>
+                  </Link>
+
+                  <Link href="/painel/agenda-juridica">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Agenda Jurídica
+                    </button>
+                  </Link>
+                  <Link href="/painel/minha-conta">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Contabilidade
+                    </button>
+                  </Link>
+                  <Link href="/painel/minha-conta">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Minha Conta
+                    </button>
+                  </Link>
+                  <Link href="/painel/editar-perfil">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Editar Perfil
+                    </button>
+                  </Link>
+                  <Link href="/logout">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Sair
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </Container>
@@ -183,61 +249,125 @@ const Header: React.FC = () => {
           </Link>
 
           <Menu />
-
-          <div className="relative hidden lg:block">
-            <button
-              type="button"
-              onClick={() => {
-                setOpenMenu(!openMenu)
-              }}
-              className="secondary-btn max-w-max"
-            >
-              CENTRAL DO SOLICITANTE
-            </button>
-
-            <div
-              className={`${
-                openMenu
-                  ? 'absolute bg-white top-12 py-6 rounded w-full flex justify-center items-center'
-                  : 'hidden'
-              }`}
-            >
+          <div className="relative inline-block text-left">
+            <div>
               <button
                 type="button"
-                onClick={() => handleSignOut()}
-                className="primary-btn"
+                className="secondary-btn max-w-max"
+                onClick={() => setShowDropdown(s => !s)}
+                id="options-menu"
+                aria-haspopup="true"
+                aria-expanded="true"
               >
-                LOGOUT
+                CENTRAL DO SOLICITANTE
               </button>
             </div>
+            {showDropdown && (
+              <div
+                className="absolute left-0 right-0 mt-2 w-full rounded-md shadow-lg bg-white divide-y divide-gray-100"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="options-menu"
+              >
+                <div className="py-1">
+                  <Link href="/painel">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Painel do solicitante
+                    </button>
+                  </Link>
+                </div>
+                <div className="py-1">
+                  <Link href="/painel/demandas">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Demandas
+                    </button>
+                  </Link>
+                  <Link href="/painel/agenda-juridica">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Agenda Jurídica
+                    </button>
+                  </Link>
+                  <Link href="/painel/contabilidade">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Contabilidade
+                    </button>
+                  </Link>
+                  <Link href="/painel/minha-conta">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Minha Conta
+                    </button>
+                  </Link>
+                  <Link href="/painel/editar-perfil">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Editar Perfil
+                    </button>
+                  </Link>
+                  <Link href="/logout">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      role="menuitem"
+                    >
+                      Sair
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </Container>
     )
   }
 
-  const LogoHeader: React.FC = () => {
-    console.log(user)
-    return (
-      <Container>
-        <div className="flex justify-center items-center">
-          <Image src="/img/logo.png" alt="Logo" width={200} height={60} />
-        </div>
-      </Container>
-    )
-  }
+  // const LogoHeader: React.FC = () => {
+  //   return (
+  //     <Container>
+  //       <div className="flex justify-center items-center">
+  //         <Image src="/img/logo.png" alt="Logo" width={200} height={60} />
+  //       </div>
+  //     </Container>
+  //   )
+  // }
 
   return (
     <header className="relative z-10 flex h-20 bg-black-500 justify-between items-center">
-      {!user ? (
-        <LoggedOutHeader />
-      ) : user.type === 'P' && person.register_finish ? (
-        <CorrespondenteHeader />
-      ) : user.type === 'E' ? (
-        <SolicitanteHeader />
-      ) : (
-        <LogoHeader />
-      )}
+      {!user && <LoggedOutHeader />}
+
+      {user?.type === 'P' && <CorrespondenteHeader />}
+
+      {user?.type === 'E' && <SolicitanteHeader />}
     </header>
   )
 }

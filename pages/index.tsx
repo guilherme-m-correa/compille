@@ -72,7 +72,8 @@ export default function Home() {
         <Container>
           <div className="w-1/2 py-12 px-12 flex-col">
             <h1 className="text-gray-50 leading-tight font-bold text-5xl">
-              Encontre agora Advogados e Correspondentes Júridicos
+              Encontre agora Advogados e Correspondentes Júridicos para suas
+              audiências
             </h1>
             <p className="mt-2 font-extralight text-gray-50 text-2xl">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
@@ -97,7 +98,7 @@ export default function Home() {
             link="/cadastro-advogados-correspondentes-juridicos"
           />
           <Card
-            headingText="Para escritórios e empresas"
+            headingText="Para departamentos jurídicos"
             paragraphText="Encontre agora Advogados e Correspondentes Jurídicos qualificados para a sua demanda jurídica."
             buttonText="ENCONTRE PROFISSIONAIS"
             link="/demandas/solicitar"
