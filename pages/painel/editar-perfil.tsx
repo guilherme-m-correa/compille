@@ -79,6 +79,15 @@ interface JuridicalArea {
   name: string
 }
 
+interface Phone {
+  area_code: string
+  contact: string
+  id: number
+  number: string
+  person_id: number
+  phonetype_id: number
+}
+
 export default function Painel() {
   const router = useRouter()
 
@@ -97,6 +106,7 @@ export default function Painel() {
     JuridicalArea[]
   >([] as JuridicalArea[])
   const [phonesTypes, setPhonesTypes] = useState([])
+  const [phones, setPhones] = useState<Phone[]>([] as Phone[])
 
   const profile_types = ['Advogado', 'Escritório de advocacia']
 
@@ -245,6 +255,43 @@ export default function Painel() {
 
   function resetForm() {
     setCities([])
+  }
+
+  useEffect(() => {
+    async function loadPhones() {
+      try {
+        const { data } = await api.get(`/comercial/personphones/${person?.id}`)
+        setPhones(data)
+      } catch (err) {
+        //
+      }
+    }
+    loadPhones()
+  }, [person?.id])
+
+  async function handleAddPhone(phone_type, phone_ddd, phone_number) {
+    try {
+      const { data } = await api.post(`/comercial/personphones`, {
+        person_id: person.id,
+        phonetype_id: Number(phone_type),
+        area_code: phone_ddd,
+        number: phone_number,
+        contact: ''
+      })
+      setPhones([...phones, data])
+      //  resetForm();
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  async function handleRemovePhone(id) {
+    try {
+      await api.delete(`/comercial/personphones/${id}`)
+      setPhones(phones.filter(p => p.id !== id))
+    } catch (err) {
+      //
+    }
   }
 
   async function handleAddCity(city: City) {
@@ -806,15 +853,15 @@ export default function Painel() {
                       </h2>
                     </div>
 
-                    <div className="mt-2 max-w-2xl flex flex-col lg:flex-row">
+                    <div className="mt-2 max-w-3xl flex flex-col lg:flex-row">
                       <div className="flex-1 lg:mr-2">
-                        <label htmlFor="phone_type_1" className="sr-only">
+                        <label htmlFor="phone_type" className="sr-only">
                           Tipo de telefone
                         </label>
                         <Field
-                          id="phone_type_1"
-                          name="phone_type_1"
-                          type="phone_type_1"
+                          id="phone_type"
+                          name="phone_type"
+                          type="phone_type"
                           as="select"
                           className={
                             errors.phone_type && touched.phone_type
@@ -844,9 +891,9 @@ export default function Painel() {
                           DDD
                         </label>
                         <Field
-                          id="phone_ddd_1"
-                          name="phone_ddd_1"
-                          type="phone_ddd_1"
+                          id="phone_ddd"
+                          name="phone_ddd"
+                          type="text"
                           placeholder="DDD"
                           className={
                             errors.phone_ddd && touched.phone_ddd
@@ -866,7 +913,7 @@ export default function Painel() {
                         <Field
                           id="phone_number"
                           name="phone_number"
-                          type="phone_number"
+                          type="text"
                           value={values.phone_number}
                           placeholder="Número"
                           className={
@@ -879,7 +926,41 @@ export default function Painel() {
                           <ErrorMessage>{errors.phone_number}</ErrorMessage>
                         )}
                       </div>
+
+                      <button
+                        type="button"
+                        className="primary-btn"
+                        onClick={() => {
+                          handleAddPhone(
+                            values.phone_type,
+                            values.phone_ddd,
+                            values.phone_number
+                          )
+                        }}
+                      >
+                        ADICIONAR
+                      </button>
                     </div>
+
+                    {phones.length > 0 && (
+                      <div>
+                        {phones.map(phone => (
+                          <p
+                            key={phone.id}
+                            className="mt-2 flex items-center bg-blue-500 py-1 px-2 mr-2 text-white rounded max-w-max"
+                          >
+                            {phone.number}
+                            <button
+                              type="button"
+                              className="flex items-center ml-2 h-full outline-none focus:outline-none"
+                              onClick={() => handleRemovePhone(phone.id)}
+                            >
+                              <FaTimes />
+                            </button>
+                          </p>
+                        ))}
+                      </div>
+                    )}
 
                     <div className="py-4 border-b-2 border-gray-100">
                       <h2 className="text-2xl font-semibold">

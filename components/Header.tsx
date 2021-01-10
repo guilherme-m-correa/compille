@@ -157,7 +157,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Painel do correspondente
@@ -169,7 +169,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Demandas
@@ -180,7 +180,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Agenda Jurídica
@@ -190,7 +190,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Contabilidade
@@ -200,7 +200,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Minha Conta
@@ -210,7 +210,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Editar Perfil
@@ -220,7 +220,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Sair
@@ -274,7 +274,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Painel do solicitante
@@ -286,7 +286,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Demandas
@@ -296,7 +296,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Agenda Jurídica
@@ -306,7 +306,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Contabilidade
@@ -316,7 +316,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Minha Conta
@@ -326,7 +326,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Editar Perfil
@@ -336,7 +336,7 @@ const Header: React.FC = () => {
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
                       role="menuitem"
                     >
                       Sair
