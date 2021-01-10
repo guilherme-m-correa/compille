@@ -630,15 +630,11 @@ export default function Painel() {
                               : 'select-input mt-2'
                           }
                         >
-                          <option className="text-gray-100" value="" disabled>
+                          <option value="" disabled>
                             Selecione...
                           </option>
                           {profile_types.map(type => (
-                            <option
-                              key={type}
-                              className="text-gray-100"
-                              value={type}
-                            >
+                            <option key={type} value={type}>
                               {type}
                             </option>
                           ))}
@@ -688,15 +684,11 @@ export default function Painel() {
                               : 'select-input mt-2'
                           }
                         >
-                          <option className="text-gray-100" value="" disabled>
+                          <option value="" disabled>
                             Selecione...
                           </option>
                           {states.map(state => (
-                            <option
-                              key={state.cod}
-                              className="text-gray-100"
-                              value={state.cod}
-                            >
+                            <option key={state.cod} value={state.cod}>
                               {state.uf}
                             </option>
                           ))}
@@ -758,15 +750,11 @@ export default function Painel() {
                                 : 'select-input mt-2'
                             }
                           >
-                            <option className="text-gray-100" disabled value="">
+                            <option disabled value="">
                               Selecione...
                             </option>
-                            <option className="text-gray-100" value="Masculino">
-                              Masculino
-                            </option>
-                            <option className="text-gray-100" value="Feminino">
-                              Feminino
-                            </option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
                           </Field>
                           {errors.gender && touched.gender && (
                             <ErrorMessage>{errors.gender}</ErrorMessage>
@@ -790,27 +778,16 @@ export default function Painel() {
                                 : 'select-input mt-2'
                             }
                           >
-                            <option className="text-gray-100" disabled value="">
+                            <option disabled value="">
                               Selecione...
                             </option>
-                            <option
-                              className="text-gray-100"
-                              value="Superior Incompleto"
-                            >
+                            <option value="Superior Incompleto">
                               Superior Incompleto
                             </option>
-                            <option
-                              className="text-gray-100"
-                              value="Superior Completo"
-                            >
+                            <option value="Superior Completo">
                               Superior Completo
                             </option>
-                            <option
-                              className="text-gray-100"
-                              value="Pós-Graduação"
-                            >
-                              Pós-Graduação
-                            </option>
+                            <option value="Pós-Graduação">Pós-Graduação</option>
                           </Field>
                           {errors.schoolarity && touched.schoolarity && (
                             <ErrorMessage>{errors.schoolarity}</ErrorMessage>
@@ -869,15 +846,11 @@ export default function Painel() {
                               : 'select-input'
                           }
                         >
-                          <option className="text-gray-100" disabled value="">
+                          <option disabled value="">
                             Selecione o tipo
                           </option>
                           {phonesTypes.map(type => (
-                            <option
-                              className="text-gray-100"
-                              key={type.id}
-                              value={type.id}
-                            >
+                            <option key={type.id} value={type.id}>
                               {type.name}
                             </option>
                           ))}
@@ -994,15 +967,11 @@ export default function Painel() {
                               : 'select-input mt-2'
                           }
                         >
-                          <option className="text-gray-100" value="" disabled>
+                          <option value="" disabled>
                             Selecione...
                           </option>
                           {states.map(state => (
-                            <option
-                              key={state.cod}
-                              className="text-gray-100"
-                              value={state.cod}
-                            >
+                            <option key={state.cod} value={state.cod}>
                               {state.uf}
                             </option>
                           ))}
@@ -1319,12 +1288,8 @@ export default function Painel() {
                             : 'select-input mt-2'
                         }
                       >
-                        <option className="text-gray-100" value="Não">
-                          Não
-                        </option>
-                        <option className="text-gray-100" value="Sim">
-                          Sim
-                        </option>
+                        <option value="Não">Não</option>
+                        <option value="Sim">Sim</option>
                       </Field>
                       {errors.has_certificate && touched.has_certificate && (
                         <ErrorMessage>{errors.has_certificate}</ErrorMessage>
