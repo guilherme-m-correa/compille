@@ -67,8 +67,18 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                 pathname: '/verificar-cadastro',
                 query: { token: data.token }
               })
-            } catch (error) {
-              setSubmitError(error.message)
+            } catch (err) {
+              if (err.response && err.response.status === 400) {
+                setSubmitError(err.response.data.msg)
+              } else if (err.response && err.response.status === 500) {
+                setSubmitError(
+                  'Ocorreu um erro em nossos servidores, tente mais tarde.'
+                )
+              } else {
+                setSubmitError(
+                  'Ocorreu um erro em nossa aplicação, tente novamente mais tarde'
+                )
+              }
             } finally {
               setSubmitting(false)
             }

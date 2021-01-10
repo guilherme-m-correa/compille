@@ -1,5 +1,6 @@
 import { createContext, useCallback, useState, useContext } from 'react'
 
+import { useRouter } from 'next/router'
 import { api } from './fetch'
 
 interface User {
@@ -30,6 +31,8 @@ interface AuthContextData {
 const Auth = createContext<AuthContextData>({} as AuthContextData)
 
 export const AuthProvider: React.FC = ({ children }) => {
+  const router = useRouter()
+
   const [data, setData] = useState<AuthState>(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('@Compille:token')
@@ -45,23 +48,42 @@ export const AuthProvider: React.FC = ({ children }) => {
     return {} as AuthState
   })
 
-  const signIn = useCallback(async ({ email, password }) => {
-    const response = await api.post<AuthState>('/authperm/authenticate', {
-      email,
-      password
-    })
+  const signIn = useCallback(
+    async ({ email, password }) => {
+      const response = await api.post<AuthState>('/authperm/authenticate', {
+        email,
+        password
+      })
 
-    const { token, user } = response.data
+      const { token, user } = response.data
 
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('@Compille:token', token)
-      localStorage.setItem('@Compille:user', JSON.stringify(user))
-    }
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('@Compille:token', token)
+        localStorage.setItem('@Compille:user', JSON.stringify(user))
+      }
 
-    api.defaults.headers.authorization = `Bearer ${token}`
+      api.defaults.headers.authorization = `Bearer ${token}`
 
-    setData({ token, user })
-  }, [])
+      if (user.type === 'P') {
+        const { data: person } = await api.get(
+          `/comercial/people/user/${user.id}`
+        )
+
+        if (person.register_finish) {
+          router.push('/painel')
+        } else {
+          router.push('/painel/editar-perfil')
+        }
+      }
+
+      if (user.type === 'E') {
+        router.push('/painel')
+      }
+
+      setData({ token, user })
+    },
+    [router]
+  )
 
   const signOut = useCallback(() => {
     if (typeof window !== 'undefined') {

@@ -9,19 +9,28 @@ export default function AtivarConta() {
   const { updateUser } = useAuth()
   const [error, setError] = useState('')
   const router = useRouter()
-
   const { token } = router.query
 
   useEffect(() => {
     async function loadData() {
       try {
-        api.defaults.headers.authorization = `Bearer ${token}`
+        delete api.defaults.headers.authorization
 
-        const { data: user } = await api.post('/authperm/user/activate')
+        const { data: user } = await api.post(
+          '/authperm/user/activate',
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
 
         if (typeof window !== 'undefined') {
           localStorage.setItem('@Compille:token', token as string)
         }
+
+        api.defaults.headers.authorization = `Bearer ${token}`
 
         updateUser(user)
 
@@ -32,7 +41,7 @@ export default function AtivarConta() {
     }
 
     loadData()
-  }, [token, router, updateUser])
+  }, [router, updateUser, token])
 
-  return <Container>{error && <h2>{error}</h2>}</Container>
+  return <Container>{!token && 'CARREGANDO'}</Container>
 }

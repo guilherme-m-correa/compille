@@ -11,7 +11,6 @@ import { normalizeDate } from '../../helpers'
 
 interface Values {
   city: string
-  service: string
   area: string
   tipo_audiencia: string
   audience_local: string
@@ -134,7 +133,6 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
             <Formik
               initialValues={{
                 city: '',
-                service: '',
                 area: '',
                 tipo_audiencia: '',
                 audience_local: '',
@@ -167,8 +165,18 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                     pathname: '/verificar-email',
                     query: { token: data.token }
                   })
-                } catch (error) {
-                  setSubmitError(error.message)
+                } catch (err) {
+                  if (err.response && err.response.status === 400) {
+                    setSubmitError(err.response.data.msg)
+                  } else if (err.response && err.response.status === 500) {
+                    setSubmitError(
+                      'Ocorreu um erro em nossos servidores, tente mais tarde.'
+                    )
+                  } else {
+                    setSubmitError(
+                      'Ocorreu um erro em nossa aplicação, tente novamente mais tarde'
+                    )
+                  }
                 } finally {
                   setSubmitting(false)
                 }
@@ -190,13 +198,12 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         className="text-gray-500 font-medium text-sm"
                         htmlFor="city"
                       >
-                        Em qual cidade será realizado o serviço?
+                        Em qual cidade será realizado a audiência?
                       </label>
                       <Field
                         id="city"
                         name="city"
                         type="text"
-                        autoComplete="no"
                         onBlur={e => {
                           handleBlur(e)
                           setToogleCitiesSearch(false)
@@ -222,7 +229,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                     )}
 
                     {toogleCitiesSearch && (
-                      <ul className="mt-1 bf-white rounded-md shadow-lg z-10 max-h-60 overflow-auto">
+                      <ul className="mt-1 bg-white rounded-md shadow-lg z-10 max-h-60 overflow-auto">
                         {formattedCities.map(city => (
                           <li className="hover:bg-gray-100 p-2" key={city}>
                             <button
@@ -239,292 +246,243 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         ))}
                       </ul>
                     )}
+
                     <div className="mt-4">
                       <label
                         className="text-gray-500 font-medium text-sm"
-                        htmlFor="service"
+                        htmlFor="area"
                       >
-                        Qual o serviço você deseja solicitar?
+                        Área
                       </label>
                       <Field
                         as="select"
-                        className={
-                          errors.service && touched.service
-                            ? 'mt-2 select-input border-red-500'
-                            : 'mt-2 select-input'
-                        }
-                        id="service"
-                        name="service"
+                        className="mt-2 select-input"
+                        id="area"
+                        name="area"
                       >
                         <option className="text-gray-100" value="" disabled>
                           Selecione...
                         </option>
-                        <option value="Audiências">Audiências</option>
-                        <option value="Outros">Outros...</option>
+                        <option value="Cívil">Cívil</option>
+                        <option value="Criminal">Criminal</option>
+                        <option value="Trabalhista">Trabalhista</option>
+                        <option value="Tributária">Tributária</option>
                       </Field>
                     </div>
 
-                    {errors.service && touched.service && (
-                      <ErrorMessage>{errors.service}</ErrorMessage>
-                    )}
+                    <div className="mt-4">
+                      <label
+                        className="text-gray-500 font-medium text-sm"
+                        htmlFor="tipo_audiencia"
+                      >
+                        Tipo de audiência
+                      </label>
+                      <Field
+                        as="select"
+                        className="mt-2 select-input"
+                        id="tipo_audiencia"
+                        name="tipo_audiencia"
+                      >
+                        <option className="text-gray-100" value="" disabled>
+                          Selecione...
+                        </option>
+                        <option value="Conciliação">Conciliação</option>
+                        <option value="Inicial">Inicial</option>
+                        <option value="Instrução">Instrução</option>
+                        <option value="Instrução e Julgamento">
+                          Instrução e Julgamento
+                        </option>
+                        <option value="Julgamento">Julgamento</option>
+                        <option value="Una">Una</option>
+                      </Field>
+                    </div>
 
-                    {values.service === 'Audiências' && (
-                      <>
-                        <div className="mt-4">
+                    <div className="mt-4">
+                      <label
+                        className="text-gray-500 font-medium text-sm"
+                        htmlFor="audience_local"
+                      >
+                        Local do serviço (fórum, tribunal, etc)
+                      </label>
+                      <div className="flex  mt-2">
+                        <Field
+                          id="audience_local"
+                          name="audience_local"
+                          type="text"
+                          className="input"
+                          placeholder={
+                            values.city
+                              ? 'Exemplo: Forúm Guilherme Corrêa'
+                              : 'Primeiro selecione uma cidade'
+                          }
+                        />
+                        <button
+                          type="button"
+                          className="flex justify-center items-center primary-btn focus:border-none focus:outline-none rounded-none "
+                        >
+                          <FaSearch className="text-white mr-2" /> PESQUISAR
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <div className="grid grid-cols-1 grid-rows-2 gap-4 lg:grid-cols-3 lg:grid-rows-1">
+                        <div>
                           <label
                             className="text-gray-500 font-medium text-sm"
-                            htmlFor="area"
+                            htmlFor="audience_date"
                           >
-                            Área
+                            Data da audiência
                           </label>
                           <Field
-                            as="select"
-                            className="mt-2 select-input"
-                            id="area"
-                            name="area"
-                          >
-                            <option className="text-gray-100" value="" disabled>
-                              Selecione...
-                            </option>
-                            <option value="Cívil">Cívil</option>
-                            <option value="Criminal">Criminal</option>
-                            <option value="Trabalhista">Trabalhista</option>
-                            <option value="Tributária">Tributária</option>
-                          </Field>
-                        </div>
-
-                        <div className="mt-4">
-                          <label
-                            className="text-gray-500 font-medium text-sm"
-                            htmlFor="tipo_audiencia"
-                          >
-                            Tipo de audiência
-                          </label>
-                          <Field
-                            as="select"
-                            className="mt-2 select-input"
-                            id="tipo_audiencia"
-                            name="tipo_audiencia"
-                          >
-                            <option className="text-gray-100" value="" disabled>
-                              Selecione...
-                            </option>
-                            <option value="Conciliação">Conciliação</option>
-                            <option value="Inicial">Inicial</option>
-                            <option value="Instrução">Instrução</option>
-                            <option value="Instrução e Julgamento">
-                              Instrução e Julgamento
-                            </option>
-                            <option value="Julgamento">Julgamento</option>
-                            <option value="Una">Una</option>
-                          </Field>
-                        </div>
-
-                        <div className="mt-4">
-                          <label
-                            className="text-gray-500 font-medium text-sm"
-                            htmlFor="audience_local"
-                          >
-                            Local do serviço (fórum, tribunal, etc)
-                          </label>
-                          <div className="flex  mt-2">
-                            <Field
-                              id="audience_local"
-                              name="audience_local"
-                              type="text"
-                              required
-                              className="input"
-                              placeholder={
-                                values.city
-                                  ? 'Exemplo: Forúm Guilherme Corrêa'
-                                  : 'Primeiro selecione uma cidade'
-                              }
-                            />
-                            <button
-                              type="button"
-                              className="flex justify-center items-center primary-btn focus:border-none focus:outline-none rounded-none "
-                            >
-                              <FaSearch className="text-white mr-2" /> PESQUISAR
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="mt-4">
-                          <div className="grid grid-cols-1 grid-rows-2 gap-4 lg:grid-cols-3 lg:grid-rows-1">
-                            <div>
-                              <label
-                                className="text-gray-500 font-medium text-sm"
-                                htmlFor="audience_date"
-                              >
-                                Data da audiência
-                              </label>
-                              <Field
-                                id="audience_date"
-                                name="audience_date"
-                                value={normalizeDate(values.audience_date)}
-                                type="text"
-                                className="appearance-none mt-2 input"
-                              />
-                            </div>
-
-                            <div>
-                              <label
-                                className="text-gray-500 font-medium text-sm"
-                                htmlFor="audience_hour"
-                              >
-                                Hora
-                              </label>
-                              <Field
-                                as="select"
-                                className="mt-2 select-input"
-                                id="audience_hour"
-                                name="audience_hour"
-                              >
-                                <option
-                                  className="text-gray-100"
-                                  value=""
-                                  disabled
-                                  selected
-                                >
-                                  --
-                                </option>
-                                <option value="06">06</option>
-                                <option value="07">07</option>
-                                <option value="08">08</option>
-                                <option value="09">09</option>
-                                <option value="10">10</option>
-                                <option value="11">11</option>
-                                <option value="12">12</option>
-                                <option value="13">13</option>
-                                <option value="14">14</option>
-                                <option value="15">15</option>
-                                <option value="16">11</option>
-                                <option value="17">17</option>
-                                <option value="18">18</option>
-                                <option value="19">19</option>
-                                <option value="20">20</option>
-                                <option value="21">21</option>
-                                <option value="22">22</option>
-                              </Field>
-                            </div>
-
-                            <div>
-                              <label
-                                className="text-gray-500 font-medium text-sm"
-                                htmlFor="audience_minutes"
-                              >
-                                Minutos
-                              </label>
-                              <Field
-                                as="select"
-                                className="mt-2 select-input"
-                                id="audience_minutes"
-                                name="audience_minutes"
-                              >
-                                <option
-                                  className="text-gray-100"
-                                  value=""
-                                  disabled
-                                  selected
-                                >
-                                  --
-                                </option>
-                                <option value="05">05</option>
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                                <option value="35">35</option>
-                                <option value="40">40</option>
-                                <option value="45">45</option>
-                                <option value="50">50</option>
-                                <option value="55">55</option>
-                              </Field>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="mt-4">
-                          <label
-                            className="text-gray-500 font-medium text-sm"
-                            htmlFor="professional_type"
-                          >
-                            Tipo de profissional necessário
-                          </label>
-                          <Field
-                            as="select"
-                            className="mt-2 select-input"
-                            id="professional_type"
-                            name="professional_type"
-                          >
-                            <option
-                              className="text-gray-100"
-                              value=""
-                              disabled
-                              selected
-                            >
-                              Selecione...
-                            </option>
-                            <option value="Somente Advogado">
-                              Somente Advogado
-                            </option>
-                            <option value="Somente Preposto">
-                              Somente Preposto
-                            </option>
-                            <option value="Advogado e Preposto">
-                              Advogado e Preposto
-                            </option>
-                          </Field>
-                        </div>
-
-                        <div className="mt-4">
-                          <label
-                            className="text-gray-500 font-medium text-sm"
-                            htmlFor="process_type"
-                          >
-                            Tipo de processo
-                          </label>
-                          <Field
-                            as="select"
-                            className="mt-2 select-input"
-                            id="process_type"
-                            name="process_type"
-                          >
-                            <option
-                              className="text-gray-100"
-                              value=""
-                              disabled
-                              selected
-                            >
-                              Selecione...
-                            </option>
-                            <option value="Eletrônico">Eletrônico</option>
-                            <option value="Físico">Físico</option>
-                          </Field>
-                        </div>
-
-                        <div className="mt-4">
-                          <label
-                            className="text-gray-500 font-medium text-sm"
-                            htmlFor="process_number"
-                          >
-                            Número do processo
-                          </label>
-                          <Field
-                            id="process_number"
-                            name="process_number"
+                            id="audience_date"
+                            name="audience_date"
+                            value={normalizeDate(values.audience_date)}
                             type="text"
-                            className="mt-2 input"
+                            className="appearance-none mt-2 input"
                           />
                         </div>
-                      </>
-                    )}
+
+                        <div>
+                          <label
+                            className="text-gray-500 font-medium text-sm"
+                            htmlFor="audience_hour"
+                          >
+                            Hora
+                          </label>
+                          <Field
+                            as="select"
+                            className="mt-2 select-input"
+                            id="audience_hour"
+                            name="audience_hour"
+                          >
+                            <option className="text-gray-100" value="" disabled>
+                              --
+                            </option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            <option value="16">11</option>
+                            <option value="17">17</option>
+                            <option value="18">18</option>
+                            <option value="19">19</option>
+                            <option value="20">20</option>
+                            <option value="21">21</option>
+                            <option value="22">22</option>
+                          </Field>
+                        </div>
+
+                        <div>
+                          <label
+                            className="text-gray-500 font-medium text-sm"
+                            htmlFor="audience_minutes"
+                          >
+                            Minutos
+                          </label>
+                          <Field
+                            as="select"
+                            className="mt-2 select-input"
+                            id="audience_minutes"
+                            name="audience_minutes"
+                          >
+                            <option className="text-gray-100" value="" disabled>
+                              --
+                            </option>
+                            <option value="05">05</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="35">35</option>
+                            <option value="40">40</option>
+                            <option value="45">45</option>
+                            <option value="50">50</option>
+                            <option value="55">55</option>
+                          </Field>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <label
+                        className="text-gray-500 font-medium text-sm"
+                        htmlFor="professional_type"
+                      >
+                        Tipo de profissional necessário
+                      </label>
+                      <Field
+                        as="select"
+                        className="mt-2 select-input"
+                        id="professional_type"
+                        name="professional_type"
+                      >
+                        <option className="text-gray-100" value="" disabled>
+                          Selecione...
+                        </option>
+                        <option value="Somente Advogado">
+                          Somente Advogado
+                        </option>
+                        <option value="Somente Preposto">
+                          Somente Preposto
+                        </option>
+                        <option value="Advogado e Preposto">
+                          Advogado e Preposto
+                        </option>
+                      </Field>
+                    </div>
+
+                    <div className="mt-4">
+                      <label
+                        className="text-gray-500 font-medium text-sm"
+                        htmlFor="process_type"
+                      >
+                        Tipo de processo
+                      </label>
+                      <Field
+                        as="select"
+                        className="mt-2 select-input"
+                        id="process_type"
+                        name="process_type"
+                      >
+                        <option className="text-gray-100" value="" disabled>
+                          Selecione...
+                        </option>
+                        <option value="Eletrônico">Eletrônico</option>
+                        <option value="Físico">Físico</option>
+                      </Field>
+                    </div>
+
+                    <div className="mt-4">
+                      <label
+                        className="text-gray-500 font-medium text-sm"
+                        htmlFor="process_number"
+                      >
+                        Número do processo
+                      </label>
+                      <Field
+                        id="process_number"
+                        name="process_number"
+                        type="text"
+                        className="mt-2 input"
+                      />
+                    </div>
 
                     <div className="mt-6">
                       <h3 className="text-black-500 font-semibold mb-4">
                         Suas informações de contato
                       </h3>
-
+                      {submitError && (
+                        <div className="mb-2">
+                          <ErrorMessageBox>{submitError}</ErrorMessageBox>
+                        </div>
+                      )}
                       <label
                         className="text-gray-500 font-medium text-sm"
                         htmlFor="username"

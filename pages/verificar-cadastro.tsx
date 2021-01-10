@@ -12,10 +12,14 @@ export default function TermosDeUso() {
 
   useEffect(() => {
     async function loadData() {
-      try {
-        api.defaults.headers.authorization = `Bearer ${token}`
+      delete api.defaults.headers.authorization
 
-        const { data } = await api.get('/authperm/user/mine')
+      try {
+        const { data } = await api.get('/authperm/user/mine', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
 
         setEmail(data.email)
       } catch (error) {

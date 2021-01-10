@@ -51,8 +51,6 @@ export default function Login() {
 
             try {
               await signIn({ email, password })
-
-              router.push('/painel')
             } catch (error) {
               setSubmitError(error.message)
             } finally {

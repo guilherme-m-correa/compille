@@ -2,15 +2,55 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Menu } from './Menu'
 import { useAuth } from '../hooks/auth'
+import { api } from '../hooks/fetch'
 import Container from './Container'
+
+interface Person {
+  id: number
+  user_id: string
+  cpf: string
+  rg: string
+  rg_exp: string
+  rg_uf: string
+  oab: string
+  oab_uf: string
+  gender: string
+  created_at: string
+  updated_at: string
+  profile_type: string
+  profile_name: string
+  profile_link: string
+  birth_date: null
+  curriculum: string
+  schoolarity: string
+  has_certificate: boolean
+  register_finish: boolean
+}
 
 const Header: React.FC = () => {
   const router = useRouter()
   const { user, signOut } = useAuth()
   const [openMenu, setOpenMenu] = useState(false)
+  const [person, setPerson] = useState<Person>({} as Person)
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const response = await api.get(`/comercial/people/user/${user?.id}`)
+
+        if (response.status === 200) {
+          setPerson(response.data)
+        }
+      } catch (error) {
+        //
+      }
+    }
+
+    loadData()
+  }, [user?.id])
 
   const menuItems = [
     { name: 'Home', link: '/' },
@@ -176,13 +216,28 @@ const Header: React.FC = () => {
     )
   }
 
+  const LogoHeader: React.FC = () => {
+    console.log(user)
+    return (
+      <Container>
+        <div className="flex justify-center items-center">
+          <Image src="/img/logo.png" alt="Logo" width={200} height={60} />
+        </div>
+      </Container>
+    )
+  }
+
   return (
     <header className="relative z-10 flex h-20 bg-black-500 justify-between items-center">
-      {!user && <LoggedOutHeader />}
-
-      {user?.active && user?.type === 'P' && <CorrespondenteHeader />}
-
-      {user?.active && user?.type === 'E' && <SolicitanteHeader />}
+      {!user ? (
+        <LoggedOutHeader />
+      ) : user.type === 'P' && person.register_finish ? (
+        <CorrespondenteHeader />
+      ) : user.type === 'E' ? (
+        <SolicitanteHeader />
+      ) : (
+        <LogoHeader />
+      )}
     </header>
   )
 }

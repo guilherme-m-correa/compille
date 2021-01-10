@@ -17,13 +17,20 @@ const Footer: React.FC = () => {
             </h2>
             <nav className="list-none mb-10">
               <li>
-                <a className="text-white hover:text-gray-200">Home</a>
+                <a href="/" className="text-white hover:text-gray-200">
+                  Home
+                </a>
               </li>
               <li>
                 <a className="text-white hover:text-gray-200">Sobre nós</a>
               </li>
               <li>
-                <a className="text-white hover:text-gray-200">Fale Conosco</a>
+                <a
+                  href="/fale-conosco"
+                  className="text-white hover:text-gray-200"
+                >
+                  Fale Conosco
+                </a>
               </li>
             </nav>
           </div>
@@ -33,23 +40,24 @@ const Footer: React.FC = () => {
             </h2>
             <nav className="list-none mb-10">
               <li>
-                <a className="text-white hover:text-gray-200">
-                  Para profissionais
+                <a
+                  href="/cadastro-advogados-correspondentes-juridicos"
+                  className="text-white hover:text-gray-200"
+                >
+                  Para Correspontentes
                 </a>
               </li>
               <li>
-                <a className="text-white hover:text-gray-200">
-                  Para departamentos júridico
+                <a
+                  href="/demandas/solicitar"
+                  className="text-white hover:text-gray-200"
+                >
+                  Para Departamentos Júridico
                 </a>
               </li>
               <li>
                 <a className="text-white hover:text-gray-200">
                   Benefícios Premium
-                </a>
-              </li>
-              <li>
-                <a className="text-white hover:text-gray-200">
-                  Correspondente Jurídico
                 </a>
               </li>
             </nav>
@@ -89,7 +97,7 @@ const Footer: React.FC = () => {
           <p className="text-white text-sm text-center sm:text-left">
             © 2020 Compille —
             <a
-              href="#"
+              href="/termos-uso"
               className="text-white hover:text-gray-200 ml-1"
               rel="noopener noreferrer"
               target="_blank"
@@ -98,7 +106,7 @@ const Footer: React.FC = () => {
             </a>{' '}
             —
             <a
-              href="#"
+              href="/politica-privacidade"
               className="text-white hover:text-gray-200 ml-1"
               rel="noopener noreferrer"
               target="_blank"
