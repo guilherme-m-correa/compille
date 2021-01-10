@@ -579,8 +579,8 @@ export default function Painel() {
                           as="select"
                           className={
                             errors.profile_type && touched.profile_type
-                              ? 'input mt-2 border-red-500'
-                              : 'input mt-2'
+                              ? 'select-input mt-2 border-red-500'
+                              : 'select-input mt-2'
                           }
                         >
                           <option className="text-gray-100" value="" disabled>
@@ -637,8 +637,8 @@ export default function Painel() {
                           as="select"
                           className={
                             errors.oab_uf && touched.oab_uf
-                              ? 'input mt-2 border-red-500'
-                              : 'input mt-2'
+                              ? 'select-input mt-2 border-red-500'
+                              : 'select-input mt-2'
                           }
                         >
                           <option className="text-gray-100" value="" disabled>
@@ -707,8 +707,8 @@ export default function Painel() {
                             as="select"
                             className={
                               errors.gender && touched.gender
-                                ? 'input mt-2 border-red-500'
-                                : 'input mt-2'
+                                ? 'select-input mt-2 border-red-500'
+                                : 'select-input mt-2'
                             }
                           >
                             <option className="text-gray-100" disabled value="">
@@ -739,8 +739,8 @@ export default function Painel() {
                             as="select"
                             className={
                               errors.schoolarity && touched.schoolarity
-                                ? 'input mt-2 border-red-500'
-                                : 'input mt-2'
+                                ? 'select-input mt-2 border-red-500'
+                                : 'select-input mt-2'
                             }
                           >
                             <option className="text-gray-100" disabled value="">
@@ -818,8 +818,8 @@ export default function Painel() {
                           as="select"
                           className={
                             errors.phone_type && touched.phone_type
-                              ? 'input border-red-500'
-                              : 'input'
+                              ? 'select-input border-red-500'
+                              : 'select-input'
                           }
                         >
                           <option className="text-gray-100" disabled value="">
@@ -909,8 +909,8 @@ export default function Painel() {
                           }}
                           className={
                             errors.acting_state && touched.acting_state
-                              ? 'input mt-2 border-red-500'
-                              : 'input mt-2'
+                              ? 'select-input mt-2 border-red-500'
+                              : 'select-input mt-2'
                           }
                         >
                           <option className="text-gray-100" value="" disabled>
@@ -1234,8 +1234,8 @@ export default function Painel() {
                         as="select"
                         className={
                           errors.has_certificate && touched.has_certificate
-                            ? 'input mt-2 border-red-500'
-                            : 'input mt-2'
+                            ? 'select-input mt-2 border-red-500'
+                            : 'select-input mt-2'
                         }
                       >
                         <option className="text-gray-100" value="Não">
