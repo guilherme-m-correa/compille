@@ -132,7 +132,7 @@ const Header: React.FC = () => {
           </Link>
 
           <Menu />
-          <div className="relative inline-block text-left">
+          <div className="hidden relative lg:inline-block text-left">
             <div>
               <button
                 type="button"
@@ -259,7 +259,7 @@ const Header: React.FC = () => {
           </Link>
 
           <Menu />
-          <div className="relative inline-block text-left">
+          <div className="hidden relative lg:inline-block text-left">
             <div>
               <button
                 type="button"
