@@ -74,7 +74,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
     setLoading(true)
     try {
       const { data, status } = await axios.post(
-        `http://localhost:5000/comercial/companyaddresses`,
+        `https://gateway.compille.com.br/comercial/companyaddresses`,
         {
           company_id,
           label: dataAddress.label,

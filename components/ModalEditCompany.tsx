@@ -15,7 +15,7 @@ function ModalEditCompany({ company, open, setOpen, onUpdate }) {
     async function loadStates() {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/comercial/states`
+          `https://gateway.compille.com.br/comercial/states`
         )
         setStates(data)
       } catch (err) {}
@@ -28,7 +28,7 @@ function ModalEditCompany({ company, open, setOpen, onUpdate }) {
     setLoading(true)
     try {
       await axios.put(
-        `http://localhost:5000/comercial/companies/${company.id}`,
+        `https://gateway.compille.com.br/comercial/companies/${company.id}`,
         {
           ...companyData
         }

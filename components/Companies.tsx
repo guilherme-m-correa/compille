@@ -45,7 +45,7 @@ function Companies({ person_id }) {
       setLoading(true)
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/comercial/phonetypes`
+          `https://gateway.compille.com.br/comercial/phonetypes`
         )
         setPhonesTypes(data)
       } catch (err) {}
@@ -57,7 +57,7 @@ function Companies({ person_id }) {
   async function loadCompanies() {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/comercial/personcompanies/person/${person_id}`
+        `https://gateway.compille.com.br/comercial/personcompanies/person/${person_id}`
       )
       setCompanies(data)
     } catch (err) {}
@@ -73,10 +73,10 @@ function Companies({ person_id }) {
     setLoading(true)
     try {
       const { data: addressData } = await axios.get(
-        `http://localhost:5000/comercial/companyaddresses/${id}`
+        `https://gateway.compille.com.br/comercial/companyaddresses/${id}`
       )
       const { data: phoneData } = await axios.get(
-        `http://localhost:5000/comercial/companyphones/${id}`
+        `https://gateway.compille.com.br/comercial/companyphones/${id}`
       )
       setAddressExpand(addressData)
       setPhonesExpand(phoneData)
@@ -89,7 +89,7 @@ function Companies({ person_id }) {
     setLoading(true)
     try {
       await axios.delete(
-        `http://localhost:5000/comercial/companyaddresses/${id}`
+        `https://gateway.compille.com.br/comercial/companyaddresses/${id}`
       )
       getDetail(company_id)
     } catch (err) {}
@@ -99,7 +99,9 @@ function Companies({ person_id }) {
   async function handleRemovePhone(company_id, id) {
     setLoading(true)
     try {
-      await axios.delete(`http://localhost:5000/comercial/companyphones/${id}`)
+      await axios.delete(
+        `https://gateway.compille.com.br/comercial/companyphones/${id}`
+      )
       getDetail(company_id)
     } catch (err) {}
     setLoading(false)
@@ -231,7 +233,7 @@ function Companies({ person_id }) {
                             address.is_billing_address === true) &&
                           (address.is_main_address === 1 ||
                             address.is_main_address === true) ? (
-                            <span>Endereço Principal e Cobrança</span>
+                              <span>Endereço Principal e Cobrança</span>
                           ) : (
                             <>
                               {(address.is_billing_address === 1 ||
