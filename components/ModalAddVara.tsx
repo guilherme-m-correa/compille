@@ -43,9 +43,12 @@ function ModalAddVara({ onAdd, open, setOpen, forun_id }) {
           <Row>
             <Col lg={12}>
               <Form.Group>
-                <Form.Label>Descrição</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Descrição
+                </Form.Label>
                 <Form.Control
                   value={values.descricao}
+                  className="input"
                   onChange={e =>
                     setValues({ ...values, descricao: e.target.value })
                   }
@@ -56,9 +59,12 @@ function ModalAddVara({ onAdd, open, setOpen, forun_id }) {
             </Col>
             <Col lg={12}>
               <Form.Group>
-                <Form.Label>Localização</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Localização
+                </Form.Label>
                 <Form.Control
                   value={values.localizacao}
+                  className="input"
                   onChange={e =>
                     setValues({ ...values, localizacao: e.target.value })
                   }
@@ -67,28 +73,18 @@ function ModalAddVara({ onAdd, open, setOpen, forun_id }) {
               </Form.Group>
             </Col>
           </Row>
-          <Row>
-            <Col lg={6}>
-              <Button
-                type="submit"
-                variant="primary"
-                className="d-block btn-block"
-                disabled={loading}
-              >
-                Salvar
-              </Button>
-            </Col>
-            <Col lg={6}>
-              <Button
-                type="button"
-                variant="outline-primary"
-                className="d-block btn-block"
-                onClick={resetForm}
-              >
-                Cancelar
-              </Button>
-            </Col>
-          </Row>
+          <div className="mt-6 flex justify-center items-center space-x-4">
+            <button type="submit" className="primary-btn" disabled={loading}>
+              Salvar
+            </button>
+            <button
+              type="button"
+              className="secondary-btn border-blue-500 text-blue-500 hover:border-blue-500 hover:text-blue-500"
+              onClick={resetForm}
+            >
+              Cancelar
+            </button>
+          </div>
         </Form>
       </Modal.Body>
     </Modal>

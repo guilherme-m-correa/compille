@@ -163,7 +163,7 @@ export default function Agenda() {
 
   return (
     <Container>
-      <div className="py-10">
+      <div className="local-bootstrap py-10">
         <ModalAddCompromiss
           open={add}
           setOpen={() => setAdd(false)}
@@ -214,7 +214,7 @@ export default function Agenda() {
                 {(detail.data.resources && detail.data.resources.description) ||
                   'Nenhuma descrição informada'}
               </small>
-              <div className="d-flex justify-content-between align-items-center mt-3">
+              <div className="flex justify-between items-center mt-3">
                 <small>
                   Início:{' '}
                   {detail.data.start &&
@@ -231,8 +231,11 @@ export default function Agenda() {
           {editActive && (
             <Modal.Body>
               <Form.Group>
-                <Form.Label>Título</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Título
+                </Form.Label>
                 <Form.Control
+                  className="input"
                   value={editData.title}
                   onChange={e =>
                     setEditData({ ...editData, title: e.target.value })
@@ -241,8 +244,11 @@ export default function Agenda() {
                 />
               </Form.Group>
               <Form.Group>
-                <Form.Label>Descrição</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Descrição
+                </Form.Label>
                 <Form.Control
+                  className="input"
                   disabled={loading}
                   value={editData.description}
                   as="textarea"
@@ -253,9 +259,12 @@ export default function Agenda() {
               </Form.Group>
               <Row className="mt-3">
                 <Col lg={6}>
-                  <Form.Label>Início</Form.Label>
+                  <Form.Label className="text-black-400 font-semibold">
+                    Início
+                  </Form.Label>
                   <Form.Control
                     disabled={loading}
+                    className="input"
                     type="datetime-local"
                     value={editData.start}
                     onChange={e =>
@@ -264,9 +273,12 @@ export default function Agenda() {
                   />
                 </Col>
                 <Col lg={6}>
-                  <Form.Label>Término</Form.Label>
+                  <Form.Label className="text-black-400 font-semibold">
+                    Término
+                  </Form.Label>
                   <Form.Control
                     disabled={loading}
+                    className="input"
                     type="datetime-local"
                     value={editData.end}
                     onChange={e =>
@@ -290,10 +302,10 @@ export default function Agenda() {
           <Modal.Body className="flex-column align-items-start">
             <h6>Advogado:</h6>
             {detail.data.resources && detail.data.resources.advogado ? (
-              <div className="d-flex align-items-center">
+              <div className="flex items-center">
                 <FaUser className="mr-3 ml-2" style={{ fontSize: '20px' }} />
                 <div>
-                  <small className="d-block mb-0">
+                  <small className="block mb-0">
                     {detail.data.resources.advogado.name}
                     <br />
                     OAB/PE {detail.data.resources.advogado.oab}
@@ -306,7 +318,7 @@ export default function Agenda() {
               </div>
             )}
           </Modal.Body>
-          <Modal.Footer className="align-items-center justify-content-end">
+          <Modal.Footer className="align-items-center">
             {!confirmDelete && !editActive && (
               <>
                 <button
@@ -337,58 +349,57 @@ export default function Agenda() {
             )}
             {confirmDelete && (
               <>
-                <span className="d-block mr-auto">
-                  Tem certeza que deseja excluir?
-                </span>
-                <Button
-                  type="button"
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={handleDelete}
-                  disabled={loading}
-                >
-                  SIM, EXCLUIR
-                </Button>
-                <Button
-                  type="button"
-                  variant="danger"
-                  size="sm"
-                  onClick={() => setConfirmDelete(false)}
-                  disabled={loading}
-                >
-                  CANCELAR
-                </Button>
+                <div className="flex justify-center items-center w-full">
+                  <span>Tem certeza que deseja excluir?</span>
+                </div>
+
+                <div className="mt-6 flex justify-center items-center space-x-4 w-full">
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="primary-btn"
+                    disabled={loading}
+                  >
+                    SIM, EXCLUIR
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary-btn border-blue-500 text-blue-500"
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    CANCELAR
+                  </button>
+                </div>
               </>
             )}
             {editActive && (
               <>
-                <Button
-                  type="button"
-                  variant="outline-primary"
-                  size="sm"
-                  onClick={handleEdit}
-                  disabled={loading}
-                >
-                  SALVAR
-                </Button>
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="sm"
-                  onClick={() => {
-                    setEditActive(false)
-                    setEditData({
-                      title: detail.data.title,
-                      start: format(detail.data.start, "yyyy-MM-dd'T'HH:mm"),
-                      end: format(detail.data.end, "yyyy-MM-dd'T'HH:mm"),
-                      id: detail.data.resources.id,
-                      description: detail.data.resources.descricao
-                    })
-                  }}
-                  disabled={loading}
-                >
-                  CANCELAR
-                </Button>
+                <div className="mt-6 flex justify-center items-center space-x-4 w-full">
+                  <button
+                    type="button"
+                    onClick={handleEdit}
+                    className="primary-btn"
+                    disabled={loading}
+                  >
+                    SALVAR
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary-btn border-blue-500 text-blue-500  hover:border-blue-500 hover:text-blue-500"
+                    onClick={() => {
+                      setEditActive(false)
+                      setEditData({
+                        title: detail.data.title,
+                        start: format(detail.data.start, "yyyy-MM-dd'T'HH:mm"),
+                        end: format(detail.data.end, "yyyy-MM-dd'T'HH:mm"),
+                        id: detail.data.resources.id,
+                        description: detail.data.resources.descricao
+                      })
+                    }}
+                  >
+                    CANCELAR
+                  </button>
+                </div>
               </>
             )}
           </Modal.Footer>
@@ -412,7 +423,7 @@ export default function Agenda() {
               next: 'Próximo',
               noEventsInRange: 'Nenhum evento neste período',
               previous: 'Anterior',
-              showMore: 'Ver mais',
+              showMore: () => 'Ver mais',
               time: 'Tempo',
               today: 'Hoje',
               tomorrow: 'Amanhã',

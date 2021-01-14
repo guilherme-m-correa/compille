@@ -9,6 +9,7 @@ import ErrorMessage from '../../components/ErrorMessage'
 import ErrorMessageBox from '../../components/ErrorMessageBox'
 import { api } from '../../hooks/fetch'
 import { normalizeCpf, normalizeDate } from '../../helpers'
+import CompanyForm from '../../components/CompanyForm'
 
 interface FormCPFValues {
   cpf: string
@@ -108,7 +109,10 @@ export default function Painel() {
   const [phonesTypes, setPhonesTypes] = useState([])
   const [phones, setPhones] = useState<Phone[]>([] as Phone[])
 
-  const profile_types = ['Advogado', 'Escritório de advocacia']
+  const profile_types = [
+    'Advogado Autônomo',
+    'Faço parte de um escritório de advocacia'
+  ]
 
   const states = [
     { cod: 12, name: 'Acre', uf: 'AC' },
@@ -269,16 +273,29 @@ export default function Painel() {
     loadPhones()
   }, [person?.id])
 
+  const [phoneError, setPhoneError] = useState('')
+
   async function handleAddPhone(phone_type, phone_ddd, phone_number) {
     try {
-      const { data } = await api.post(`/comercial/personphones`, {
+      setPhoneError('')
+
+      const response = await api.post(`/comercial/personphones`, {
         person_id: person.id,
         phonetype_id: Number(phone_type),
         area_code: phone_ddd,
         number: phone_number,
         contact: ''
       })
-      setPhones([...phones, data])
+
+      if (response.status === 201 || response.status === 200) {
+        setPhones([...phones, response.data])
+      }
+      if (response.status === 203) {
+        setPhoneError(response.data.msg)
+      } else {
+        //
+      }
+
       //  resetForm();
     } catch (err) {
       console.log(err)
@@ -378,9 +395,9 @@ export default function Painel() {
         ) : (
           <h2 className="text-2xl font-semibold">Cadastrar Perfil</h2>
         )}
-        <p className="mt-2 text-base">
+        {/* <p className="mt-2 text-base">
           Preencha o seu perfil profissional e receba solicitações de serviços.
-        </p>
+        </p> */}
         {step === 1 && (
           <>
             <div className="mt-6 bg-indigo-200 p-6 text-center rounded-lg text-blue-500">
@@ -503,7 +520,7 @@ export default function Painel() {
           </>
         )}
 
-        {step === 2 && (
+        {user?.type === 'P' && step === 2 && (
           <>
             {!person.register_finish && (
               <div className="mt-6 bg-indigo-200 p-6 text-center rounded-lg text-blue-500">
@@ -589,7 +606,15 @@ export default function Painel() {
                       register_finish: true
                     })
 
-                    router.push('/painel')
+                    if (
+                      profile_type ===
+                        'Faço parte de um escritório de advocacia' &&
+                      !person.register_finish
+                    ) {
+                      setStep(3)
+                    } else {
+                      router.push('/painel')
+                    }
                   } catch (error) {
                     setSubmitError(error.message)
                   } finally {
@@ -639,8 +664,8 @@ export default function Painel() {
                             </option>
                           ))}
                         </Field>
-                        {errors.oab_uf && touched.oab_uf && (
-                          <ErrorMessage>{errors.oab_uf}</ErrorMessage>
+                        {errors.profile_type && touched.profile_type && (
+                          <ErrorMessage>{errors.profile_type}</ErrorMessage>
                         )}
                       </div>
 
@@ -830,6 +855,8 @@ export default function Painel() {
                       </h2>
                     </div>
 
+                    {phoneError && <ErrorMessage>{phoneError}</ErrorMessage>}
+
                     <div className="mt-2 max-w-2xl flex flex-col lg:flex-row">
                       <div className="flex-1 lg:mr-2">
                         <label htmlFor="phone_type" className="sr-only">
@@ -922,7 +949,11 @@ export default function Painel() {
                             key={phone.id}
                             className="mt-2 flex items-center bg-blue-500 py-1 px-2 mr-2 text-white rounded max-w-max"
                           >
-                            {phone.number}
+                            {
+                              phonesTypes.find(t => phone.phonetype_id === t.id)
+                                ?.name
+                            }{' '}
+                            - ({phone.area_code}){phone.number}
                             <button
                               type="button"
                               className="flex items-center ml-2 h-full outline-none focus:outline-none"
@@ -1351,18 +1382,635 @@ export default function Painel() {
                       <ErrorMessage>{errors.curriculum}</ErrorMessage>
                     )}
 
-                    <div className="flex justify-center">
+                    <div className="flex justify-center items-center">
                       <button
                         disabled={isSubmitting}
                         type="submit"
                         className="mt-6 primary-btn w-40"
                       >
-                        {isSubmitting ? <FaSpinner size={24} /> : 'CONTINUAR'}
+                        {isSubmitting ? <FaSpinner size={24} /> : 'SALVAR'}
                       </button>
                     </div>
                   </Form>
                 )}
               </Formik>
+            </div>
+          </>
+        )}
+
+        {user?.type === 'P' && step === 3 && (
+          <>
+            <div className="bg-white shadow-md rounded-md p-6 mt-10">
+              <div className="py-4 border-b-2 border-gray-100">
+                <h2 className="text-2xl font-semibold">
+                  Preencha os dados relacionados a empresa
+                </h2>
+              </div>
+
+              <CompanyForm
+                type="Advogado"
+                user_id={user.id}
+                onFinish={() => {
+                  router.push('/painel')
+                }}
+                person_id={person.id}
+              />
+            </div>
+          </>
+        )}
+
+        {user?.type === 'E' && step === 2 && (
+          <>
+            {!person.register_finish && (
+              <div className="mt-6 bg-indigo-200 p-6 text-center rounded-lg text-blue-500">
+                <strong>{user?.username}, estamos quase lá!</strong>
+                <p className="mt-2">
+                  Agora, só falta preencher seu perfil com as suas informações
+                  profissionais para começar.
+                </p>
+              </div>
+            )}
+
+            <div className="bg-white shadow-md rounded-md p-6 mt-10">
+              <Formik
+                initialValues={
+                  {
+                    gender: person?.gender || '',
+                    phone_type: '',
+                    phone_ddd: '',
+                    phone_number: '',
+                    phone_contact: ''
+                  } as FormValues
+                }
+                validationSchema={Yup.object({
+                  // oab: Yup.string().required('Registro obrigatório'),
+                  // oab_uf: Yup.string().required('Estado obrigatório'),
+                  // gender: Yup.string().required('Gênero obrigatório'),
+                  // profile_link: Yup.string().required(
+                  //   'Escolha um link para seu perfil'
+                  // ),
+                  // profile_name: Yup.string().required(
+                  //   'Nome do perfil obrigatório'
+                  // ),
+                  // profile_type: Yup.string().required(
+                  //   'Tipo de perfil obrigatório'
+                  // ),
+                  // curriculum: Yup.string().required(
+                  //   'Minicurrículo obrigatório'
+                  // ),
+                  // schoolarity: Yup.string().required(
+                  //   'Nivel de escolaridade obrigatória'
+                  // )
+                })}
+                onSubmit={async (
+                  values: FormValues,
+                  { setSubmitting }: FormikHelpers<FormValues>
+                ) => {
+                  setSubmitError('')
+
+                  const { gender } = values
+
+                  try {
+                    await api.put(`/comercial/people/${person.id}`, {
+                      gender,
+                      register_finish: true
+                    })
+
+                    if (!person.register_finish) {
+                      setStep(3)
+                    } else {
+                      router.push('/painel')
+                    }
+                  } catch (error) {
+                    setSubmitError(error.message)
+                  } finally {
+                    setSubmitting(false)
+                  }
+                }}
+              >
+                {({
+                  isSubmitting,
+                  errors,
+                  touched,
+                  values,
+                  handleChange,
+                  setFieldValue
+                }) => (
+                  <Form className="space-y-6 flex p-6 flex-col">
+                    <div className="py-4 border-b-2 border-gray-100">
+                      <h2 className="text-2xl font-semibold">Dados pessoais</h2>
+                    </div>
+
+                    <div className="mt-2">
+                      <div className="flex flex-col">
+                        <label
+                          className="text-black-400 font-semibold"
+                          htmlFor="gender"
+                        >
+                          Gênero
+                        </label>
+                        <Field
+                          id="gender"
+                          name="gender"
+                          type="gender"
+                          as="select"
+                          className={
+                            errors.gender && touched.gender
+                              ? 'select-input w-40 mt-2 border-red-500'
+                              : 'select-input w-40 mt-2'
+                          }
+                        >
+                          <option disabled value="">
+                            Selecione...
+                          </option>
+                          <option value="Masculino">Masculino</option>
+                          <option value="Feminino">Feminino</option>
+                        </Field>
+                        {errors.gender && touched.gender && (
+                          <ErrorMessage>{errors.gender}</ErrorMessage>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="py-4 border-b-2 border-gray-100">
+                      <h2 className="text-2xl font-semibold">
+                        Telefones de contato
+                      </h2>
+                    </div>
+
+                    {phoneError && <ErrorMessage>{phoneError}</ErrorMessage>}
+
+                    <div className="mt-2 max-w-2xl flex flex-col lg:flex-row">
+                      <div className="flex-1 lg:mr-2">
+                        <label htmlFor="phone_type" className="sr-only">
+                          Tipo de telefone
+                        </label>
+                        <Field
+                          id="phone_type"
+                          name="phone_type"
+                          type="phone_type"
+                          as="select"
+                          className={
+                            errors.phone_type && touched.phone_type
+                              ? 'select-input border-red-500'
+                              : 'select-input'
+                          }
+                        >
+                          <option disabled value="">
+                            Selecione o tipo
+                          </option>
+                          {phonesTypes.map(type => (
+                            <option key={type.id} value={type.id}>
+                              {type.name}
+                            </option>
+                          ))}
+                        </Field>
+                        {errors.phone_type && touched.phone_type && (
+                          <ErrorMessage>{errors.phone_type}</ErrorMessage>
+                        )}
+                      </div>
+                      <div className="lg:mr-2">
+                        <label htmlFor="phone_ddd" className="sr-only">
+                          DDD
+                        </label>
+                        <Field
+                          id="phone_ddd"
+                          name="phone_ddd"
+                          type="text"
+                          placeholder="DDD"
+                          className={
+                            errors.phone_ddd && touched.phone_ddd
+                              ? 'input border-red-500 w-16'
+                              : 'input w-16'
+                          }
+                        />
+                        {errors.phone_ddd && touched.phone_ddd && (
+                          <ErrorMessage>{errors.phone_ddd}</ErrorMessage>
+                        )}
+                      </div>
+
+                      <div className="lg:mr-2">
+                        <label htmlFor="phone_number" className="sr-only">
+                          DDD
+                        </label>
+                        <Field
+                          id="phone_number"
+                          name="phone_number"
+                          type="text"
+                          value={values.phone_number}
+                          placeholder="Número"
+                          className={
+                            errors.phone_number && touched.phone_number
+                              ? 'input border-red-500 w-40'
+                              : 'input w-40'
+                          }
+                        />
+                        {errors.phone_number && touched.phone_number && (
+                          <ErrorMessage>{errors.phone_number}</ErrorMessage>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        className="primary-btn"
+                        onClick={() => {
+                          handleAddPhone(
+                            values.phone_type,
+                            values.phone_ddd,
+                            values.phone_number
+                          )
+                        }}
+                      >
+                        ADICIONAR
+                      </button>
+                    </div>
+
+                    {phones.length > 0 && (
+                      <div>
+                        {phones.map(phone => (
+                          <p
+                            key={phone.id}
+                            className="mt-2 flex items-center bg-blue-500 py-1 px-2 mr-2 text-white rounded max-w-max"
+                          >
+                            {
+                              phonesTypes.find(t => phone.phonetype_id === t.id)
+                                ?.name
+                            }{' '}
+                            - ({phone.area_code}){phone.number}
+                            <button
+                              type="button"
+                              className="flex items-center ml-2 h-full outline-none focus:outline-none"
+                              onClick={() => handleRemovePhone(phone.id)}
+                            >
+                              <FaTimes />
+                            </button>
+                          </p>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="py-4 border-b-2 border-gray-100">
+                      <h2 className="text-2xl font-semibold">
+                        Cidades de atuação
+                      </h2>
+                    </div>
+
+                    {msg && <ErrorMessageBox>{msg}</ErrorMessageBox>}
+
+                    <div className="mt-2 flex flex-col lg:flex-row">
+                      <div className="flex-1 lg:mr-2">
+                        <label
+                          className="text-black-400 font-semibold"
+                          htmlFor="acting_state"
+                        >
+                          Estado
+                        </label>
+                        <Field
+                          id="acting_state"
+                          name="acting_state"
+                          type="acting_state"
+                          as="select"
+                          onChange={e => {
+                            handleChange(e)
+                            setMsg('')
+                            setStateSelected(e.target.value)
+                          }}
+                          className={
+                            errors.acting_state && touched.acting_state
+                              ? 'select-input mt-2 border-red-500'
+                              : 'select-input mt-2'
+                          }
+                        >
+                          <option value="" disabled>
+                            Selecione...
+                          </option>
+                          {states.map(state => (
+                            <option key={state.cod} value={state.cod}>
+                              {state.uf}
+                            </option>
+                          ))}
+                        </Field>
+                        {errors.acting_state && touched.acting_state && (
+                          <ErrorMessage>{errors.acting_state}</ErrorMessage>
+                        )}
+                      </div>
+                      <div className="relative flex-1">
+                        <label
+                          className="text-black-400 font-semibold"
+                          htmlFor="acting_city"
+                        >
+                          Cidade
+                        </label>
+                        <Field
+                          id="acting_city"
+                          name="acting_city"
+                          type="text"
+                          onChange={e => {
+                            handleChange(e)
+                            setMsg('')
+                            if (e.target.value.length >= 3) {
+                              loadCities(e.target.value)
+                            }
+                            if (e.target.value.length < 3) {
+                              setCities([])
+                            }
+                          }}
+                          autoComplete="off"
+                          disabled={!values.acting_state}
+                          placeholder={`${
+                            !values.acting_state
+                              ? 'Selecione o estado'
+                              : 'Digite para buscar'
+                          }`}
+                          className="input mt-2"
+                        />
+
+                        {cities.length > 0 && (
+                          <ul className="absolute divide-y-2 flex flex-col top-20 right-0 left-0 bg-white rounded-md shadow-lg z-10 max-h-60 overflow-auto">
+                            {cities.map(city => (
+                              <li
+                                key={city.district_id}
+                                className="hover:bg-gray-100 cursor-pointer"
+                              >
+                                <button
+                                  type="button"
+                                  className="focus:outline-none py-3 flex items-center justify-center w-full h-full"
+                                  onClick={() => {
+                                    handleAddCity(city)
+                                    setFieldValue('acting_city', '')
+                                    setCities([])
+                                  }}
+                                >
+                                  {city.district_name === city.city_name
+                                    ? city.city_name
+                                    : `${city.district_name} - ${city.city_name}`}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+
+                        {errors.acting_city && touched.acting_city && (
+                          <ErrorMessage>{errors.acting_city}</ErrorMessage>
+                        )}
+                      </div>
+                    </div>
+
+                    {citiesData.length > 0 && (
+                      <div>
+                        {citiesData.map(city => (
+                          <p
+                            key={city.id}
+                            className="mt-2 flex items-center bg-blue-500 py-1 px-2 mr-2 text-white rounded max-w-max"
+                          >
+                            {city.city.name} - {city.city.state.uf}
+                            <button
+                              type="button"
+                              className="flex items-center ml-2 h-full outline-none focus:outline-none"
+                              onClick={() => handleRemoveCity(city.id)}
+                            >
+                              <FaTimes />
+                            </button>
+                          </p>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="py-4 border-b-2 border-gray-100">
+                      <h2 className="text-2xl font-semibold">
+                        Áreas de atuação
+                      </h2>
+                    </div>
+
+                    <div
+                      className="flex flex-wrap"
+                      role="group"
+                      aria-labelledby="checkbox-group"
+                    >
+                      <ul className="lg:w-1/3 sm:w-1/2 w-full">
+                        {juridicalAreasOptions
+                          .slice(0, juridicalAreasOptions.length / 3)
+                          .map(option => {
+                            const juridicalArea = juridicalAreas.find(
+                              area => area.juridical_area_id === option.id
+                            )
+
+                            return (
+                              <li key={option.name}>
+                                <label className="inline-flex items-center mt-3">
+                                  <Field
+                                    className="h-5 w-5 text-blue-500 rounded"
+                                    type="checkbox"
+                                    name="juridical_areas"
+                                    checked={formattedJuridicalAreas.includes(
+                                      option.name
+                                    )}
+                                    onChange={e => {
+                                      handleChange(e)
+
+                                      if (!e.target.checked) {
+                                        handleRemoveJuridicalArea(
+                                          juridicalArea.id
+                                        )
+                                      } else {
+                                        handleAddJuridicalArea(
+                                          option.id,
+                                          option.name
+                                        )
+                                      }
+                                    }}
+                                    value={option.name}
+                                  />
+                                  <span className="ml-2 text-gray-700">
+                                    {option.name}
+                                  </span>
+                                </label>
+                              </li>
+                            )
+                          })}
+                      </ul>
+
+                      <ul className="lg:w-1/3 w-full">
+                        {juridicalAreasOptions
+                          .slice(
+                            juridicalAreasOptions.length / 3,
+                            2 * (juridicalAreasOptions.length / 3)
+                          )
+                          .map(option => {
+                            const juridicalArea = juridicalAreas.find(
+                              area => area.juridical_area_id === option.id
+                            )
+
+                            return (
+                              <li key={option.name}>
+                                <label className="inline-flex items-center mt-3">
+                                  <Field
+                                    className="h-5 w-5 text-blue-500 rounded"
+                                    type="checkbox"
+                                    name="juridical_areas"
+                                    checked={formattedJuridicalAreas.includes(
+                                      option.name
+                                    )}
+                                    onChange={e => {
+                                      handleChange(e)
+
+                                      if (!e.target.checked) {
+                                        handleRemoveJuridicalArea(
+                                          juridicalArea.id
+                                        )
+                                      } else {
+                                        handleAddJuridicalArea(
+                                          option.id,
+                                          option.name
+                                        )
+                                      }
+                                    }}
+                                    value={option.name}
+                                  />
+                                  <span className="ml-2 text-gray-700">
+                                    {option.name}
+                                  </span>
+                                </label>
+                              </li>
+                            )
+                          })}
+                      </ul>
+
+                      <ul className="lg:w-1/3 sm:w-1/2 w-full">
+                        {juridicalAreasOptions
+                          .slice(
+                            2 * (juridicalAreasOptions.length / 3),
+                            juridicalAreasOptions.length
+                          )
+                          .map(option => {
+                            const juridicalArea = juridicalAreas.find(
+                              area => area.juridical_area_id === option.id
+                            )
+
+                            return (
+                              <li key={option.name}>
+                                <label className="inline-flex items-center mt-3">
+                                  <Field
+                                    className="h-5 w-5 text-blue-500 rounded"
+                                    type="checkbox"
+                                    name="juridical_areas"
+                                    checked={formattedJuridicalAreas.includes(
+                                      option.name
+                                    )}
+                                    onChange={e => {
+                                      handleChange(e)
+
+                                      if (!e.target.checked) {
+                                        handleRemoveJuridicalArea(
+                                          juridicalArea.id
+                                        )
+                                      } else {
+                                        handleAddJuridicalArea(
+                                          option.id,
+                                          option.name
+                                        )
+                                      }
+                                    }}
+                                    value={option.name}
+                                  />
+                                  <span className="ml-2 text-gray-700">
+                                    {option.name}
+                                  </span>
+                                </label>
+                              </li>
+                            )
+                          })}
+                      </ul>
+                    </div>
+
+                    <div className="py-4 border-b-2 border-gray-100">
+                      <h2 className="text-2xl font-semibold">
+                        Instâncias de atuação
+                      </h2>
+                    </div>
+
+                    <div
+                      className="flex flex-wrap"
+                      role="group"
+                      aria-labelledby="checkbox-group"
+                    >
+                      <ul className="w-full">
+                        {legalInstancesOptions.length > 0 &&
+                          legalInstancesOptions.map(option => {
+                            const legalInstance = legalInstances.find(
+                              instance =>
+                                instance.legal_instance_id === option.id
+                            )
+
+                            return (
+                              <li key={option.id}>
+                                <label className="inline-flex items-center mt-3">
+                                  <Field
+                                    className="h-5 w-5 text-blue-500 rounded"
+                                    type="checkbox"
+                                    checked={formattedActingInstances.includes(
+                                      option.name
+                                    )}
+                                    name="acting_instances"
+                                    onChange={e => {
+                                      handleChange(e)
+
+                                      if (!e.target.checked) {
+                                        handleRemoveLegalInstance(
+                                          legalInstance.id
+                                        )
+                                      } else {
+                                        handleAddLegalInstance(
+                                          option.id,
+                                          option.name
+                                        )
+                                      }
+                                    }}
+                                    value={option.name}
+                                  />
+                                  <span className="ml-2 text-gray-700">
+                                    {option.name}
+                                  </span>
+                                </label>
+                              </li>
+                            )
+                          })}
+                      </ul>
+                    </div>
+
+                    <div className="flex justify-center items-center">
+                      <button
+                        disabled={isSubmitting}
+                        type="submit"
+                        className="mt-6 primary-btn w-40"
+                      >
+                        {isSubmitting ? <FaSpinner size={24} /> : 'SALVAR'}
+                      </button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+            </div>
+          </>
+        )}
+
+        {user?.type === 'E' && step === 3 && (
+          <>
+            <div className="bg-white shadow-md rounded-md p-6 mt-10">
+              <div className="py-4 border-b-2 border-gray-100">
+                <h2 className="text-2xl font-semibold">
+                  Preencha os dados relacionados a empresa
+                </h2>
+              </div>
+
+              <CompanyForm
+                type="Empresa"
+                user_id={user.id}
+                onFinish={() => {
+                  router.push('/painel')
+                }}
+                person_id={person.id}
+              />
             </div>
           </>
         )}

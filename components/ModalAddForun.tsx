@@ -123,9 +123,12 @@ function ModalAddForun({ onAdd, open, setOpen }) {
           <Row>
             <Col lg={12}>
               <Form.Group>
-                <Form.Label>Descrição</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Descrição
+                </Form.Label>
                 <Form.Control
                   value={values.descricao}
+                  className="input"
                   onChange={e =>
                     setValues({ ...values, descricao: e.target.value })
                   }
@@ -136,9 +139,13 @@ function ModalAddForun({ onAdd, open, setOpen }) {
             </Col>
             <Col lg={4}>
               <Form.Group>
-                <Form.Label>CEP</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  CEP
+                </Form.Label>
+
                 <Form.Control
                   value={values.zip_code}
+                  className="input"
                   onBlur={handleCep}
                   onChange={e =>
                     setValues({
@@ -153,9 +160,12 @@ function ModalAddForun({ onAdd, open, setOpen }) {
             </Col>
             <Col lg={8}>
               <Form.Group>
-                <Form.Label>Endereço</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Endereço
+                </Form.Label>
                 <Form.Control
                   value={values.street}
+                  className="input"
                   onChange={e =>
                     setValues({ ...values, street: e.target.value })
                   }
@@ -166,9 +176,12 @@ function ModalAddForun({ onAdd, open, setOpen }) {
             </Col>
             <Col lg={6}>
               <Form.Group>
-                <Form.Label>Número</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Número
+                </Form.Label>
                 <Form.Control
                   id="number_form"
+                  className="input"
                   value={values.street_number}
                   onChange={e =>
                     setValues({ ...values, street_number: e.target.value })
@@ -180,9 +193,12 @@ function ModalAddForun({ onAdd, open, setOpen }) {
             </Col>
             <Col lg={6}>
               <Form.Group>
-                <Form.Label>Complemento</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Complemento
+                </Form.Label>
                 <Form.Control
                   value={values.street_complement}
+                  className="input"
                   onChange={e =>
                     setValues({ ...values, street_complement: e.target.value })
                   }
@@ -192,9 +208,12 @@ function ModalAddForun({ onAdd, open, setOpen }) {
             </Col>
             <Col lg={5}>
               <Form.Group>
-                <Form.Label>Bairro</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Bairro
+                </Form.Label>
                 <Form.Control
                   value={values.neighborhood}
+                  className="input"
                   onChange={e =>
                     setValues({ ...values, neighborhood: e.target.value })
                   }
@@ -205,9 +224,12 @@ function ModalAddForun({ onAdd, open, setOpen }) {
             </Col>
             <Col lg={5}>
               <Form.Group>
-                <Form.Label>Cidade</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Cidade
+                </Form.Label>
                 <Form.Control
                   value={values.city}
+                  className="input"
                   onChange={e => setValues({ ...values, city: e.target.value })}
                   disabled={loading}
                   required
@@ -216,9 +238,12 @@ function ModalAddForun({ onAdd, open, setOpen }) {
             </Col>
             <Col lg={2}>
               <Form.Group>
-                <Form.Label>UF</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  UF
+                </Form.Label>
                 <Form.Control
                   value={values.uf}
+                  className="select-input"
                   onChange={e => setValues({ ...values, uf: e.target.value })}
                   as="select"
                   disabled={loading}
@@ -233,28 +258,18 @@ function ModalAddForun({ onAdd, open, setOpen }) {
               </Form.Group>
             </Col>
           </Row>
-          <Row>
-            <Col lg={6}>
-              <Button
-                type="submit"
-                variant="primary"
-                className="d-block btn-block"
-                disabled={loading}
-              >
-                Salvar
-              </Button>
-            </Col>
-            <Col lg={6}>
-              <Button
-                type="button"
-                variant="outline-primary"
-                className="d-block btn-block"
-                onClick={resetForm}
-              >
-                Cancelar
-              </Button>
-            </Col>
-          </Row>
+          <div className="mt-6 flex justify-center items-center space-x-4">
+            <button type="submit" className="primary-btn" disabled={loading}>
+              Salvar
+            </button>
+            <button
+              type="button"
+              className="secondary-btn border-blue-500 text-blue-500 hover:border-blue-600 hover:text-blue-600"
+              onClick={resetForm}
+            >
+              Cancelar
+            </button>
+          </div>
         </Form>
       </Modal.Body>
     </Modal>

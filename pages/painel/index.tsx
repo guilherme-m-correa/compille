@@ -15,7 +15,7 @@ const PainelCorrespondente: React.FC = () => {
           Olá, {user?.username}, seja bem-vindo ao seu painel
         </p>
       </div>
-      <div className="grid gap-8 grid-cols-1 grid-rows-6 lg:grid-cols-3 lg:grid-rows-2">
+      <div className="flex-col space-y-4 max-w-2xl mx-auto">
         <Link href="/painel/demandas">
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
             Demandas
@@ -24,6 +24,11 @@ const PainelCorrespondente: React.FC = () => {
         <Link href="/painel/agenda-juridica">
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
             Agenda Júridica
+          </a>
+        </Link>
+        <Link href="/painel/empresas">
+          <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
+            Empresas
           </a>
         </Link>
         <Link href="/painel/contabilidade">
@@ -64,18 +69,23 @@ const PainelSolicitante: React.FC = () => {
           Olá, {user?.username}, seja bem-vindo ao seu painel
         </p>
       </div>
-      <div className="grid gap-8 grid-cols-1 grid-rows-6 lg:grid-cols-3 lg:grid-rows-2">
+      <div className="flex-col space-y-4 max-w-2xl mx-auto">
         <Link href="/painel/demandas">
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
             Demandas
           </a>
         </Link>
-        <Link href="#">
+        <Link href="/painel/agenda-juridica">
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
             Agenda Júridica
           </a>
         </Link>
-        <Link href="#">
+        <Link href="/painel/empresas">
+          <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
+            Empresas
+          </a>
+        </Link>
+        <Link href="/painel/contabilidade">
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
             Contabilidade
           </a>
@@ -85,12 +95,12 @@ const PainelSolicitante: React.FC = () => {
             Editar Perfil
           </a>
         </Link>
-        <Link href="#">
+        <Link href="/painel/minha-assinatura">
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
             Minha assinatura
           </a>
         </Link>
-        <Link href="#">
+        <Link href="/painel/minha-conta">
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
             Minha Conta
           </a>

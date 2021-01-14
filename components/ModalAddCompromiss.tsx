@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 
 import { Modal, Form, Row, Col, Button } from 'react-bootstrap'
 import { FaTimes, FaPlus } from 'react-icons/fa'
-import axios from 'axios'
 import { isBefore } from 'date-fns'
 import { api } from '../hooks/fetch'
 import { useAuth } from '../hooks/auth'
@@ -44,7 +43,7 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
   async function handleSubmit() {
     setLoading(true)
     try {
-      const { data } = await api.post(`/comercial/compromisses`, {
+      const { data } = await api.post(`/agenda/compromisses`, {
         id_user: user.id,
         compromisse_type_id: type,
         dataInicial,
@@ -77,7 +76,7 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
   useEffect(() => {
     async function loadTypes() {
       try {
-        const { data } = await axios.get(`/agenda/compromisse-types`)
+        const { data } = await api.get(`/agenda/compromisse-types`)
         setTypesOptions(data)
       } catch (error) {
         console.log(error)
@@ -138,9 +137,12 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
         <Modal.Body>
           <Form>
             <Form.Group>
-              <Form.Label>Tipo de Compromisso</Form.Label>
+              <Form.Label className="text-black-400 font-semibold">
+                Tipo de Compromisso
+              </Form.Label>
               <Form.Control
                 as="select"
+                className="select-input"
                 value={type}
                 onChange={e => setType(Number(e.target.value))}
               >
@@ -154,15 +156,21 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
             <Form.Group>
               <Row>
                 <Col lg={6}>
-                  <Form.Label>Data de Início</Form.Label>
+                  <Form.Label className="text-black-400 font-semibold">
+                    Data de Início
+                  </Form.Label>
                   <Form.Control
+                    className="input"
                     type="datetime-local"
                     onChange={e => setDataInicial(new Date(e.target.value))}
                   />
                 </Col>
                 <Col lg={6}>
-                  <Form.Label>Data de Término</Form.Label>
+                  <Form.Label className="text-black-400 font-semibold">
+                    Data de Término
+                  </Form.Label>
                   <Form.Control
+                    className="input"
                     type="datetime-local"
                     onChange={e => setDataFinal(new Date(e.target.value))}
                   />
@@ -178,9 +186,12 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
             </Form.Group>
             {(type === 1 || type === 2) && (
               <Form.Group>
-                <Form.Label>Descrição</Form.Label>
+                <Form.Label className="text-black-400 font-semibold">
+                  Descrição
+                </Form.Label>
                 <Form.Control
                   as="textarea"
+                  className="input"
                   rows={3}
                   value={descricao}
                   onChange={e => setDescricao(e.target.value)}
@@ -188,12 +199,15 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
               </Form.Group>
             )}
             {(type === 1 || type === 2) && (
-              <Row>
-                <Col lg={6}>
+              <div className="flex space-x-4">
+                <div className="flex-1">
                   <Form.Group>
-                    <Form.Label>Fórum</Form.Label>
-                    <div className="d-flex align-items">
+                    <Form.Label className="text-black-400 font-semibold">
+                      Fórum
+                    </Form.Label>
+                    <div className="flex">
                       <Form.Control
+                        className="input"
                         value={forumValue}
                         onChange={handleLoadForum}
                         disabled={Object.keys(forumSelected).length > 0}
@@ -237,13 +251,16 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
                       </div>
                     )}
                   </Form.Group>
-                </Col>
-                <Col lg={6}>
+                </div>
+                <div className="flex-1">
                   <Form.Group>
-                    <Form.Label>Vara</Form.Label>
-                    <div className="d-flex align-items">
+                    <Form.Label className="text-black-400 font-semibold">
+                      Vara
+                    </Form.Label>
+                    <div className="flex">
                       <Form.Control
                         as="select"
+                        className="select-input"
                         value={varaSelected}
                         onChange={e => setVaraSelected(e.target.value)}
                       >
@@ -264,44 +281,38 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
                       )}
                     </div>
                   </Form.Group>
-                </Col>
-              </Row>
+                </div>
+              </div>
             )}
-            <Row>
-              <Col lg={6}>
-                <Button
-                  type="button"
-                  variant="primary"
-                  className="d-block btn-block"
-                  disabled={
-                    !type ||
-                    type === 0 ||
-                    dataInicial === '' ||
-                    dataFinal === '' ||
-                    (dataInicial !== '' &&
-                      dataFinal !== '' &&
-                      isBefore(new Date(dataFinal), new Date(dataInicial))) ||
-                    loading ||
-                    ((type === 1 || type === 2) &&
-                      (Object.keys(forumSelected).length === 0 ||
-                        Object.keys(varaSelected).length === 0))
-                  }
-                  onClick={handleSubmit}
-                >
-                  Salvar
-                </Button>
-              </Col>
-              <Col lg={6}>
-                <Button
-                  type="button"
-                  variant="outline-primary"
-                  className="d-block btn-block"
-                  onClick={resetForm}
-                >
-                  Cancelar
-                </Button>
-              </Col>
-            </Row>
+            <div className="mt-6 flex justify-center items-center space-x-4">
+              <button
+                type="button"
+                className="primary-btn"
+                disabled={
+                  !type ||
+                  type === 0 ||
+                  dataInicial === '' ||
+                  dataFinal === '' ||
+                  (dataInicial !== '' &&
+                    dataFinal !== '' &&
+                    isBefore(new Date(dataFinal), new Date(dataInicial))) ||
+                  loading ||
+                  ((type === 1 || type === 2) &&
+                    (Object.keys(forumSelected).length === 0 ||
+                      Object.keys(varaSelected).length === 0))
+                }
+                onClick={handleSubmit}
+              >
+                Salvar
+              </button>
+              <button
+                type="button"
+                className="secondary-btn border-blue-500 text-blue-500 hover:border-blue-700 hover:text-blue-700 hover:bg-gray-100hover:bg-gray-100"
+                onClick={resetForm}
+              >
+                Cancelar
+              </button>
+            </div>
           </Form>
         </Modal.Body>
       </Modal>

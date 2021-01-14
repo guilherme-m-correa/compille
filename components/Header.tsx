@@ -59,7 +59,10 @@ const Header: React.FC = () => {
       name: 'Para correspondentes',
       link: '/cadastro-advogados-correspondentes-juridicos'
     },
-    { name: 'Para departamentos jurídico', link: '/demandas/solicitar' },
+    {
+      name: 'Para departamentos jurídico',
+      link: '/cadastro-departamentos-juridico'
+    },
     { name: 'Blog', link: '/' }
     // { name: 'Diretório', link: '/profissionais' }
   ]
@@ -186,6 +189,16 @@ const Header: React.FC = () => {
                       Agenda Jurídica
                     </button>
                   </Link>
+                  <Link href="/painel/empresas">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
+                      role="menuitem"
+                    >
+                      Empresas
+                    </button>
+                  </Link>
                   <Link href="/painel/contabilidade">
                     <button
                       type="button"
@@ -310,6 +323,16 @@ const Header: React.FC = () => {
                       role="menuitem"
                     >
                       Agenda Jurídica
+                    </button>
+                  </Link>
+                  <Link href="/painel/empresas">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdown(false)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
+                      role="menuitem"
+                    >
+                      Empresas
                     </button>
                   </Link>
                   <Link href="/painel/contabilidade">

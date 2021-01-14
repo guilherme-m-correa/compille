@@ -49,7 +49,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="/demandas/solicitar"
+                  href="/cadastro-departamentos-juridico"
                   className="text-white hover:text-gray-200"
                 >
                   Para Departamentos Júridico

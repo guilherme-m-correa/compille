@@ -80,7 +80,7 @@ export default function Home() {
               vitae pulvinar nisi, vel elementum nisl. Phasellus vitae tincidunt
               orci.
             </p>
-            <Link href="/demandas/solicitar">
+            <Link href="/cadastro-departamentos-juridico">
               <button type="button" className="primary-btn mt-6 ">
                 ENCONTRE AGORA
               </button>
@@ -101,7 +101,7 @@ export default function Home() {
             headingText="Para departamentos jurídicos"
             paragraphText="Encontre agora Advogados e Correspondentes Jurídicos qualificados para a sua demanda jurídica."
             buttonText="ENCONTRE PROFISSIONAIS"
-            link="/demandas/solicitar"
+            link="/cadastro-departamentos-juridico"
           />
           <Card
             headingText="Para quem busca orientação jurídica"
