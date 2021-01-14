@@ -8,7 +8,7 @@ import { normalizeCep } from '../helpers'
 function Address({ company_id, open, setOpen, onAdd }) {
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
-  const [states] = useState([
+  const [states] = useState<any[]>([
     { cod: 11, name: 'Rondônia', uf: 'RO' },
     { cod: 12, name: 'Acre', uf: 'AC' },
     { cod: 13, name: 'Amazonas', uf: 'AM' },
@@ -38,7 +38,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
     { cod: 53, name: 'Distrito Federal', uf: 'DF' }
   ])
 
-  const [dataAddress, setDataAddress] = useState({
+  const [dataAddress, setDataAddress] = useState<any>({
     label: '',
     street: '',
     street_number: '',

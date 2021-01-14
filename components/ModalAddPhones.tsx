@@ -7,7 +7,7 @@ import { normalizeNumber } from '../helpers'
 
 function Phones({ company_id, open, setOpen, onAdd }) {
   const [loading, setLoading] = useState(false)
-  const [phonesTypes, setPhonesTypes] = useState([])
+  const [phonesTypes, setPhonesTypes] = useState<any[]>([])
 
   useEffect(() => {
     async function loadTypes() {
@@ -23,7 +23,7 @@ function Phones({ company_id, open, setOpen, onAdd }) {
     loadTypes()
   }, [])
 
-  const [dataPhone, setDataPhone] = useState({
+  const [dataPhone, setDataPhone] = useState<any>({
     phonetype: '',
     area_code: '',
     number: '',

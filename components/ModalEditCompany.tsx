@@ -6,8 +6,8 @@ import axios from 'axios'
 import { normalizeCnpj } from '../helpers'
 
 function ModalEditCompany({ company, open, setOpen, onUpdate }) {
-  const [companyData, setCompanyData] = useState(company)
-  const [states, setStates] = useState([])
+  const [companyData, setCompanyData] = useState<any>(company)
+  const [states, setStates] = useState<any[]>([])
 
   const [loading, setLoading] = useState(false)
 
