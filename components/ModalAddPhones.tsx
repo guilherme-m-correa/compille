@@ -44,16 +44,13 @@ function Phones({ company_id, open, setOpen, onAdd }) {
     e.preventDefault()
     setLoading(true)
     try {
-      await axios.post(
-        `https://gateway.compille.com.br/comercial/companyphones`,
-        {
-          company_id,
-          phonetype_id: Number(dataPhone.phonetype),
-          area_code: dataPhone.area_code,
-          number: dataPhone.number,
-          contact: dataPhone.contact
-        }
-      )
+      await axios.post(`https://gateway.compille.com.br/comercial/companyphones`, {
+        company_id,
+        phonetype_id: Number(dataPhone.phonetype),
+        area_code: dataPhone.area_code,
+        number: dataPhone.number,
+        contact: dataPhone.contact
+      })
       resetForm()
       onAdd()
     } catch (err) {}
@@ -64,8 +61,8 @@ function Phones({ company_id, open, setOpen, onAdd }) {
     <Modal show={open} onHide={resetForm} backdrop="static" centered>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
-          <div className="row">
-            <div className="col-md-12">
+          <div className="flex flex-col lg:grid lg:grid-cols-3 lg:gap-4">
+            <div className="col-span-3">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Tipo
@@ -91,7 +88,7 @@ function Phones({ company_id, open, setOpen, onAdd }) {
                 </Form.Control>
               </Form.Group>
             </div>
-            <div className="col-md-4">
+            <div className="col-span-1">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   DDD
@@ -113,7 +110,7 @@ function Phones({ company_id, open, setOpen, onAdd }) {
               </Form.Group>
             </div>
 
-            <div className="col-md-8">
+            <div className="col-span-2">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Número
@@ -134,7 +131,7 @@ function Phones({ company_id, open, setOpen, onAdd }) {
                 />
               </Form.Group>
             </div>
-            <div className="col-md-12">
+            <div className="col-span-3">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Contato

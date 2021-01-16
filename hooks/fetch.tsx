@@ -2,7 +2,6 @@ import useSWR from 'swr'
 import axios from 'axios'
 
 export const api = axios.create({
-  // baseURL: 'https://gateway.compille.com.br/'
   baseURL: 'https://gateway.compille.com.br/'
 })
 

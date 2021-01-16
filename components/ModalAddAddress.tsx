@@ -143,8 +143,8 @@ function Address({ company_id, open, setOpen, onAdd }) {
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           {msg !== '' && <h5 className="text-danger text-center">{msg}</h5>}
-          <div className="row">
-            <div className="col-md-12">
+          <div className="flex flex-col lg:grid lg:grid-cols-4 lg:gap-4">
+            <div className="col-span-4">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Rótulo
@@ -165,7 +165,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
                 />
               </Form.Group>
             </div>
-            <div className="col-md-3">
+            <div className="col-span-1">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   CEP
@@ -187,7 +187,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
                 />
               </Form.Group>
             </div>
-            <div className="col-md-9">
+            <div className="col-span-3">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Rua
@@ -208,7 +208,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
                 />
               </Form.Group>
             </div>
-            <div className="col-md-2">
+            <div className="col-span-1">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Número
@@ -230,7 +230,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
                 />
               </Form.Group>
             </div>
-            <div className="col-md-3">
+            <div className="col-span-1">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Complemento
@@ -250,7 +250,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
                 />
               </Form.Group>
             </div>
-            <div className="col-md-7">
+            <div className="col-span-2">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Bairro
@@ -271,7 +271,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
                 />
               </Form.Group>
             </div>
-            <div className="col-md-6">
+            <div className="col-span-2">
               <Form.Group style={{ position: 'relative' }}>
                 <Form.Label className="text-black-400 font-semibold">
                   Cidade
@@ -292,7 +292,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
                 />
               </Form.Group>
             </div>
-            <div className="col-md-6">
+            <div className="col-span-2">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Estado
@@ -314,7 +314,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
                 </Form.Control>
               </Form.Group>
             </div>
-            <div className="col-md-6">
+            <div className="col-span-4">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Tipo

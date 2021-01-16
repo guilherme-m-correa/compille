@@ -209,7 +209,7 @@ const Header: React.FC = () => {
                       Contabilidade
                     </button>
                   </Link>
-                  <Link href="/painel/minha-conta">
+                  {/* <Link href="/painel/minha-conta">
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
@@ -218,7 +218,7 @@ const Header: React.FC = () => {
                     >
                       Minha Conta
                     </button>
-                  </Link>
+                  </Link> */}
                   <Link href="/painel/minha-assinatura">
                     <button
                       type="button"
@@ -345,7 +345,7 @@ const Header: React.FC = () => {
                       Contabilidade
                     </button>
                   </Link>
-                  <Link href="/painel/minha-conta">
+                  {/* <Link href="/painel/minha-conta">
                     <button
                       type="button"
                       onClick={e => setShowDropdown(false)}
@@ -354,7 +354,7 @@ const Header: React.FC = () => {
                     >
                       Minha Conta
                     </button>
-                  </Link>
+                  </Link> */}
                   <Link href="/painel/editar-perfil">
                     <button
                       type="button"

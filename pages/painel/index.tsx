@@ -46,11 +46,11 @@ const PainelCorrespondente: React.FC = () => {
             Minha assinatura
           </a>
         </Link>
-        <Link href="/painel/minha-conta">
+        {/* <Link href="/painel/minha-conta">
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
             Minha Conta
           </a>
-        </Link>
+        </Link> */}
       </div>
     </div>
   )
@@ -100,11 +100,11 @@ const PainelSolicitante: React.FC = () => {
             Minha assinatura
           </a>
         </Link>
-        <Link href="/painel/minha-conta">
+        {/* <Link href="/painel/minha-conta">
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-900 text-lg font-medium px-3 py-12 h-full flex justify-center items-center border-gray-300 rounded-lg w-full cursor-pointer">
             Minha Conta
           </a>
-        </Link>
+        </Link> */}
       </div>
     </div>
   )

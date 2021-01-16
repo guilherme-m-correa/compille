@@ -3,13 +3,15 @@ import { useRouter } from 'next/router'
 import { Formik, Form, Field, FormikHelpers } from 'formik'
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { FaTimes, FaSpinner } from 'react-icons/fa'
+import axios from 'axios'
 import Container from '../../components/Container'
 import { useAuth } from '../../hooks/auth'
 import ErrorMessage from '../../components/ErrorMessage'
 import ErrorMessageBox from '../../components/ErrorMessageBox'
 import { api } from '../../hooks/fetch'
-import { normalizeCpf, normalizeDate } from '../../helpers'
+import { normalizeCpf, normalizeDate, normalizeCep } from '../../helpers'
 import CompanyForm from '../../components/CompanyForm'
+import Address from '../../components/Address'
 
 interface FormCPFValues {
   cpf: string
@@ -17,6 +19,9 @@ interface FormCPFValues {
 }
 
 interface FormValues {
+  rg: string
+  rg_exp: string
+  rg_uf: string
   oab: string
   oab_uf: string
   profile_type: string
@@ -33,6 +38,24 @@ interface FormValues {
   phone_ddd: string
   phone_number: string
   phone_contact: string
+}
+
+interface FormCompanyValues {
+  rg: string
+  rg_exp: string
+  rg_uf: string
+  gender: string
+  phone_type: string
+  phone_ddd: string
+  phone_number: string
+  phone_contact: string
+  address_zip_code: string
+  address_street: string
+  address_number: string
+  address_neighborhood: string
+  address_complement: string
+  address_state: string
+  address_city: string
 }
 
 interface City {
@@ -108,6 +131,8 @@ export default function Painel() {
   >([] as JuridicalArea[])
   const [phonesTypes, setPhonesTypes] = useState([])
   const [phones, setPhones] = useState<Phone[]>([] as Phone[])
+  const [ibgeAddress, setIbgeAddress] = useState('')
+  const [addresses, setAddresses] = useState<any[]>([] as any[])
 
   const profile_types = [
     'Advogado Autônomo',
@@ -155,6 +180,20 @@ export default function Painel() {
     }
     loadTypes()
   }, [])
+
+  useEffect(() => {
+    async function loadAddresses() {
+      try {
+        const { data } = await api.get(
+          `/comercial/personaddresses/${person.id}`
+        )
+        setAddresses(data)
+      } catch (err) {
+        //
+      }
+    }
+    loadAddresses()
+  }, [person.id])
 
   useEffect(() => {
     async function loadData() {
@@ -327,6 +366,32 @@ export default function Painel() {
       resetForm()
     } else {
       setMsg(data.msg)
+    }
+  }
+
+  async function handleCep(address_zip_code, setFieldValue) {
+    try {
+      const { data } = await axios.get(
+        `https://viacep.com.br/ws/${address_zip_code.replace(
+          /[^\d]/g,
+          ''
+        )}/json/`
+      )
+
+      if (data.erro) {
+        // document.getElementById('street_form').focus()
+      } else {
+        const { bairro, localidade, uf, logradouro, ibge } = data
+
+        setIbgeAddress(ibge)
+
+        setFieldValue('address_street', logradouro)
+        setFieldValue('address_neighborhood', bairro)
+        setFieldValue('address_state', uf)
+        setFieldValue('address_city', localidade)
+      }
+    } catch (err) {
+      //
     }
   }
 
@@ -536,6 +601,9 @@ export default function Painel() {
               <Formik
                 initialValues={
                   {
+                    rg: person?.rg || '',
+                    rg_exp: person?.rg_exp || '',
+                    rg_uf: person?.rg_uf || '',
                     oab: person?.oab || '',
                     oab_uf: person?.oab_uf || '',
                     acting_city: '',
@@ -555,6 +623,9 @@ export default function Painel() {
                   } as FormValues
                 }
                 validationSchema={Yup.object({
+                  rg: Yup.string().required('RG obrigatório'),
+                  rg_exp: Yup.string().required('Orgão expedidor obrigatório'),
+                  rg_uf: Yup.string().required('Estado do RG obrigatório'),
                   oab: Yup.string().required('Registro obrigatório'),
                   oab_uf: Yup.string().required('Estado obrigatório'),
                   gender: Yup.string().required('Gênero obrigatório'),
@@ -581,6 +652,9 @@ export default function Painel() {
                   setSubmitError('')
 
                   const {
+                    rg,
+                    rg_exp,
+                    rg_uf,
                     profile_type,
                     profile_link,
                     profile_name,
@@ -594,6 +668,9 @@ export default function Painel() {
 
                   try {
                     await api.put(`/comercial/people/${person.id}`, {
+                      rg,
+                      rg_exp,
+                      rg_uf,
                       profile_type,
                       profile_link,
                       profile_name,
@@ -726,6 +803,87 @@ export default function Painel() {
 
                     <div className="py-4 border-b-2 border-gray-100">
                       <h2 className="text-2xl font-semibold">Dados pessoais</h2>
+                    </div>
+
+                    <div className="flex flex-col space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0">
+                      <div>
+                        <label
+                          className="text-black-400 font-semibold"
+                          htmlFor="rg"
+                        >
+                          RG
+                        </label>
+                        <Field
+                          id="rg"
+                          name="rg"
+                          type="text"
+                          className={
+                            errors.rg && touched.rg
+                              ? 'input mt-2 border-red-500'
+                              : 'input mt-2'
+                          }
+                        />
+                        {errors.rg && touched.rg && (
+                          <ErrorMessage>{errors.rg}</ErrorMessage>
+                        )}
+                      </div>
+
+                      <div className="lg:w-40">
+                        <label
+                          className="text-black-400 font-semibold"
+                          htmlFor="rg_exp"
+                        >
+                          Orgão expedidor
+                        </label>
+                        <Field
+                          id="rg_exp"
+                          name="rg_exp"
+                          type="text"
+                          className={
+                            errors.rg_exp && touched.rg_exp
+                              ? 'input mt-2 border-red-500'
+                              : 'input mt-2'
+                          }
+                        />
+                        {errors.rg_exp && touched.rg_exp && (
+                          <ErrorMessage>{errors.rg_exp}</ErrorMessage>
+                        )}
+                      </div>
+
+                      <div className="lg:w-40">
+                        <label
+                          className="text-black-400 font-semibold"
+                          htmlFor="rg_uf"
+                        >
+                          Estado do RG
+                        </label>
+                        <Field
+                          id="rg_uf"
+                          name="rg_uf"
+                          as="select"
+                          className={
+                            errors.rg_uf && touched.rg_uf
+                              ? 'select-input mt-2 border-red-500'
+                              : 'select-input mt-2'
+                          }
+                        >
+                          <option className="text-gray-100" value="" disabled>
+                            Selecione...
+                          </option>
+                          {states.map(state => (
+                            <option
+                              key={state.cod}
+                              className="text-gray-100"
+                              value={state.cod}
+                            >
+                              {state.uf}
+                            </option>
+                          ))}
+                        </Field>
+                        {errors.rg_uf && touched.rg_uf && (
+                          <ErrorMessage>{errors.rg_uf}</ErrorMessage>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex flex-col">
@@ -965,6 +1123,12 @@ export default function Painel() {
                         ))}
                       </div>
                     )}
+
+                    <div className="py-4 border-b-2 border-gray-100">
+                      <h2 className="text-2xl font-semibold">Endereços</h2>
+                    </div>
+
+                    <Address person_id={person.id} />
 
                     <div className="py-4 border-b-2 border-gray-100">
                       <h2 className="text-2xl font-semibold">
@@ -1435,43 +1599,42 @@ export default function Painel() {
               <Formik
                 initialValues={
                   {
+                    rg: person?.rg || '',
+                    rg_exp: person?.rg_exp || '',
+                    rg_uf: person?.rg_uf || '',
                     gender: person?.gender || '',
                     phone_type: '',
                     phone_ddd: '',
                     phone_number: '',
-                    phone_contact: ''
-                  } as FormValues
+                    phone_contact: '',
+                    address_zip_code: '',
+                    address_street: '',
+                    address_number: '',
+                    address_neighborhood: '',
+                    address_complement: '',
+                    address_state: '',
+                    address_city: ''
+                  } as FormCompanyValues
                 }
                 validationSchema={Yup.object({
-                  // oab: Yup.string().required('Registro obrigatório'),
-                  // oab_uf: Yup.string().required('Estado obrigatório'),
-                  // gender: Yup.string().required('Gênero obrigatório'),
-                  // profile_link: Yup.string().required(
-                  //   'Escolha um link para seu perfil'
-                  // ),
-                  // profile_name: Yup.string().required(
-                  //   'Nome do perfil obrigatório'
-                  // ),
-                  // profile_type: Yup.string().required(
-                  //   'Tipo de perfil obrigatório'
-                  // ),
-                  // curriculum: Yup.string().required(
-                  //   'Minicurrículo obrigatório'
-                  // ),
-                  // schoolarity: Yup.string().required(
-                  //   'Nivel de escolaridade obrigatória'
-                  // )
+                  rg: Yup.string().required('RG obrigatório'),
+                  rg_exp: Yup.string().required('Orgão expedidor obrigatório'),
+                  rg_uf: Yup.string().required('Estado do RG obrigatório'),
+                  gender: Yup.string().required('Gênero obrigatório')
                 })}
                 onSubmit={async (
-                  values: FormValues,
-                  { setSubmitting }: FormikHelpers<FormValues>
+                  values: FormCompanyValues,
+                  { setSubmitting }: FormikHelpers<FormCompanyValues>
                 ) => {
                   setSubmitError('')
 
-                  const { gender } = values
+                  const { rg, rg_exp, rg_uf, gender } = values
 
                   try {
                     await api.put(`/comercial/people/${person.id}`, {
+                      rg,
+                      rg_exp,
+                      rg_uf,
                       gender,
                       register_finish: true
                     })
@@ -1493,12 +1656,93 @@ export default function Painel() {
                   errors,
                   touched,
                   values,
-                  handleChange,
+                  handleBlur,
                   setFieldValue
                 }) => (
                   <Form className="space-y-6 flex p-6 flex-col">
                     <div className="py-4 border-b-2 border-gray-100">
                       <h2 className="text-2xl font-semibold">Dados pessoais</h2>
+                    </div>
+
+                    <div className="flex flex-col space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0">
+                      <div>
+                        <label
+                          className="text-black-400 font-semibold"
+                          htmlFor="rg"
+                        >
+                          RG
+                        </label>
+                        <Field
+                          id="rg"
+                          name="rg"
+                          type="text"
+                          className={
+                            errors.rg && touched.rg
+                              ? 'input mt-2 border-red-500'
+                              : 'input mt-2'
+                          }
+                        />
+                        {errors.rg && touched.rg && (
+                          <ErrorMessage>{errors.rg}</ErrorMessage>
+                        )}
+                      </div>
+
+                      <div className="lg:w-40">
+                        <label
+                          className="text-black-400 font-semibold"
+                          htmlFor="rg_exp"
+                        >
+                          Orgão expedidor
+                        </label>
+                        <Field
+                          id="rg_exp"
+                          name="rg_exp"
+                          type="text"
+                          className={
+                            errors.rg_exp && touched.rg_exp
+                              ? 'input mt-2 border-red-500'
+                              : 'input mt-2'
+                          }
+                        />
+                        {errors.rg_exp && touched.rg_exp && (
+                          <ErrorMessage>{errors.rg_exp}</ErrorMessage>
+                        )}
+                      </div>
+
+                      <div className="lg:w-40">
+                        <label
+                          className="text-black-400 font-semibold"
+                          htmlFor="rg_uf"
+                        >
+                          Estado do RG
+                        </label>
+                        <Field
+                          id="rg_uf"
+                          name="rg_uf"
+                          as="select"
+                          className={
+                            errors.rg_uf && touched.rg_uf
+                              ? 'select-input mt-2 border-red-500'
+                              : 'select-input mt-2'
+                          }
+                        >
+                          <option className="text-gray-100" value="" disabled>
+                            Selecione...
+                          </option>
+                          {states.map(state => (
+                            <option
+                              key={state.cod}
+                              className="text-gray-100"
+                              value={state.cod}
+                            >
+                              {state.uf}
+                            </option>
+                          ))}
+                        </Field>
+                        {errors.rg_uf && touched.rg_uf && (
+                          <ErrorMessage>{errors.rg_uf}</ErrorMessage>
+                        )}
+                      </div>
                     </div>
 
                     <div className="mt-2">
@@ -1538,445 +1782,124 @@ export default function Painel() {
                       </h2>
                     </div>
 
-                    {phoneError && <ErrorMessage>{phoneError}</ErrorMessage>}
+                    <div className="flex flex-col lg:flex-row w-full">
+                      {phoneError && <ErrorMessage>{phoneError}</ErrorMessage>}
 
-                    <div className="mt-2 max-w-2xl flex flex-col lg:flex-row">
-                      <div className="flex-1 lg:mr-2">
-                        <label htmlFor="phone_type" className="sr-only">
-                          Tipo de telefone
-                        </label>
-                        <Field
-                          id="phone_type"
-                          name="phone_type"
-                          type="phone_type"
-                          as="select"
-                          className={
-                            errors.phone_type && touched.phone_type
-                              ? 'select-input border-red-500'
-                              : 'select-input'
-                          }
-                        >
-                          <option disabled value="">
-                            Selecione o tipo
-                          </option>
-                          {phonesTypes.map(type => (
-                            <option key={type.id} value={type.id}>
-                              {type.name}
-                            </option>
-                          ))}
-                        </Field>
-                        {errors.phone_type && touched.phone_type && (
-                          <ErrorMessage>{errors.phone_type}</ErrorMessage>
-                        )}
-                      </div>
-                      <div className="lg:mr-2">
-                        <label htmlFor="phone_ddd" className="sr-only">
-                          DDD
-                        </label>
-                        <Field
-                          id="phone_ddd"
-                          name="phone_ddd"
-                          type="text"
-                          placeholder="DDD"
-                          className={
-                            errors.phone_ddd && touched.phone_ddd
-                              ? 'input border-red-500 w-16'
-                              : 'input w-16'
-                          }
-                        />
-                        {errors.phone_ddd && touched.phone_ddd && (
-                          <ErrorMessage>{errors.phone_ddd}</ErrorMessage>
-                        )}
-                      </div>
-
-                      <div className="lg:mr-2">
-                        <label htmlFor="phone_number" className="sr-only">
-                          DDD
-                        </label>
-                        <Field
-                          id="phone_number"
-                          name="phone_number"
-                          type="text"
-                          value={values.phone_number}
-                          placeholder="Número"
-                          className={
-                            errors.phone_number && touched.phone_number
-                              ? 'input border-red-500 w-40'
-                              : 'input w-40'
-                          }
-                        />
-                        {errors.phone_number && touched.phone_number && (
-                          <ErrorMessage>{errors.phone_number}</ErrorMessage>
-                        )}
-                      </div>
-
-                      <button
-                        type="button"
-                        className="primary-btn"
-                        onClick={() => {
-                          handleAddPhone(
-                            values.phone_type,
-                            values.phone_ddd,
-                            values.phone_number
-                          )
-                        }}
-                      >
-                        ADICIONAR
-                      </button>
-                    </div>
-
-                    {phones.length > 0 && (
-                      <div>
-                        {phones.map(phone => (
-                          <p
-                            key={phone.id}
-                            className="mt-2 flex items-center bg-blue-500 py-1 px-2 mr-2 text-white rounded max-w-max"
+                      <div className="mt-2 max-w-2xl flex flex-col lg:flex-row">
+                        <div className="flex-1 lg:mr-2">
+                          <label htmlFor="phone_type" className="sr-only">
+                            Tipo de telefone
+                          </label>
+                          <Field
+                            id="phone_type"
+                            name="phone_type"
+                            type="phone_type"
+                            as="select"
+                            className={
+                              errors.phone_type && touched.phone_type
+                                ? 'select-input border-red-500'
+                                : 'select-input'
+                            }
                           >
-                            {
-                              phonesTypes.find(t => phone.phonetype_id === t.id)
-                                ?.name
-                            }{' '}
-                            - ({phone.area_code}){phone.number}
-                            <button
-                              type="button"
-                              className="flex items-center ml-2 h-full outline-none focus:outline-none"
-                              onClick={() => handleRemovePhone(phone.id)}
-                            >
-                              <FaTimes />
-                            </button>
-                          </p>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="py-4 border-b-2 border-gray-100">
-                      <h2 className="text-2xl font-semibold">
-                        Cidades de atuação
-                      </h2>
-                    </div>
-
-                    {msg && <ErrorMessageBox>{msg}</ErrorMessageBox>}
-
-                    <div className="mt-2 flex flex-col lg:flex-row">
-                      <div className="flex-1 lg:mr-2">
-                        <label
-                          className="text-black-400 font-semibold"
-                          htmlFor="acting_state"
-                        >
-                          Estado
-                        </label>
-                        <Field
-                          id="acting_state"
-                          name="acting_state"
-                          type="acting_state"
-                          as="select"
-                          onChange={e => {
-                            handleChange(e)
-                            setMsg('')
-                            setStateSelected(e.target.value)
-                          }}
-                          className={
-                            errors.acting_state && touched.acting_state
-                              ? 'select-input mt-2 border-red-500'
-                              : 'select-input mt-2'
-                          }
-                        >
-                          <option value="" disabled>
-                            Selecione...
-                          </option>
-                          {states.map(state => (
-                            <option key={state.cod} value={state.cod}>
-                              {state.uf}
+                            <option disabled value="">
+                              Selecione o tipo
                             </option>
-                          ))}
-                        </Field>
-                        {errors.acting_state && touched.acting_state && (
-                          <ErrorMessage>{errors.acting_state}</ErrorMessage>
-                        )}
-                      </div>
-                      <div className="relative flex-1">
-                        <label
-                          className="text-black-400 font-semibold"
-                          htmlFor="acting_city"
-                        >
-                          Cidade
-                        </label>
-                        <Field
-                          id="acting_city"
-                          name="acting_city"
-                          type="text"
-                          onChange={e => {
-                            handleChange(e)
-                            setMsg('')
-                            if (e.target.value.length >= 3) {
-                              loadCities(e.target.value)
-                            }
-                            if (e.target.value.length < 3) {
-                              setCities([])
-                            }
-                          }}
-                          autoComplete="off"
-                          disabled={!values.acting_state}
-                          placeholder={`${
-                            !values.acting_state
-                              ? 'Selecione o estado'
-                              : 'Digite para buscar'
-                          }`}
-                          className="input mt-2"
-                        />
-
-                        {cities.length > 0 && (
-                          <ul className="absolute divide-y-2 flex flex-col top-20 right-0 left-0 bg-white rounded-md shadow-lg z-10 max-h-60 overflow-auto">
-                            {cities.map(city => (
-                              <li
-                                key={city.district_id}
-                                className="hover:bg-gray-100 cursor-pointer"
-                              >
-                                <button
-                                  type="button"
-                                  className="focus:outline-none py-3 flex items-center justify-center w-full h-full"
-                                  onClick={() => {
-                                    handleAddCity(city)
-                                    setFieldValue('acting_city', '')
-                                    setCities([])
-                                  }}
-                                >
-                                  {city.district_name === city.city_name
-                                    ? city.city_name
-                                    : `${city.district_name} - ${city.city_name}`}
-                                </button>
-                              </li>
+                            {phonesTypes.map(type => (
+                              <option key={type.id} value={type.id}>
+                                {type.name}
+                              </option>
                             ))}
-                          </ul>
-                        )}
+                          </Field>
+                          {errors.phone_type && touched.phone_type && (
+                            <ErrorMessage>{errors.phone_type}</ErrorMessage>
+                          )}
+                        </div>
+                        <div className="lg:mr-2">
+                          <label htmlFor="phone_ddd" className="sr-only">
+                            DDD
+                          </label>
+                          <Field
+                            id="phone_ddd"
+                            name="phone_ddd"
+                            type="text"
+                            placeholder="DDD"
+                            className={
+                              errors.phone_ddd && touched.phone_ddd
+                                ? 'input border-red-500 w-16'
+                                : 'input w-16'
+                            }
+                          />
+                          {errors.phone_ddd && touched.phone_ddd && (
+                            <ErrorMessage>{errors.phone_ddd}</ErrorMessage>
+                          )}
+                        </div>
 
-                        {errors.acting_city && touched.acting_city && (
-                          <ErrorMessage>{errors.acting_city}</ErrorMessage>
-                        )}
+                        <div className="lg:mr-2">
+                          <label htmlFor="phone_number" className="sr-only">
+                            DDD
+                          </label>
+                          <Field
+                            id="phone_number"
+                            name="phone_number"
+                            type="text"
+                            value={values.phone_number}
+                            placeholder="Número"
+                            className={
+                              errors.phone_number && touched.phone_number
+                                ? 'input border-red-500 w-40'
+                                : 'input w-40'
+                            }
+                          />
+                          {errors.phone_number && touched.phone_number && (
+                            <ErrorMessage>{errors.phone_number}</ErrorMessage>
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          className="primary-btn"
+                          onClick={() => {
+                            handleAddPhone(
+                              values.phone_type,
+                              values.phone_ddd,
+                              values.phone_number
+                            )
+                          }}
+                        >
+                          ADICIONAR
+                        </button>
                       </div>
-                    </div>
 
-                    {citiesData.length > 0 && (
-                      <div>
-                        {citiesData.map(city => (
-                          <p
-                            key={city.id}
-                            className="mt-2 flex items-center bg-blue-500 py-1 px-2 mr-2 text-white rounded max-w-max"
-                          >
-                            {city.city.name} - {city.city.state.uf}
-                            <button
-                              type="button"
-                              className="flex items-center ml-2 h-full outline-none focus:outline-none"
-                              onClick={() => handleRemoveCity(city.id)}
+                      {phones.length > 0 && (
+                        <div>
+                          {phones.map(phone => (
+                            <p
+                              key={phone.id}
+                              className="mt-2 flex items-center bg-blue-500 py-1 px-2 mr-2 text-white rounded max-w-max"
                             >
-                              <FaTimes />
-                            </button>
-                          </p>
-                        ))}
-                      </div>
-                    )}
-
+                              {
+                                phonesTypes.find(
+                                  t => phone.phonetype_id === t.id
+                                )?.name
+                              }{' '}
+                              - ({phone.area_code}){phone.number}
+                              <button
+                                type="button"
+                                className="flex items-center ml-2 h-full outline-none focus:outline-none"
+                                onClick={() => handleRemovePhone(phone.id)}
+                              >
+                                <FaTimes />
+                              </button>
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     <div className="py-4 border-b-2 border-gray-100">
-                      <h2 className="text-2xl font-semibold">
-                        Áreas de atuação
-                      </h2>
+                      <h2 className="text-2xl font-semibold">Endereços</h2>
                     </div>
 
-                    <div
-                      className="flex flex-wrap"
-                      role="group"
-                      aria-labelledby="checkbox-group"
-                    >
-                      <ul className="lg:w-1/3 sm:w-1/2 w-full">
-                        {juridicalAreasOptions
-                          .slice(0, juridicalAreasOptions.length / 3)
-                          .map(option => {
-                            const juridicalArea = juridicalAreas.find(
-                              area => area.juridical_area_id === option.id
-                            )
-
-                            return (
-                              <li key={option.name}>
-                                <label className="inline-flex items-center mt-3">
-                                  <Field
-                                    className="h-5 w-5 text-blue-500 rounded"
-                                    type="checkbox"
-                                    name="juridical_areas"
-                                    checked={formattedJuridicalAreas.includes(
-                                      option.name
-                                    )}
-                                    onChange={e => {
-                                      handleChange(e)
-
-                                      if (!e.target.checked) {
-                                        handleRemoveJuridicalArea(
-                                          juridicalArea.id
-                                        )
-                                      } else {
-                                        handleAddJuridicalArea(
-                                          option.id,
-                                          option.name
-                                        )
-                                      }
-                                    }}
-                                    value={option.name}
-                                  />
-                                  <span className="ml-2 text-gray-700">
-                                    {option.name}
-                                  </span>
-                                </label>
-                              </li>
-                            )
-                          })}
-                      </ul>
-
-                      <ul className="lg:w-1/3 w-full">
-                        {juridicalAreasOptions
-                          .slice(
-                            juridicalAreasOptions.length / 3,
-                            2 * (juridicalAreasOptions.length / 3)
-                          )
-                          .map(option => {
-                            const juridicalArea = juridicalAreas.find(
-                              area => area.juridical_area_id === option.id
-                            )
-
-                            return (
-                              <li key={option.name}>
-                                <label className="inline-flex items-center mt-3">
-                                  <Field
-                                    className="h-5 w-5 text-blue-500 rounded"
-                                    type="checkbox"
-                                    name="juridical_areas"
-                                    checked={formattedJuridicalAreas.includes(
-                                      option.name
-                                    )}
-                                    onChange={e => {
-                                      handleChange(e)
-
-                                      if (!e.target.checked) {
-                                        handleRemoveJuridicalArea(
-                                          juridicalArea.id
-                                        )
-                                      } else {
-                                        handleAddJuridicalArea(
-                                          option.id,
-                                          option.name
-                                        )
-                                      }
-                                    }}
-                                    value={option.name}
-                                  />
-                                  <span className="ml-2 text-gray-700">
-                                    {option.name}
-                                  </span>
-                                </label>
-                              </li>
-                            )
-                          })}
-                      </ul>
-
-                      <ul className="lg:w-1/3 sm:w-1/2 w-full">
-                        {juridicalAreasOptions
-                          .slice(
-                            2 * (juridicalAreasOptions.length / 3),
-                            juridicalAreasOptions.length
-                          )
-                          .map(option => {
-                            const juridicalArea = juridicalAreas.find(
-                              area => area.juridical_area_id === option.id
-                            )
-
-                            return (
-                              <li key={option.name}>
-                                <label className="inline-flex items-center mt-3">
-                                  <Field
-                                    className="h-5 w-5 text-blue-500 rounded"
-                                    type="checkbox"
-                                    name="juridical_areas"
-                                    checked={formattedJuridicalAreas.includes(
-                                      option.name
-                                    )}
-                                    onChange={e => {
-                                      handleChange(e)
-
-                                      if (!e.target.checked) {
-                                        handleRemoveJuridicalArea(
-                                          juridicalArea.id
-                                        )
-                                      } else {
-                                        handleAddJuridicalArea(
-                                          option.id,
-                                          option.name
-                                        )
-                                      }
-                                    }}
-                                    value={option.name}
-                                  />
-                                  <span className="ml-2 text-gray-700">
-                                    {option.name}
-                                  </span>
-                                </label>
-                              </li>
-                            )
-                          })}
-                      </ul>
-                    </div>
-
-                    <div className="py-4 border-b-2 border-gray-100">
-                      <h2 className="text-2xl font-semibold">
-                        Instâncias de atuação
-                      </h2>
-                    </div>
-
-                    <div
-                      className="flex flex-wrap"
-                      role="group"
-                      aria-labelledby="checkbox-group"
-                    >
-                      <ul className="w-full">
-                        {legalInstancesOptions.length > 0 &&
-                          legalInstancesOptions.map(option => {
-                            const legalInstance = legalInstances.find(
-                              instance =>
-                                instance.legal_instance_id === option.id
-                            )
-
-                            return (
-                              <li key={option.id}>
-                                <label className="inline-flex items-center mt-3">
-                                  <Field
-                                    className="h-5 w-5 text-blue-500 rounded"
-                                    type="checkbox"
-                                    checked={formattedActingInstances.includes(
-                                      option.name
-                                    )}
-                                    name="acting_instances"
-                                    onChange={e => {
-                                      handleChange(e)
-
-                                      if (!e.target.checked) {
-                                        handleRemoveLegalInstance(
-                                          legalInstance.id
-                                        )
-                                      } else {
-                                        handleAddLegalInstance(
-                                          option.id,
-                                          option.name
-                                        )
-                                      }
-                                    }}
-                                    value={option.name}
-                                  />
-                                  <span className="ml-2 text-gray-700">
-                                    {option.name}
-                                  </span>
-                                </label>
-                              </li>
-                            )
-                          })}
-                      </ul>
-                    </div>
+                    <Address person_id={person.id} />
 
                     <div className="flex justify-center items-center">
                       <button
