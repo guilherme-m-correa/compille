@@ -169,7 +169,7 @@ function Address({ person_id }) {
         {!addAddress && (
           <button
             type="button"
-            className="primary-btn my-6"
+            className="primary-btn mb-6"
             onClick={() => setAddAddress(true)}
           >
             ADICIONAR NOVO ENDEREÇO
@@ -341,6 +341,9 @@ function Address({ person_id }) {
                       setDataAddress({ ...dataAddress, state: e.target.value })
                     }
                   >
+                    <option disabled value="">
+                      Selecione...
+                    </option>
                     {states.map(state => (
                       <option key={state.cod} value={state.uf}>
                         {state.name}
@@ -358,6 +361,7 @@ function Address({ person_id }) {
                     <Form.Check
                       disabled={loading}
                       name="type"
+                      className="mt-2"
                       label="Endereço Principal"
                       checked={dataAddress.is_main_address}
                       onChange={e =>
@@ -370,6 +374,7 @@ function Address({ person_id }) {
                     <Form.Check
                       disabled={loading}
                       name="type"
+                      className="mt-2"
                       label="Endereço de Cobrança"
                       checked={dataAddress.is_billing_address}
                       onChange={e =>
@@ -429,7 +434,7 @@ function Address({ person_id }) {
               address.is_billing_address === true) &&
             (address.is_main_address === 1 ||
               address.is_main_address === true) ? (
-              <span>Endereço Principal e Cobrança</span>
+                <span>Endereço Principal e Cobrança</span>
             ) : (
               <>
                 {(address.is_billing_address === 1 ||

@@ -44,13 +44,16 @@ function Phones({ company_id, open, setOpen, onAdd }) {
     e.preventDefault()
     setLoading(true)
     try {
-      await axios.post(`https://gateway.compille.com.br/comercial/companyphones`, {
-        company_id,
-        phonetype_id: Number(dataPhone.phonetype),
-        area_code: dataPhone.area_code,
-        number: dataPhone.number,
-        contact: dataPhone.contact
-      })
+      await axios.post(
+        `https://gateway.compille.com.br/comercial/companyphones`,
+        {
+          company_id,
+          phonetype_id: Number(dataPhone.phonetype),
+          area_code: dataPhone.area_code,
+          number: dataPhone.number,
+          contact: dataPhone.contact
+        }
+      )
       resetForm()
       onAdd()
     } catch (err) {}
@@ -80,6 +83,9 @@ function Phones({ company_id, open, setOpen, onAdd }) {
                   }
                   required
                 >
+                  <option disabled value="">
+                    Selecione o tipo
+                  </option>
                   {phonesTypes.map(type => (
                     <option key={type.id} value={type.id}>
                       {type.name}

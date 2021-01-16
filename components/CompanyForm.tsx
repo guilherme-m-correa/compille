@@ -206,6 +206,9 @@ function CompanyForm({ type, user_id, onFinish, person_id }) {
                     }}
                     required={type === 'Empresa'}
                   >
+                    <option disabled value="">
+                      Selecione...
+                    </option>
                     {positionOptions
                       .filter(position => position.id !== 9)
                       .map(position => (
@@ -324,6 +327,9 @@ function CompanyForm({ type, user_id, onFinish, person_id }) {
                     }}
                     required
                   >
+                    <option disabled value="">
+                      Selecione...
+                    </option>
                     {states.map(state => (
                       <option key={state.uf} value={state.uf}>
                         {state.uf}
@@ -351,6 +357,9 @@ function CompanyForm({ type, user_id, onFinish, person_id }) {
                       }}
                       required={type === 'Empresa'}
                     >
+                      <option disabled value="">
+                        Selecione...
+                      </option>
                       {positionOptions
                         .filter(position => position.id !== 9)
                         .map(position => (

@@ -120,6 +120,9 @@ function ModalEditCompany({ company, open, setOpen, onUpdate }) {
                   disabled={loading}
                   required
                 >
+                  <option disabled value="">
+                    Selecione...
+                  </option>
                   {states.map(state => (
                     <option key={state.uf} value={state.uf}>
                       {state.uf}

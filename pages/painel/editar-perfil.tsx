@@ -467,10 +467,21 @@ export default function Painel() {
           <>
             <div className="mt-6 bg-indigo-200 p-6 text-center rounded-lg text-blue-500">
               <strong>{user?.username}, bem-vindo ao Compille!</strong>
-              <p className="mt-2">
-                As oportunidades de serviços estão lhe esperando. Continue o
-                cadastro abaixo para começar a receber as oportunidades
-              </p>
+              {user?.type === 'P' && (
+                <>
+                  <p className="mt-2">
+                    As oportunidades de serviços estão lhe esperando. Continue o
+                    cadastro abaixo para começar a receber as oportunidades
+                  </p>
+                </>
+              )}
+              {user?.type === 'E' && (
+                <>
+                  <p className="mt-2">
+                    Continue o cadastro abaixo para buscar demandas
+                  </p>
+                </>
+              )}
             </div>
 
             <div className="bg-white shadow-md rounded-md p-6 mt-10">
@@ -1782,9 +1793,8 @@ export default function Painel() {
                       </h2>
                     </div>
 
+                    {phoneError && <ErrorMessage>{phoneError}</ErrorMessage>}
                     <div className="flex flex-col lg:flex-row w-full">
-                      {phoneError && <ErrorMessage>{phoneError}</ErrorMessage>}
-
                       <div className="mt-2 max-w-2xl flex flex-col lg:flex-row">
                         <div className="flex-1 lg:mr-2">
                           <label htmlFor="phone_type" className="sr-only">
@@ -1869,32 +1879,31 @@ export default function Painel() {
                           ADICIONAR
                         </button>
                       </div>
-
-                      {phones.length > 0 && (
-                        <div>
-                          {phones.map(phone => (
-                            <p
-                              key={phone.id}
-                              className="mt-2 flex items-center bg-blue-500 py-1 px-2 mr-2 text-white rounded max-w-max"
-                            >
-                              {
-                                phonesTypes.find(
-                                  t => phone.phonetype_id === t.id
-                                )?.name
-                              }{' '}
-                              - ({phone.area_code}){phone.number}
-                              <button
-                                type="button"
-                                className="flex items-center ml-2 h-full outline-none focus:outline-none"
-                                onClick={() => handleRemovePhone(phone.id)}
-                              >
-                                <FaTimes />
-                              </button>
-                            </p>
-                          ))}
-                        </div>
-                      )}
                     </div>
+
+                    {phones.length > 0 && (
+                      <div>
+                        {phones.map(phone => (
+                          <p
+                            key={phone.id}
+                            className="mt-2 flex items-center bg-blue-500 py-1 px-2 mr-2 text-white rounded max-w-max"
+                          >
+                            {
+                              phonesTypes.find(t => phone.phonetype_id === t.id)
+                                ?.name
+                            }{' '}
+                            - ({phone.area_code}){phone.number}
+                            <button
+                              type="button"
+                              className="flex items-center ml-2 h-full outline-none focus:outline-none"
+                              onClick={() => handleRemovePhone(phone.id)}
+                            >
+                              <FaTimes />
+                            </button>
+                          </p>
+                        ))}
+                      </div>
+                    )}
                     <div className="py-4 border-b-2 border-gray-100">
                       <h2 className="text-2xl font-semibold">Endereços</h2>
                     </div>

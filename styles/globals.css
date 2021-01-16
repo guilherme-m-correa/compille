@@ -282,4 +282,45 @@ a {
   margin-left: -15px;
 }
 
+.form-check {
+  position: relative;
+  display: block;
+  padding-left: 1.25rem;
+}
 
+.form-check-input {
+  position: absolute;
+  margin-top: 0.1rem;
+  margin-left: -1.25rem;
+  border-radius: 0.25rem;
+  height: 1.25rem;
+  width: 1.25rem;
+  vertical-align: middle;
+}
+
+
+.form-check-input[disabled] ~ .form-check-label,
+.form-check-input:disabled ~ .form-check-label {
+  color: #6c757d;
+}
+
+.form-check-label {
+  margin-bottom: 0;
+  margin-left: 0.25rem;
+}
+
+.form-check-inline {
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-left: 0;
+  margin-right: 0.75rem;
+}
+
+.form-check-inline .form-check-input {
+  position: static;
+  margin-top: 0;
+  margin-right: 0.3125rem;
+  margin-left: 0;
+}

@@ -249,6 +249,9 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   disabled={loading}
                   required
                 >
+                  <option disabled value="">
+                    Selecione...
+                  </option>
                   {states.map(state => (
                     <option key={state.cod} value={state.uf}>
                       {state.uf}

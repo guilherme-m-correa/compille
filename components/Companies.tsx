@@ -99,7 +99,9 @@ function Companies({ person_id }) {
   async function handleRemovePhone(company_id, id) {
     setLoading(true)
     try {
-      await axios.delete(`https://gateway.compille.com.br/comercial/companyphones/${id}`)
+      await axios.delete(
+        `https://gateway.compille.com.br/comercial/companyphones/${id}`
+      )
       getDetail(company_id)
     } catch (err) {}
     setLoading(false)
@@ -231,7 +233,7 @@ function Companies({ person_id }) {
                             address.is_billing_address === true) &&
                           (address.is_main_address === 1 ||
                             address.is_main_address === true) ? (
-                            <span>Endereço Principal e Cobrança</span>
+                              <span>Endereço Principal e Cobrança</span>
                           ) : (
                             <>
                               {(address.is_billing_address === 1 ||

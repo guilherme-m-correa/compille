@@ -77,7 +77,8 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
     async function loadTypes() {
       try {
         const { data } = await api.get(`/agenda/compromisse-types`)
-        setTypesOptions(data)
+        console.log(data)
+        setTypesOptions(data.filter(d => d.type === user.type))
       } catch (error) {
         console.log(error)
       }
@@ -146,6 +147,9 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
                 value={type}
                 onChange={e => setType(Number(e.target.value))}
               >
+                <option disabled value="">
+                  Selecione...
+                </option>
                 {typesOptions.map(o => (
                   <option value={o.id} key={o.id}>
                     {o.descricao}
@@ -264,6 +268,9 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
                         value={varaSelected}
                         onChange={e => setVaraSelected(e.target.value)}
                       >
+                        <option disabled value="">
+                          Selecione...
+                        </option>
                         {varaOptions.map(v => (
                           <option key={v.id} value={v.id}>
                             {v.descricao}
