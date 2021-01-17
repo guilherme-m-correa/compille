@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Modal, Form, Row, Col, Button } from 'react-bootstrap'
+import { Modal, Form, Row, div, Button } from 'react-bootstrap'
 import axios from 'axios'
 import { api } from '../hooks/fetch'
 
@@ -120,8 +120,8 @@ function ModalAddForun({ onAdd, open, setOpen }) {
       <Modal.Header>Adicionar Fórum</Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
-          <Row>
-            <Col lg={12}>
+          <div className="flex flex-col lg:grid lg:grid-cols-6 lg:gap-4">
+            <div className="col-span-6">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Descrição
@@ -136,8 +136,8 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   required
                 />
               </Form.Group>
-            </Col>
-            <Col lg={4}>
+            </div>
+            <div className="col-span-2">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   CEP
@@ -157,8 +157,8 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   required
                 />
               </Form.Group>
-            </Col>
-            <Col lg={8}>
+            </div>
+            <div className="col-span-4">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Endereço
@@ -173,8 +173,8 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   required
                 />
               </Form.Group>
-            </Col>
-            <Col lg={6}>
+            </div>
+            <div className="col-span-1">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Número
@@ -190,8 +190,8 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   required
                 />
               </Form.Group>
-            </Col>
-            <Col lg={6}>
+            </div>
+            <div className="col-span-2">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Complemento
@@ -205,8 +205,8 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   disabled={loading}
                 />
               </Form.Group>
-            </Col>
-            <Col lg={5}>
+            </div>
+            <div className="col-span-3">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Bairro
@@ -221,8 +221,8 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   required
                 />
               </Form.Group>
-            </Col>
-            <Col lg={5}>
+            </div>
+            <div className="col-span-3">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   Cidade
@@ -235,8 +235,8 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   required
                 />
               </Form.Group>
-            </Col>
-            <Col lg={2}>
+            </div>
+            <div className="col-span-3">
               <Form.Group>
                 <Form.Label className="text-black-400 font-semibold">
                   UF
@@ -249,7 +249,7 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   disabled={loading}
                   required
                 >
-                  <option disabled selected value="">
+                  <option disabled value="">
                     Selecione...
                   </option>
                   {states.map(state => (
@@ -259,8 +259,8 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   ))}
                 </Form.Control>
               </Form.Group>
-            </Col>
-          </Row>
+            </div>
+          </div>
           <div className="mt-6 flex justify-center items-center space-x-4">
             <button type="submit" className="primary-btn" disabled={loading}>
               Salvar
