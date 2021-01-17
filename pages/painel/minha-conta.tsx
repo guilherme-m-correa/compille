@@ -401,7 +401,7 @@ export default function ConfirmarDemanda() {
                           : 'select-input mt-2'
                       }
                     >
-                      <option className="text-gray-100" value="" disabled>
+                      <option value="" disabled>
                         Selecione...
                       </option>
                       ))
@@ -620,15 +620,11 @@ export default function ConfirmarDemanda() {
                           : 'select-input mt-2'
                       }
                     >
-                      <option className="text-gray-100" value="" disabled>
+                      <option value="" disabled>
                         Selecione...
                       </option>
                       {states.map(state => (
-                        <option
-                          key={state.cod}
-                          className="text-gray-100"
-                          value={state.cod}
-                        >
+                        <option key={state.cod} value={state.cod}>
                           {state.uf}
                         </option>
                       ))}

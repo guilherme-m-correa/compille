@@ -260,7 +260,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         id="area"
                         name="area"
                       >
-                        <option className="text-gray-100" value="" disabled>
+                        <option value="" disabled>
                           Selecione...
                         </option>
                         <option value="Cívil">Cívil</option>
@@ -283,7 +283,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         id="tipo_audiencia"
                         name="tipo_audiencia"
                       >
-                        <option className="text-gray-100" value="" disabled>
+                        <option value="" disabled>
                           Selecione...
                         </option>
                         <option value="Conciliação">Conciliação</option>
@@ -356,7 +356,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                             id="audience_hour"
                             name="audience_hour"
                           >
-                            <option className="text-gray-100" value="" disabled>
+                            <option value="" disabled>
                               --
                             </option>
                             <option value="06">06</option>
@@ -392,7 +392,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                             id="audience_minutes"
                             name="audience_minutes"
                           >
-                            <option className="text-gray-100" value="" disabled>
+                            <option value="" disabled>
                               --
                             </option>
                             <option value="05">05</option>
@@ -423,7 +423,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         id="professional_type"
                         name="professional_type"
                       >
-                        <option className="text-gray-100" value="" disabled>
+                        <option value="" disabled>
                           Selecione...
                         </option>
                         <option value="Somente Advogado">
@@ -451,7 +451,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         id="process_type"
                         name="process_type"
                       >
-                        <option className="text-gray-100" value="" disabled>
+                        <option value="" disabled>
                           Selecione...
                         </option>
                         <option value="Eletrônico">Eletrônico</option>

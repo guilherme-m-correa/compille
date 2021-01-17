@@ -9,7 +9,13 @@ import { useAuth } from '../../hooks/auth'
 import ErrorMessage from '../../components/ErrorMessage'
 import ErrorMessageBox from '../../components/ErrorMessageBox'
 import { api } from '../../hooks/fetch'
-import { normalizeCpf, normalizeDate, normalizeCep } from '../../helpers'
+import {
+  normalizeCpf,
+  normalizeDate,
+  normalizeDDD,
+  normalizeTelephoneNumber,
+  normalizeTelephone
+} from '../../helpers'
 import CompanyForm from '../../components/CompanyForm'
 import Address from '../../components/Address'
 
@@ -878,15 +884,11 @@ export default function Painel() {
                               : 'select-input mt-2'
                           }
                         >
-                          <option className="text-gray-100" value="" disabled>
+                          <option value="" disabled>
                             Selecione...
                           </option>
                           {states.map(state => (
-                            <option
-                              key={state.cod}
-                              className="text-gray-100"
-                              value={state.cod}
-                            >
+                            <option key={state.cod} value={state.cod}>
                               {state.uf}
                             </option>
                           ))}
@@ -1064,6 +1066,7 @@ export default function Painel() {
                           name="phone_ddd"
                           type="text"
                           placeholder="DDD"
+                          value={normalizeDDD(values.phone_ddd)}
                           className={
                             errors.phone_ddd && touched.phone_ddd
                               ? 'input border-red-500 w-16'
@@ -1083,8 +1086,8 @@ export default function Painel() {
                           id="phone_number"
                           name="phone_number"
                           type="text"
-                          value={values.phone_number}
                           placeholder="Número"
+                          value={normalizeTelephoneNumber(values.phone_number)}
                           className={
                             errors.phone_number && touched.phone_number
                               ? 'input border-red-500 w-40'
@@ -1122,7 +1125,10 @@ export default function Painel() {
                               phonesTypes.find(t => phone.phonetype_id === t.id)
                                 ?.name
                             }{' '}
-                            - ({phone.area_code}){phone.number}
+                            -{' '}
+                            {normalizeTelephone(
+                              phone.area_code.concat(phone.number)
+                            )}
                             <button
                               type="button"
                               className="flex items-center ml-2 h-full outline-none focus:outline-none"
@@ -1737,15 +1743,11 @@ export default function Painel() {
                               : 'select-input mt-2'
                           }
                         >
-                          <option className="text-gray-100" value="" disabled>
+                          <option value="" disabled>
                             Selecione...
                           </option>
                           {states.map(state => (
-                            <option
-                              key={state.cod}
-                              className="text-gray-100"
-                              value={state.cod}
-                            >
+                            <option key={state.cod} value={state.cod}>
                               {state.uf}
                             </option>
                           ))}
@@ -1833,6 +1835,7 @@ export default function Painel() {
                             name="phone_ddd"
                             type="text"
                             placeholder="DDD"
+                            value={normalizeDDD(values.phone_ddd)}
                             className={
                               errors.phone_ddd && touched.phone_ddd
                                 ? 'input border-red-500 w-16'
@@ -1846,14 +1849,16 @@ export default function Painel() {
 
                         <div className="lg:mr-2">
                           <label htmlFor="phone_number" className="sr-only">
-                            DDD
+                            Número
                           </label>
                           <Field
                             id="phone_number"
                             name="phone_number"
                             type="text"
-                            value={values.phone_number}
                             placeholder="Número"
+                            value={normalizeTelephoneNumber(
+                              values.phone_number
+                            )}
                             className={
                               errors.phone_number && touched.phone_number
                                 ? 'input border-red-500 w-40'
@@ -1892,7 +1897,10 @@ export default function Painel() {
                               phonesTypes.find(t => phone.phonetype_id === t.id)
                                 ?.name
                             }{' '}
-                            - ({phone.area_code}){phone.number}
+                            -{' '}
+                            {normalizeTelephone(
+                              phone.area_code.concat(phone.number)
+                            )}
                             <button
                               type="button"
                               className="flex items-center ml-2 h-full outline-none focus:outline-none"

@@ -161,3 +161,23 @@ export const normalizeTelephone = value => {
 
   return onlyNums
 }
+
+export const normalizeDDD = value => {
+  if (!value) {
+    return value
+  }
+
+  const onlyNums = value.replace(/\D/g, '').slice(0, 2)
+
+  return onlyNums
+}
+
+export const normalizeTelephoneNumber = value => {
+  if (!value) {
+    return value
+  }
+
+  const onlyNums = value.replace(/\D/g, '').slice(0, 9)
+
+  return onlyNums
+}
