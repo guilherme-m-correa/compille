@@ -206,7 +206,7 @@ function CompanyForm({ type, user_id, onFinish, person_id }) {
                     }}
                     required={type === 'Empresa'}
                   >
-                    <option disabled value="">
+                    <option disabled selected value="">
                       Selecione...
                     </option>
                     {positionOptions
@@ -327,7 +327,7 @@ function CompanyForm({ type, user_id, onFinish, person_id }) {
                     }}
                     required
                   >
-                    <option disabled value="">
+                    <option disabled selected value="">
                       Selecione...
                     </option>
                     {states.map(state => (
@@ -357,7 +357,7 @@ function CompanyForm({ type, user_id, onFinish, person_id }) {
                       }}
                       required={type === 'Empresa'}
                     >
-                      <option disabled value="">
+                      <option disabled selected value="">
                         Selecione...
                       </option>
                       {positionOptions

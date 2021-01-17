@@ -249,7 +249,7 @@ function ModalAddForun({ onAdd, open, setOpen }) {
                   disabled={loading}
                   required
                 >
-                  <option disabled value="">
+                  <option disabled selected value="">
                     Selecione...
                   </option>
                   {states.map(state => (

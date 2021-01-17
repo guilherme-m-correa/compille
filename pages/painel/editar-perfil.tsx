@@ -946,7 +946,7 @@ export default function Painel() {
                                 : 'select-input mt-2'
                             }
                           >
-                            <option disabled value="">
+                            <option disabled selected value="">
                               Selecione...
                             </option>
                             <option value="Masculino">Masculino</option>
@@ -974,7 +974,7 @@ export default function Painel() {
                                 : 'select-input mt-2'
                             }
                           >
-                            <option disabled value="">
+                            <option disabled selected value="">
                               Selecione...
                             </option>
                             <option value="Superior Incompleto">
@@ -1044,7 +1044,7 @@ export default function Painel() {
                               : 'select-input'
                           }
                         >
-                          <option disabled value="">
+                          <option disabled selected value="">
                             Selecione o tipo
                           </option>
                           {phonesTypes.map(type => (
@@ -1777,7 +1777,7 @@ export default function Painel() {
                               : 'select-input w-40 mt-2'
                           }
                         >
-                          <option disabled value="">
+                          <option disabled selected value="">
                             Selecione...
                           </option>
                           <option value="Masculino">Masculino</option>
@@ -1813,7 +1813,7 @@ export default function Painel() {
                                 : 'select-input'
                             }
                           >
-                            <option disabled value="">
+                            <option disabled selected value="">
                               Selecione o tipo
                             </option>
                             {phonesTypes.map(type => (

@@ -83,7 +83,7 @@ function Phones({ company_id, open, setOpen, onAdd }) {
                   }
                   required
                 >
-                  <option disabled value="">
+                  <option disabled selected value="">
                     Selecione o tipo
                   </option>
                   {phonesTypes.map(type => (

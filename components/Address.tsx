@@ -341,7 +341,7 @@ function Address({ person_id }) {
                       setDataAddress({ ...dataAddress, state: e.target.value })
                     }
                   >
-                    <option disabled value="">
+                    <option disabled selected value="">
                       Selecione...
                     </option>
                     {states.map(state => (
@@ -434,7 +434,7 @@ function Address({ person_id }) {
               address.is_billing_address === true) &&
             (address.is_main_address === 1 ||
               address.is_main_address === true) ? (
-                <span>Endereço Principal e Cobrança</span>
+              <span>Endereço Principal e Cobrança</span>
             ) : (
               <>
                 {(address.is_billing_address === 1 ||

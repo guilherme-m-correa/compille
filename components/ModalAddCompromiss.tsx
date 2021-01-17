@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react'
 import { Modal, Form, Row, Col, Button } from 'react-bootstrap'
 import { FaTimes, FaPlus } from 'react-icons/fa'
 import { isBefore } from 'date-fns'
+import { IoIosReturnRight } from 'react-icons/io'
 import { api } from '../hooks/fetch'
 import { useAuth } from '../hooks/auth'
 
 import ModalAddForun from './ModalAddForun'
 import ModalAddVara from './ModalAddVara'
+import ErrorMessageBox from './ErrorMessageBox'
 
 function ModalAddCompromiss({ open, setOpen, onAdd }) {
   const [type, setType] = useState(null)
@@ -15,6 +17,7 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
   const [dataFinal, setDataFinal] = useState<string | Date>('')
   const [descricao, setDescricao] = useState('')
   const [typesOptions, setTypesOptions] = useState([] as any[])
+  const [errorMessage, setErrorMessage] = useState('')
 
   const [forumValue, setForumValue] = useState('')
   const [forumSelected, setForumSelected] = useState({} as any)
@@ -43,6 +46,40 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
   async function handleSubmit() {
     setLoading(true)
     try {
+      setErrorMessage('')
+
+      if (!type || type === 0) {
+        setErrorMessage('Selecione um tipo')
+        return
+      }
+
+      if (dataInicial === '') {
+        setErrorMessage('Selecione a data inicial')
+        return
+      }
+
+      if (dataFinal === '') {
+        setErrorMessage('Selecione a data final')
+        return
+      }
+      if (
+        dataInicial !== '' &&
+        dataFinal !== '' &&
+        isBefore(new Date(dataFinal), new Date(dataInicial))
+      ) {
+        setErrorMessage('Data final não pode ser depois da data inicial')
+        return
+      }
+
+      if (
+        (type === 1 || type === 2) &&
+        (Object.keys(forumSelected).length === 0 ||
+          Object.keys(varaSelected).length === 0)
+      ) {
+        setErrorMessage('Selecione um fórum e uma vara')
+        return
+      }
+
       const { data } = await api.post(`/agenda/compromisses`, {
         id_user: user.id,
         compromisse_type_id: type,
@@ -69,8 +106,9 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
       resetForm()
     } catch (err) {
       console.log(err)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   useEffect(() => {
@@ -137,6 +175,12 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
         <Modal.Header closeButton>Adicionar Compromisso</Modal.Header>
         <Modal.Body>
           <Form>
+            <div className="my-2">
+              {errorMessage && (
+                <ErrorMessageBox>{errorMessage}</ErrorMessageBox>
+              )}
+            </div>
+
             <Form.Group>
               <Form.Label className="text-black-400 font-semibold">
                 Tipo de Compromisso
@@ -147,7 +191,7 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
                 value={type}
                 onChange={e => setType(Number(e.target.value))}
               >
-                <option disabled value="">
+                <option disabled selected value="">
                   Selecione...
                 </option>
                 {typesOptions.map(o => (
@@ -178,13 +222,6 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
                     type="datetime-local"
                     onChange={e => setDataFinal(new Date(e.target.value))}
                   />
-                  {dataInicial !== '' &&
-                    dataFinal !== '' &&
-                    isBefore(new Date(dataFinal), new Date(dataInicial)) && (
-                      <small className="text-danger">
-                        Data final não pode ser depois da data inicial
-                      </small>
-                    )}
                 </Col>
               </Row>
             </Form.Group>
@@ -268,7 +305,7 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
                         value={varaSelected}
                         onChange={e => setVaraSelected(e.target.value)}
                       >
-                        <option disabled value="">
+                        <option disabled selected value="">
                           Selecione...
                         </option>
                         {varaOptions.map(v => (
@@ -295,19 +332,7 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
               <button
                 type="button"
                 className="primary-btn"
-                disabled={
-                  !type ||
-                  type === 0 ||
-                  dataInicial === '' ||
-                  dataFinal === '' ||
-                  (dataInicial !== '' &&
-                    dataFinal !== '' &&
-                    isBefore(new Date(dataFinal), new Date(dataInicial))) ||
-                  loading ||
-                  ((type === 1 || type === 2) &&
-                    (Object.keys(forumSelected).length === 0 ||
-                      Object.keys(varaSelected).length === 0))
-                }
+                disabled={loading}
                 onClick={handleSubmit}
               >
                 Salvar

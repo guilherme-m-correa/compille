@@ -306,7 +306,7 @@ function Address({ company_id, open, setOpen, onAdd }) {
                     setDataAddress({ ...dataAddress, state: e.target.value })
                   }
                 >
-                  <option disabled value="">
+                  <option disabled selected value="">
                     Selecione...
                   </option>
                   {states.map(state => (
