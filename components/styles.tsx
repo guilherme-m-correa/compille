@@ -71,7 +71,6 @@ export const Container = styled.div`
     }
   }
   #list {
-    display: grid;
     grid-template-columns: 1fr;
     grid-gap: 20px;
     &.grided {
