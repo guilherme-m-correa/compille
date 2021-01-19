@@ -586,13 +586,17 @@ export default function Painel() {
                       </div>
                     </div>
 
-                    <div className="flex justify-center">
+                    <div className="flex justify-center items-center">
                       <button
                         disabled={isSubmitting}
                         type="submit"
-                        className="mt-6 primary-btn w-40"
+                        className="mt-6 primary-btn  flex justify-center items-center w-40 w-40"
                       >
-                        {isSubmitting ? <FaSpinner size={24} /> : 'CONTINUAR'}
+                        {isSubmitting ? (
+                          <FaSpinner className="animate-spin" size={24} />
+                        ) : (
+                          'CONTINUAR'
+                        )}
                       </button>
                     </div>
                   </Form>
@@ -1567,9 +1571,13 @@ export default function Painel() {
                       <button
                         disabled={isSubmitting}
                         type="submit"
-                        className="mt-6 primary-btn w-40"
+                        className="mt-6 primary-btn  flex justify-center items-center w-40 w-40"
                       >
-                        {isSubmitting ? <FaSpinner size={24} /> : 'SALVAR'}
+                        {isSubmitting ? (
+                          <FaSpinner className="animate-spin" size={24} />
+                        ) : (
+                          'SALVAR'
+                        )}
                       </button>
                     </div>
                   </Form>
@@ -1922,9 +1930,13 @@ export default function Painel() {
                       <button
                         disabled={isSubmitting}
                         type="submit"
-                        className="mt-6 primary-btn w-40"
+                        className="mt-6 primary-btn  flex justify-center items-center w-40 w-40"
                       >
-                        {isSubmitting ? <FaSpinner size={24} /> : 'SALVAR'}
+                        {isSubmitting ? (
+                          <FaSpinner className="animate-spin" size={24} />
+                        ) : (
+                          'SALVAR'
+                        )}
                       </button>
                     </div>
                   </Form>

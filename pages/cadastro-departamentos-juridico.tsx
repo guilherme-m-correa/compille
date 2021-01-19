@@ -69,7 +69,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
               })
 
               router.push({
-                pathname: '/ativar-conta',
+                pathname: '/verificar-cadastro',
                 query: { token: data.token }
               })
             } catch (err) {

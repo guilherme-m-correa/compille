@@ -328,9 +328,13 @@ export default function ConfirmarDemanda() {
                   <button
                     disabled={isSubmitting}
                     type="submit"
-                    className="mt-6 primary-btn w-40"
+                    className="mt-6 primary-btn  flex justify-center items-center w-40 w-40"
                   >
-                    {isSubmitting ? <FaSpinner size={24} /> : 'SALVAR'}
+                    {isSubmitting ? (
+                      <FaSpinner className="animate-spin" size={24} />
+                    ) : (
+                      'SALVAR'
+                    )}
                   </button>
                 </div>
               </Form>
@@ -661,9 +665,13 @@ export default function ConfirmarDemanda() {
                   <button
                     disabled={isSubmitting}
                     type="submit"
-                    className="mt-6 primary-btn w-40"
+                    className="mt-6 primary-btn  flex justify-center items-center w-40 w-40"
                   >
-                    {isSubmitting ? <FaSpinner size={24} /> : 'SALVAR'}
+                    {isSubmitting ? (
+                      <FaSpinner className="animate-spin" size={24} />
+                    ) : (
+                      'SALVAR'
+                    )}
                   </button>
                 </div>
               </Form>

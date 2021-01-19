@@ -92,27 +92,27 @@ export default function Home() {
       <Container>
         <section className="lg:mt-6 xl:-mt-24 w-full grid grid-cols-1 grid-rows-3 gap-4 mt-10 lg:grid-cols-3 lg:grid-rows-1">
           <Card
-            headingText="Para correspondentes jurídicos"
+            headingText="Para Correspondentes Autônomos"
             paragraphText="Cadastre-se como Advogado ou Correspondente Jurídico e receba diligências e audiências na sua cidade."
             buttonText="CADASTRE-SE AGORA"
             link="/cadastro-advogados-correspondentes-juridicos"
           />
           <Card
-            headingText="Para departamentos jurídicos"
-            paragraphText="Encontre agora Advogados e Correspondentes Jurídicos qualificados para a sua demanda jurídica."
+            headingText="Para Escritórios de Advocacia"
+            paragraphText="Cadastre-se como Escritório e receba diligências e audiências na sua cidade."
             buttonText="CADASTRE SEU ESCRITÓRIO"
             link="/cadastro-departamentos-juridico"
           />
           <Card
-            headingText="Para quem busca orientação jurídica"
-            paragraphText="Conecte-se aos advogados da sua cidade."
+            headingText="Para Departamentos Júridico"
+            paragraphText="Encontre agora Advogados e Correspondentes Jurídicos qualificados para a sua demanda jurídica."
             buttonText="CADASTRE SUA EMPRESA"
             link="/cadastro-departamentos-juridico"
           />
         </section>
       </Container>
 
-      <section className="text-gray-600 body-font">
+      <section className="text-gray-600 bg-whitebody-font">
         <div className="container px-5 py-24 mx-auto">
           <div className="flex flex-wrap w-full mb-20 flex-col items-center text-center">
             <h1 className="sm:text-3xl text-2xl font-semibold title-font mb-2  text-blue-500">

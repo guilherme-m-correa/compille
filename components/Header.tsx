@@ -54,7 +54,7 @@ const Header: React.FC = () => {
   }, [user?.id])
 
   const menuItems = [
-    { name: 'Home', link: '/' },
+    // { name: 'Home', link: '/' },
     {
       name: 'Para correspondentes',
       link: '/cadastro-advogados-correspondentes-juridicos'
@@ -63,7 +63,8 @@ const Header: React.FC = () => {
       name: 'Para departamentos jurídico',
       link: '/cadastro-departamentos-juridico'
     },
-    { name: 'Blog', link: '/' }
+    { name: 'Blog', link: '/' },
+    { name: 'Fale Conosco', link: '/fale-conosco' }
     // { name: 'Diretório', link: '/profissionais' }
   ]
 

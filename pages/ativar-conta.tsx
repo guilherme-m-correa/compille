@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { FaSpinner } from 'react-icons/fa'
 import Container from '../components/Container'
 
 import { api } from '../hooks/fetch'
@@ -13,6 +14,10 @@ export default function AtivarConta() {
 
   useEffect(() => {
     async function loadData() {
+      if (!token) {
+        return
+      }
+
       try {
         delete api.defaults.headers.authorization
 
@@ -42,6 +47,26 @@ export default function AtivarConta() {
 
     loadData()
   }, [router, updateUser, token])
+  console.log(error)
+  return (
+    <Container>
+      {error === '' && (
+        <div className="min-h-screen flex justify-center items-center animate-spin text-blue-500">
+          <FaSpinner className="h-16 w-16" />
+        </div>
+      )}
 
-  return <Container>{!token && 'CARREGANDO'}</Container>
+      {error !== '' && (
+        <div className="min-h-screen flex justify-center items-center">
+          <p className="text-xl text-blue-500">
+            Oops, um erro ocorreu ao tentar ativar o seu cadastro. Qualquer
+            dúvida entre em{' '}
+            <a className="font-semibold" href="/fale-conosco">
+              contato conosco
+            </a>
+          </p>
+        </div>
+      )}
+    </Container>
+  )
 }

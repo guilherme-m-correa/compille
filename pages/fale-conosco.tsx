@@ -1,8 +1,26 @@
+import { useState } from 'react'
+import { Formik, Form, Field, FormikHelpers } from 'formik'
+import * as Yup from 'yup'
+import { FaSpinner } from 'react-icons/fa'
+import ErrorMessage from '../components/ErrorMessage'
+import ErrorMessageBox from '../components/ErrorMessageBox'
+import SuccessMessageBox from '../components/SuccessMessageBox'
+import { api } from '../hooks/fetch'
+
+interface FormValues {
+  email: string
+  name: string
+  message: string
+}
+
 export default function FaleConosco() {
+  const [successMsg, setSuccessMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+
   return (
     <section className="text-gray-600 body-font relative">
       <div className="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap">
-        <div className="lg:w-2/3 md:w-1/2 bg-gray-300 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
+        {/* <div className="lg:w-2/3 md:w-1/2 bg-gray-300 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
           <iframe
             width="100%"
             height="100%"
@@ -36,56 +54,144 @@ export default function FaleConosco() {
             </div>
           </div>
         </div>
-        <div className="p-8 rounded-lg lg:w-1/3 md:w-1/2 bg-white flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0">
-          <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">
-            Fale Conosco
-          </h2>
-          <p className="leading-relaxed mb-5 text-gray-600">
-            Post-ironic portland shabby chic echo park, banjo fashion axe
-          </p>
-          <div className="relative mb-4">
-            <label htmlFor="name" className="leading-7 text-sm text-gray-600">
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-            />
-          </div>
-          <div className="relative mb-4">
-            <label htmlFor="email" className="leading-7 text-sm text-gray-600">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-            />
-          </div>
-          <div className="relative mb-4">
-            <label
-              htmlFor="message"
-              className="leading-7 text-sm text-gray-600"
-            >
-              Messagem
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              className="w-full bg-white rounded border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
-            />
-          </div>
-          <button type="button" className="primary-btn">
-            Enviar
-          </button>
-          <p className="text-xs text-gray-500 mt-3">
-            Chicharrones blog helvetica normcore iceland tousled brook viral
-            artisan.
-          </p>
-        </div>
+
+        md:ml-auto => mx-auto
+
+      */}
+        <Formik
+          initialValues={{
+            email: '',
+            name: '',
+            message: ''
+          }}
+          validationSchema={Yup.object({
+            email: Yup.string()
+              .email('Endereço de email inválido')
+              .required('Email obrigátorio'),
+            name: Yup.string().required('Nome obrigátorio'),
+            message: Yup.string().required('Menssagem obrigátoria')
+          })}
+          onSubmit={async (
+            values: FormValues,
+            { setSubmitting }: FormikHelpers<FormValues>
+          ) => {
+            setSuccessMsg('')
+            setErrorMsg('')
+            try {
+              await api.post(
+                'http://localhost:5000/sendmail/contact-us',
+                values
+              )
+              setSuccessMsg(
+                'Sua mensagem foi enviada com sucesso! Em breve, nossa equipe entrará em contato com você.'
+              )
+            } catch (error) {
+              setErrorMsg(
+                'Ocorreu um erro ao enviar a mensagem, tente novamente mais tarde.'
+              )
+            } finally {
+              setSubmitting(false)
+            }
+          }}
+        >
+          {({ isSubmitting, errors, touched }) => (
+            <>
+              <Form className="p-8 rounded-lg lg:w-1/3 md:w-1/2 bg-white flex flex-col mx-auto w-full md:py-8 mt-8 md:mt-0">
+                <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">
+                  Fale Conosco
+                </h2>
+                {/* <p className="leading-relaxed mb-5 text-gray-600">
+                  Post-ironic portland shabby chic echo park, banjo fashion axe
+                </p> */}
+                {errorMsg && (
+                  <div className="my-2">
+                    <ErrorMessageBox>{errorMsg}</ErrorMessageBox>
+                  </div>
+                )}
+
+                {successMsg && (
+                  <div className="my-2">
+                    <SuccessMessageBox>{successMsg}</SuccessMessageBox>
+                  </div>
+                )}
+
+                <div className="relative mb-4">
+                  <label
+                    htmlFor="name"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Nome
+                  </label>
+                  <Field
+                    type="text"
+                    id="name"
+                    name="name"
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out ${
+                      errors.name && touched.name && 'border-red-500'
+                    }`}
+                  />
+                  {errors.name && touched.name && (
+                    <ErrorMessage>{errors.name}</ErrorMessage>
+                  )}
+                </div>
+                <div className="relative mb-4">
+                  <label
+                    htmlFor="email"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Email
+                  </label>
+                  <Field
+                    type="email"
+                    id="email"
+                    name="email"
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out ${
+                      errors.email && touched.email && 'border-red-500'
+                    }`}
+                  />
+                  {errors.email && touched.email && (
+                    <ErrorMessage>{errors.email}</ErrorMessage>
+                  )}
+                </div>
+                <div className="relative mb-4">
+                  <label
+                    htmlFor="message"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Messagem
+                  </label>
+                  <Field
+                    as="textarea"
+                    id="message"
+                    name="message"
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out ${
+                      errors.message && touched.message && 'border-red-500'
+                    }`}
+                  />
+                  {errors.message && touched.message && (
+                    <ErrorMessage>{errors.message}</ErrorMessage>
+                  )}
+                </div>
+                <button
+                  disabled={isSubmitting}
+                  type="submit"
+                  className="mt-6 primary-btn flex justify-center items-center"
+                >
+                  {isSubmitting ? (
+                    <FaSpinner className="animate-spin" size={24} />
+                  ) : (
+                    'ENVIAR'
+                  )}
+                </button>
+
+                {/* <p className="text-xs text-gray-500 mt-3">
+                  Chicharrones blog helvetica normcore iceland tousled brook
+                  viral artisan.
+                </p> */}
+              </Form>
+            </>
+          )}
+        </Formik>
       </div>
     </section>
   )
