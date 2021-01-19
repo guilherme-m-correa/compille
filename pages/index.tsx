@@ -80,11 +80,11 @@ export default function Home() {
               vitae pulvinar nisi, vel elementum nisl. Phasellus vitae tincidunt
               orci.
             </p>
-            <Link href="/cadastro-departamentos-juridico">
+            {/* <Link href="/cadastro-departamentos-juridico">
               <button type="button" className="primary-btn mt-6 ">
                 ENCONTRE AGORA
               </button>
-            </Link>
+            </Link> */}
           </div>
         </Container>
       </section>
@@ -100,14 +100,14 @@ export default function Home() {
           <Card
             headingText="Para departamentos jurídicos"
             paragraphText="Encontre agora Advogados e Correspondentes Jurídicos qualificados para a sua demanda jurídica."
-            buttonText="ENCONTRE PROFISSIONAIS"
+            buttonText="CADASTRE SEU ESCRITÓRIO"
             link="/cadastro-departamentos-juridico"
           />
           <Card
             headingText="Para quem busca orientação jurídica"
             paragraphText="Conecte-se aos advogados da sua cidade."
-            buttonText="FALE COM ADVOGADOS"
-            link="#"
+            buttonText="CADASTRE SUA EMPRESA"
+            link="/cadastro-departamentos-juridico"
           />
         </section>
       </Container>
@@ -274,7 +274,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="mt-6 bg-gradient-to-b from-blue-500 to-indigo-600 w-full py-36 h-4/5">
+      {/* <section className="mt-6 bg-gradient-to-b from-blue-500 to-indigo-600 w-full py-36 h-4/5">
         <Container>
           <div className="flex flex-col justify-between items-center">
             <h2 className="text-white font-medium text-4xl">
@@ -352,7 +352,7 @@ export default function Home() {
             </Link>
           </div>
         </Container>
-      </section>
+      </section> */}
 
       <section className="py-36 h-4/5">
         <Container>
