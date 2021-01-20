@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { Form, Modal } from 'react-bootstrap'
 import axios from 'axios'
-
+import { api } from '../hooks/fetch'
 import { normalizeCep } from '../helpers'
 
 function Address({ company_id, open, setOpen, onAdd }) {
@@ -73,43 +73,41 @@ function Address({ company_id, open, setOpen, onAdd }) {
     setMsg('')
     setLoading(true)
     try {
-      const { data, status } = await axios.post(
-        `https://gateway.compille.com.br/comercial/companyaddresses`,
-        {
-          company_id,
-          label: dataAddress.label,
-          zip_code: dataAddress.zip_code.replace(/[^\d]/g, ''),
-          street: dataAddress.street,
-          street_number: dataAddress.street_number,
-          street_complement: dataAddress.street_complement,
-          neighborhood: dataAddress.neighborhood,
-          city: dataAddress.city,
-          ibge: dataAddress.ibge,
-          uf: dataAddress.state,
-          latitude: 0,
-          longitude: 0,
-          is_billing_address: dataAddress.is_billing_address,
-          is_main_address: dataAddress.is_main_address
-        }
-      )
+      const { data, status } = await api.post(`/comercial/companyaddresses`, {
+        company_id,
+        label: dataAddress.label,
+        zip_code: dataAddress.zip_code.replace(/[^\d]/g, ''),
+        street: dataAddress.street,
+        street_number: dataAddress.street_number,
+        street_complement: dataAddress.street_complement,
+        neighborhood: dataAddress.neighborhood,
+        city: dataAddress.city,
+        ibge: dataAddress.ibge,
+        uf: dataAddress.state,
+        latitude: 0,
+        longitude: 0,
+        is_billing_address: dataAddress.is_billing_address,
+        is_main_address: dataAddress.is_main_address
+      })
       if (status === 203) {
         setMsg(data.msg)
       } else {
         onAdd()
         resetForm()
       }
-    } catch (err) {}
+    } catch (err) {
+      //
+    }
     setLoading(false)
   }
 
   async function handleCep() {
-    const api = axios.create({
-      baseURL: 'https://viacep.com.br/ws'
-    })
-    delete api.defaults.headers.Authorization
     try {
-      const { data } = await api.get(
-        `/${dataAddress.zip_code.replace(/[^\d]/g, '')}/json/`
+      const { data } = await axios.get(
+        `https://viacep.com.br/ws/${dataAddress.zip_code.replace(
+          /[^\d]/g,
+          ''
+        )}/json/`
       )
       setDataAddress({
         ...dataAddress,

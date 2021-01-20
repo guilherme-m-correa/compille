@@ -4,7 +4,7 @@ export default function TermosDeUso() {
   return (
     <Container>
       <div className="min-h-screen flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-blue-500">
           Política de privacidade
         </h2>
         <p className="mt-6 text-center text-xl text-gray-900">

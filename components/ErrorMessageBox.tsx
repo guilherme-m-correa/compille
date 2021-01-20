@@ -1,8 +1,21 @@
+// import { useState } from 'react'
+import { FaTimesCircle, FaTimes } from 'react-icons/fa'
+
 const ErrorMessageBox: React.FC = ({ children }) => {
+  // const [open, setOpen] = useState(true)
+
   return (
-    <div className="bg-red-100 p-3 rounded-lg border-2 border-red-500 text-red-600">
-      {children}
-    </div>
+    <>
+      <div className="bg-red-500 py-4 px-6 rounded-md relative flex space-x-4 items-center text-white">
+        <FaTimesCircle className="h-12 w-12" />
+
+        <div>{children}</div>
+        {/*
+        <button type="button" onClick={() => setOpen(false)}>
+          <FaTimes className="absolute top-2 right-2" />
+        </button> */}
+      </div>
+    </>
   )
 }
 

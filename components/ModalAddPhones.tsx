@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 import { Form, Modal } from 'react-bootstrap'
-import axios from 'axios'
+import { api } from '../hooks/fetch'
 
 import { normalizeNumber } from '../helpers'
 
@@ -13,9 +13,7 @@ function Phones({ company_id, open, setOpen, onAdd }) {
     async function loadTypes() {
       setLoading(true)
       try {
-        const { data } = await axios.get(
-          `https://gateway.compille.com.br/comercial/phonetypes`
-        )
+        const { data } = await api.get(`/comercial/phonetypes`)
         setPhonesTypes(data)
       } catch (err) {}
       setLoading(false)
@@ -44,16 +42,13 @@ function Phones({ company_id, open, setOpen, onAdd }) {
     e.preventDefault()
     setLoading(true)
     try {
-      await axios.post(
-        `https://gateway.compille.com.br/comercial/companyphones`,
-        {
-          company_id,
-          phonetype_id: Number(dataPhone.phonetype),
-          area_code: dataPhone.area_code,
-          number: dataPhone.number,
-          contact: dataPhone.contact
-        }
-      )
+      await api.post(`/comercial/companyphones`, {
+        company_id,
+        phonetype_id: Number(dataPhone.phonetype),
+        area_code: dataPhone.area_code,
+        number: dataPhone.number,
+        contact: dataPhone.contact
+      })
       resetForm()
       onAdd()
     } catch (err) {}

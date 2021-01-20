@@ -3,12 +3,11 @@ import { useEffect, useState } from 'react'
 import { IoIosBusiness } from 'react-icons/io'
 import { AiOutlineDown, AiOutlineUp, AiOutlineEdit } from 'react-icons/ai'
 
-import axios from 'axios'
-
 import { Spinner } from 'react-bootstrap'
 
 import { GrLocation } from 'react-icons/gr'
 import { FaPhoneAlt, FaPlus, FaTrash } from 'react-icons/fa'
+import { api } from '../hooks/fetch'
 import { normalizeCnpj } from '../helpers'
 
 import ModalAddAddress from './ModalAddAddress'
@@ -44,9 +43,7 @@ function Companies({ person_id }) {
     async function loadTypes() {
       setLoading(true)
       try {
-        const { data } = await axios.get(
-          `https://gateway.compille.com.br/comercial/phonetypes`
-        )
+        const { data } = await api.get(`/comercial/phonetypes`)
         setPhonesTypes(data)
       } catch (err) {}
       setLoading(false)
@@ -56,8 +53,8 @@ function Companies({ person_id }) {
 
   async function loadCompanies() {
     try {
-      const { data } = await axios.get(
-        `https://gateway.compille.com.br/comercial/personcompanies/person/${person_id}`
+      const { data } = await api.get(
+        `/comercial/personcompanies/person/${person_id}`
       )
       setCompanies(data)
     } catch (err) {}
@@ -72,11 +69,11 @@ function Companies({ person_id }) {
   async function getDetail(id) {
     setLoading(true)
     try {
-      const { data: addressData } = await axios.get(
-        `https://gateway.compille.com.br/comercial/companyaddresses/${id}`
+      const { data: addressData } = await api.get(
+        `/comercial/companyaddresses/${id}`
       )
-      const { data: phoneData } = await axios.get(
-        `https://gateway.compille.com.br/comercial/companyphones/${id}`
+      const { data: phoneData } = await api.get(
+        `/comercial/companyphones/${id}`
       )
       setAddressExpand(addressData)
       setPhonesExpand(phoneData)
@@ -88,9 +85,7 @@ function Companies({ person_id }) {
   async function handleRemoveAddress(company_id, id) {
     setLoading(true)
     try {
-      await axios.delete(
-        `https://gateway.compille.com.br/comercial/companyaddresses/${id}`
-      )
+      await api.delete(`/comercial/companyaddresses/${id}`)
       getDetail(company_id)
     } catch (err) {}
     setLoading(false)
@@ -99,9 +94,7 @@ function Companies({ person_id }) {
   async function handleRemovePhone(company_id, id) {
     setLoading(true)
     try {
-      await axios.delete(
-        `https://gateway.compille.com.br/comercial/companyphones/${id}`
-      )
+      await api.delete(`/comercial/companyphones/${id}`)
       getDetail(company_id)
     } catch (err) {}
     setLoading(false)
@@ -233,7 +226,7 @@ function Companies({ person_id }) {
                             address.is_billing_address === true) &&
                           (address.is_main_address === 1 ||
                             address.is_main_address === true) ? (
-                              <span>Endereço Principal e Cobrança</span>
+                            <span>Endereço Principal e Cobrança</span>
                           ) : (
                             <>
                               {(address.is_billing_address === 1 ||

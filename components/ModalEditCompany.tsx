@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 
 import { Modal, Form, Spinner } from 'react-bootstrap'
-import axios from 'axios'
+
+import { api } from '../hooks/fetch'
 
 import { normalizeCnpj } from '../helpers'
 
@@ -14,11 +15,11 @@ function ModalEditCompany({ company, open, setOpen, onUpdate }) {
   useEffect(() => {
     async function loadStates() {
       try {
-        const { data } = await axios.get(
-          `https://gateway.compille.com.br/comercial/states`
-        )
+        const { data } = await api.get(`/comercial/states`)
         setStates(data)
-      } catch (err) {}
+      } catch (err) {
+        //
+      }
     }
     loadStates()
   }, [])
@@ -27,12 +28,9 @@ function ModalEditCompany({ company, open, setOpen, onUpdate }) {
     e.preventDefault()
     setLoading(true)
     try {
-      await axios.put(
-        `https://gateway.compille.com.br/comercial/companies/${company.id}`,
-        {
-          ...companyData
-        }
-      )
+      await api.put(`/comercial/companies/${company.id}`, {
+        ...companyData
+      })
       onUpdate()
       resetForm()
     } catch (err) {}

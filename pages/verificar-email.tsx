@@ -31,7 +31,7 @@ export default function TermosDeUso() {
   return (
     <Container>
       <div className="flex flex-col py-12 px-4 sm:px-6 lg:px-8">
-        <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-blue-500">
           Confirmar demanda
         </h2>
         <h3 className="mt-6 text-2xl font-medium text-gray-900">
