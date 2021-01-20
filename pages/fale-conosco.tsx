@@ -6,11 +6,13 @@ import ErrorMessage from '../components/ErrorMessage'
 import ErrorMessageBox from '../components/ErrorMessageBox'
 import SuccessMessageBox from '../components/SuccessMessageBox'
 import { api } from '../hooks/fetch'
+import { normalizeTelephone } from '../helpers'
 
 interface FormValues {
   email: string
   name: string
   message: string
+  telephone: string
 }
 
 export default function FaleConosco() {
@@ -62,6 +64,7 @@ export default function FaleConosco() {
           initialValues={{
             email: '',
             name: '',
+            telephone: '',
             message: ''
           }}
           validationSchema={Yup.object({
@@ -69,7 +72,7 @@ export default function FaleConosco() {
               .email('Endereço de email inválido')
               .required('Email obrigátorio'),
             name: Yup.string().required('Nome obrigátorio'),
-            message: Yup.string().required('Menssagem obrigátoria')
+            message: Yup.string().required('Mensagem obrigátoria')
           })}
           onSubmit={async (
             values: FormValues,
@@ -94,7 +97,7 @@ export default function FaleConosco() {
             }
           }}
         >
-          {({ isSubmitting, errors, touched }) => (
+          {({ isSubmitting, errors, touched, values }) => (
             <>
               <Form className="p-8 rounded-lg lg:w-1/3 md:w-1/2 bg-white flex flex-col mx-auto w-full md:py-8 mt-8 md:mt-0">
                 <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">
@@ -155,10 +158,30 @@ export default function FaleConosco() {
                 </div>
                 <div className="relative mb-4">
                   <label
+                    htmlFor="telephone"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Telefone (opcional)
+                  </label>
+                  <Field
+                    type="telephone"
+                    id="telephone"
+                    name="telephone"
+                    value={normalizeTelephone(values.telephone)}
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out ${
+                      errors.telephone && touched.telephone && 'border-red-500'
+                    }`}
+                  />
+                  {errors.telephone && touched.telephone && (
+                    <ErrorMessage>{errors.telephone}</ErrorMessage>
+                  )}
+                </div>
+                <div className="relative mb-4">
+                  <label
                     htmlFor="message"
                     className="leading-7 text-sm text-gray-600"
                   >
-                    Messagem
+                    Mensagem
                   </label>
                   <Field
                     as="textarea"
