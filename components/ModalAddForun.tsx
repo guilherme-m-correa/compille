@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Modal, Form, Row, div, Button } from 'react-bootstrap'
+import { Modal, Form, Row, Button } from 'react-bootstrap'
 import axios from 'axios'
 import { api } from '../hooks/fetch'
 
