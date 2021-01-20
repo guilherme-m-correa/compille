@@ -45,7 +45,9 @@ function Companies({ person_id }) {
       try {
         const { data } = await api.get(`/comercial/phonetypes`)
         setPhonesTypes(data)
-      } catch (err) {}
+      } catch (err) {
+        //
+      }
       setLoading(false)
     }
     loadTypes()
@@ -57,7 +59,9 @@ function Companies({ person_id }) {
         `/comercial/personcompanies/person/${person_id}`
       )
       setCompanies(data)
-    } catch (err) {}
+    } catch (err) {
+      //
+    }
   }
 
   useEffect(() => {
@@ -78,7 +82,9 @@ function Companies({ person_id }) {
       setAddressExpand(addressData)
       setPhonesExpand(phoneData)
       setExpand(id)
-    } catch (err) {}
+    } catch (err) {
+      //
+    }
     setLoading(false)
   }
 
@@ -87,7 +93,9 @@ function Companies({ person_id }) {
     try {
       await api.delete(`/comercial/companyaddresses/${id}`)
       getDetail(company_id)
-    } catch (err) {}
+    } catch (err) {
+      //
+    }
     setLoading(false)
   }
 
@@ -96,7 +104,9 @@ function Companies({ person_id }) {
     try {
       await api.delete(`/comercial/companyphones/${id}`)
       getDetail(company_id)
-    } catch (err) {}
+    } catch (err) {
+      //
+    }
     setLoading(false)
   }
 
@@ -226,7 +236,7 @@ function Companies({ person_id }) {
                             address.is_billing_address === true) &&
                           (address.is_main_address === 1 ||
                             address.is_main_address === true) ? (
-                            <span>Endereço Principal e Cobrança</span>
+                              <span>Endereço Principal e Cobrança</span>
                           ) : (
                             <>
                               {(address.is_billing_address === 1 ||
@@ -254,7 +264,7 @@ function Companies({ person_id }) {
                     ))}
                   </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-4 mt-6">
                   <div className="flex justify-between items-center head_detail mb-4">
                     <small>
                       <FaPhoneAlt /> Telefones

@@ -99,8 +99,8 @@ const Header: React.FC = () => {
                 <a
                   className={
                     state.active === menuItem.name
-                      ? 'tracking-wide text-blue-500'
-                      : 'tracking-wide text-gray-50 hover:text-blue-500'
+                      ? 'tracking-wide text-white'
+                      : 'tracking-wide text-white hover:text-gray-100'
                   }
                 >
                   {menuItem.name}

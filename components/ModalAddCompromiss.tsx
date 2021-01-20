@@ -180,7 +180,6 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
                 <ErrorMessageBox>{errorMessage}</ErrorMessageBox>
               )}
             </div>
-
             <Form.Group>
               <Form.Label className="text-black-400 font-semibold">
                 Tipo de Compromisso
@@ -225,20 +224,18 @@ function ModalAddCompromiss({ open, setOpen, onAdd }) {
                 </Col>
               </Row>
             </Form.Group>
-            {(type === 1 || type === 2) && (
-              <Form.Group>
-                <Form.Label className="text-black-400 font-semibold">
-                  Descrição
-                </Form.Label>
-                <Form.Control
-                  as="textarea"
-                  className="input"
-                  rows={3}
-                  value={descricao}
-                  onChange={e => setDescricao(e.target.value)}
-                />
-              </Form.Group>
-            )}
+            <Form.Group>
+              <Form.Label className="text-black-400 font-semibold">
+                Descrição
+              </Form.Label>
+              <Form.Control
+                as="textarea"
+                className="input"
+                rows={3}
+                value={descricao}
+                onChange={e => setDescricao(e.target.value)}
+              />
+            </Form.Group>
             {(type === 1 || type === 2) && (
               <div className="flex space-x-4">
                 <div className="flex-1">
