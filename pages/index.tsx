@@ -101,7 +101,7 @@ export default function Home() {
             headingText="Para Escritórios de Advocacia"
             paragraphText="Cadastre-se como Escritório e receba diligências e audiências na sua cidade."
             buttonText="CADASTRE SEU ESCRITÓRIO"
-            link="/cadastro-departamentos-juridico"
+            link="/cadastro-advogados-correspondentes-juridicos"
           />
           <Card
             headingText="Para Departamentos Júridico"
