@@ -7,7 +7,7 @@ const SuccessMessageBox: React.FC = ({ children }) => {
   return (
     <>
       <div className="bg-green-500 py-4 px-6 rounded-md relative flex space-x-4 items-center text-white">
-        <FaRegCheckCircle className="h-12 w-12" />
+        <FaRegCheckCircle className="h-12 w-12 flex-shrink-0" />
 
         <div>{children}</div>
         {/*
