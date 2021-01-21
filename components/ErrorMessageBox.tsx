@@ -7,7 +7,7 @@ const ErrorMessageBox: React.FC = ({ children }) => {
   return (
     <>
       <div className="bg-red-500 py-4 px-6 rounded-md relative flex space-x-4 items-center text-white">
-        <FaTimesCircle className="h-12 w-12 flex-shrink-0" />
+        <FaTimesCircle className="h-10 w-10 flex-shrink-0" />
 
         <div>{children}</div>
         {/*

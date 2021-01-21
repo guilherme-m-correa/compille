@@ -118,7 +118,7 @@ export default function Login() {
               <div className="flex items-center justify-center">
                 <div className="text-sm">
                   <a
-                    href="#"
+                    href="/esqueci-senha"
                     className="font-medium text-blue-600 hover:text-blue-500"
                   >
                     Esqueceu a senha? Clique Aqui.

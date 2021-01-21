@@ -47,7 +47,9 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
             email: Yup.string()
               .email('Endereço de email inválido')
               .required('Email obrigátorio'),
-            password: Yup.string().required('Senha obrigátoria')
+            password: Yup.string()
+              .min(6, 'A senha deve conter no mínimo 6 dígitos')
+              .required('Senha obrigátoria')
           })}
           onSubmit={async (
             values: FormValues,
