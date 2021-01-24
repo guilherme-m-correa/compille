@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-
+import { FaAngleDown, FaAngleUp } from 'react-icons/fa'
 import { useState, useCallback, useEffect } from 'react'
 import { Menu } from './Menu'
 import { useAuth } from '../hooks/auth'
@@ -36,6 +36,7 @@ const Header: React.FC = () => {
   const [openMenu, setOpenMenu] = useState(false)
   const [person, setPerson] = useState<Person>({} as Person)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [showDropdownSolutions, setShowDropdownSolutions] = useState(false)
 
   useEffect(() => {
     async function loadData() {
@@ -56,14 +57,7 @@ const Header: React.FC = () => {
   const menuItems = [
     // { name: 'Home', link: '/' },
     { name: 'Sobre Nós', link: '/#sobre-nos' },
-    {
-      name: 'Para Correspondentes',
-      link: '/cadastro-advogados-correspondentes-juridicos'
-    },
-    {
-      name: 'Para Departamentos Jurídicos',
-      link: '/cadastro-departamentos-juridico'
-    },
+
     { name: 'Blog', link: '/#blog' },
     { name: 'Fale Conosco', link: '/#fale-conosco' }
     // { name: 'Diretório', link: '/profissionais' }
@@ -90,6 +84,70 @@ const Header: React.FC = () => {
         <Menu />
 
         <nav className="hidden lg:block lg:h-full space-x-6">
+          <div className="h-full px-2 py-1 float-left relative flex items-center">
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowDropdownSolutions(s => !s)}
+                id="options-menu"
+                className="flex items-center text-white hover:text-gray-100 focus:outline-none"
+                aria-haspopup="true"
+                aria-expanded="true"
+              >
+                Soluções{' '}
+                {!showDropdownSolutions ? (
+                  <FaAngleDown className="ml-1" />
+                ) : (
+                  <FaAngleUp className="ml-1" />
+                )}
+              </button>
+            </div>
+            {showDropdownSolutions && (
+              <div
+                className="absolute animate whitespace-nowrap left-1/2 transform -translate-x-1/2 top-0 mt-20 rounded-sm bg-black-500 divide-y divide-white"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="options-menu"
+              >
+                <div className="py-1">
+                  <Link href="#">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdownSolutions(false)}
+                      className="block p-4 text-white hover:text-gray-200 w-full"
+                      role="menuitem"
+                    >
+                      Como Funciona
+                    </button>
+                  </Link>
+                </div>
+                <div className="py-1">
+                  <Link href="/cadastro-advogados-correspondentes-juridicos">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdownSolutions(false)}
+                      className="block p-4 text-white hover:text-gray-200 w-full"
+                      role="menuitem"
+                    >
+                      Para Correspondentes
+                    </button>
+                  </Link>
+                </div>
+                <div className="py-1">
+                  <Link href="/cadastro-departamentos-juridico">
+                    <button
+                      type="button"
+                      onClick={e => setShowDropdownSolutions(false)}
+                      className="block p-4 text-white hover:text-gray-200 w-full"
+                      role="menuitem"
+                    >
+                      Para Departamentos Jurídicos
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
           {menuItems.map(menuItem => (
             <Link key={menuItem.name} href={menuItem.link}>
               <button
