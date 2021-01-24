@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const Container = styled.div`
-  padding: 25px;
+  margin-top: 2rem;
   background: #f9f9f9;
   #add_item {
     #add_instance {

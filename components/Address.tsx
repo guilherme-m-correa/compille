@@ -164,301 +164,306 @@ function Address({ person_id }) {
   }
 
   return (
-    <Container>
-      <div id="add_item">
-        {!addAddress && (
-          <button
-            type="button"
-            className="primary-btn mb-6"
-            onClick={() => setAddAddress(true)}
-          >
-            ADICIONAR NOVO ENDEREÇO
-          </button>
-        )}
-        {addAddress && (
-          <Form>
-            {msg !== '' && <h5 className="text-danger text-center">{msg}</h5>}
-            <div className="flex flex-col lg:grid lg:grid-cols-4 lg:gap-4">
-              <div className="col-span-4">
-                <Form.Group>
-                  <Form.Label className="text-black-400 font-semibold">
-                    Rótulo
-                  </Form.Label>
-                  <Form.Control
-                    size="sm"
-                    className="input"
-                    disabled={loading}
-                    type="text"
-                    value={dataAddress.label}
-                    onChange={e =>
-                      setDataAddress({
-                        ...dataAddress,
-                        label: e.target.value
-                      })
-                    }
-                    required
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-span-1">
-                <Form.Group>
-                  <Form.Label className="text-black-400 font-semibold">
-                    CEP
-                  </Form.Label>
-                  <Form.Control
-                    size="sm"
-                    className="input"
-                    disabled={loading}
-                    value={dataAddress.zip_code}
-                    type="text"
-                    onChange={e =>
-                      setDataAddress({
-                        ...dataAddress,
-                        zip_code: normalizeCep(e.target.value)
-                      })
-                    }
-                    onBlur={handleCep}
-                    required
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-span-3">
-                <Form.Group>
-                  <Form.Label className="text-black-400 font-semibold">
-                    Rua
-                  </Form.Label>
-                  <Form.Control
-                    size="sm"
-                    className="input"
-                    disabled={loading}
-                    value={dataAddress.street}
-                    type="text"
-                    onChange={e =>
-                      setDataAddress({
-                        ...dataAddress,
-                        street: e.target.value
-                      })
-                    }
-                    required
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-span-1">
-                <Form.Group>
-                  <Form.Label className="text-black-400 font-semibold">
-                    Número
-                  </Form.Label>
-                  <Form.Control
-                    size="sm"
-                    className="input"
-                    disabled={loading}
-                    type="text"
-                    value={dataAddress.street_number}
-                    id="number_form"
-                    onChange={e =>
-                      setDataAddress({
-                        ...dataAddress,
-                        street_number: e.target.value
-                      })
-                    }
-                    required
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-span-1">
-                <Form.Group>
-                  <Form.Label className="text-black-400 font-semibold">
-                    Complemento
-                  </Form.Label>
-                  <Form.Control
-                    size="sm"
-                    className="input"
-                    disabled={loading}
-                    value={dataAddress.street_complement}
-                    type="text"
-                    onChange={e =>
-                      setDataAddress({
-                        ...dataAddress,
-                        street_complement: e.target.value
-                      })
-                    }
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-span-2">
-                <Form.Group>
-                  <Form.Label className="text-black-400 font-semibold">
-                    Bairro
-                  </Form.Label>
-                  <Form.Control
-                    size="sm"
-                    className="input"
-                    disabled={loading}
-                    type="text"
-                    value={dataAddress.neighborhood}
-                    onChange={e =>
-                      setDataAddress({
-                        ...dataAddress,
-                        neighborhood: e.target.value
-                      })
-                    }
-                    required
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-span-2">
-                <Form.Group style={{ position: 'relative' }}>
-                  <Form.Label className="text-black-400 font-semibold">
-                    Cidade
-                  </Form.Label>
-                  <Form.Control
-                    size="sm"
-                    className="input"
-                    disabled={loading}
-                    type="text"
-                    value={dataAddress.city}
-                    onChange={e => {
-                      setDataAddress({
-                        ...dataAddress,
-                        city: e.target.value
-                      })
-                    }}
-                    required
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-span-2">
-                <Form.Group>
-                  <Form.Label className="text-black-400 font-semibold">
-                    Estado
-                  </Form.Label>
-                  <Form.Control
-                    size="sm"
-                    className="select-input"
-                    as="select"
-                    value={dataAddress.state}
-                    onChange={e =>
-                      setDataAddress({ ...dataAddress, state: e.target.value })
-                    }
-                  >
-                    <option disabled selected value="">
-                      Selecione...
-                    </option>
-                    {states.map(state => (
-                      <option key={state.cod} value={state.uf}>
-                        {state.name}
+    <>
+      {!addAddress && (
+        <button
+          type="button"
+          className="primary-btn max-w-max mb-6"
+          onClick={() => setAddAddress(true)}
+        >
+          ADICIONAR NOVO ENDEREÇO
+        </button>
+      )}
+      <Container>
+        <div id="add_item">
+          {addAddress && (
+            <Form>
+              {msg !== '' && <h5 className="text-danger text-center">{msg}</h5>}
+              <div className="flex flex-col lg:grid lg:grid-cols-4 lg:gap-4">
+                <div className="col-span-4">
+                  <Form.Group>
+                    <Form.Label className="text-black-400 font-semibold">
+                      Rótulo
+                    </Form.Label>
+                    <Form.Control
+                      size="sm"
+                      className="input"
+                      disabled={loading}
+                      type="text"
+                      value={dataAddress.label}
+                      onChange={e =>
+                        setDataAddress({
+                          ...dataAddress,
+                          label: e.target.value
+                        })
+                      }
+                      required
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-span-1">
+                  <Form.Group>
+                    <Form.Label className="text-black-400 font-semibold">
+                      CEP
+                    </Form.Label>
+                    <Form.Control
+                      size="sm"
+                      className="input"
+                      disabled={loading}
+                      value={dataAddress.zip_code}
+                      type="text"
+                      onChange={e =>
+                        setDataAddress({
+                          ...dataAddress,
+                          zip_code: normalizeCep(e.target.value)
+                        })
+                      }
+                      onBlur={handleCep}
+                      required
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-span-3">
+                  <Form.Group>
+                    <Form.Label className="text-black-400 font-semibold">
+                      Rua
+                    </Form.Label>
+                    <Form.Control
+                      size="sm"
+                      className="input"
+                      disabled={loading}
+                      value={dataAddress.street}
+                      type="text"
+                      onChange={e =>
+                        setDataAddress({
+                          ...dataAddress,
+                          street: e.target.value
+                        })
+                      }
+                      required
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-span-1">
+                  <Form.Group>
+                    <Form.Label className="text-black-400 font-semibold">
+                      Número
+                    </Form.Label>
+                    <Form.Control
+                      size="sm"
+                      className="input"
+                      disabled={loading}
+                      type="text"
+                      value={dataAddress.street_number}
+                      id="number_form"
+                      onChange={e =>
+                        setDataAddress({
+                          ...dataAddress,
+                          street_number: e.target.value
+                        })
+                      }
+                      required
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-span-1">
+                  <Form.Group>
+                    <Form.Label className="text-black-400 font-semibold">
+                      Complemento
+                    </Form.Label>
+                    <Form.Control
+                      size="sm"
+                      className="input"
+                      disabled={loading}
+                      value={dataAddress.street_complement}
+                      type="text"
+                      onChange={e =>
+                        setDataAddress({
+                          ...dataAddress,
+                          street_complement: e.target.value
+                        })
+                      }
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-span-2">
+                  <Form.Group>
+                    <Form.Label className="text-black-400 font-semibold">
+                      Bairro
+                    </Form.Label>
+                    <Form.Control
+                      size="sm"
+                      className="input"
+                      disabled={loading}
+                      type="text"
+                      value={dataAddress.neighborhood}
+                      onChange={e =>
+                        setDataAddress({
+                          ...dataAddress,
+                          neighborhood: e.target.value
+                        })
+                      }
+                      required
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-span-2">
+                  <Form.Group style={{ position: 'relative' }}>
+                    <Form.Label className="text-black-400 font-semibold">
+                      Cidade
+                    </Form.Label>
+                    <Form.Control
+                      size="sm"
+                      className="input"
+                      disabled={loading}
+                      type="text"
+                      value={dataAddress.city}
+                      onChange={e => {
+                        setDataAddress({
+                          ...dataAddress,
+                          city: e.target.value
+                        })
+                      }}
+                      required
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-span-2">
+                  <Form.Group>
+                    <Form.Label className="text-black-400 font-semibold">
+                      Estado
+                    </Form.Label>
+                    <Form.Control
+                      size="sm"
+                      className="select-input"
+                      as="select"
+                      value={dataAddress.state}
+                      onChange={e =>
+                        setDataAddress({
+                          ...dataAddress,
+                          state: e.target.value
+                        })
+                      }
+                    >
+                      <option disabled selected value="">
+                        Selecione...
                       </option>
-                    ))}
-                  </Form.Control>
-                </Form.Group>
+                      {states.map(state => (
+                        <option key={state.cod} value={state.uf}>
+                          {state.name}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </Form.Group>
+                </div>
+                <div className="col-span-4">
+                  <Form.Group>
+                    <Form.Label className="text-black-400 font-semibold">
+                      Tipo
+                    </Form.Label>
+                    <div>
+                      <Form.Check
+                        disabled={loading}
+                        name="type"
+                        className="mt-2"
+                        label="Endereço Principal"
+                        checked={dataAddress.is_main_address}
+                        onChange={e =>
+                          setDataAddress({
+                            ...dataAddress,
+                            is_main_address: !dataAddress.is_main_address
+                          })
+                        }
+                      />
+                      <Form.Check
+                        disabled={loading}
+                        name="type"
+                        className="mt-2"
+                        label="Endereço de Cobrança"
+                        checked={dataAddress.is_billing_address}
+                        onChange={e =>
+                          setDataAddress({
+                            ...dataAddress,
+                            is_billing_address: !dataAddress.is_billing_address
+                          })
+                        }
+                      />
+                    </div>
+                  </Form.Group>
+                </div>
               </div>
-              <div className="col-span-4">
-                <Form.Group>
-                  <Form.Label className="text-black-400 font-semibold">
-                    Tipo
-                  </Form.Label>
-                  <div>
-                    <Form.Check
-                      disabled={loading}
-                      name="type"
-                      className="mt-2"
-                      label="Endereço Principal"
-                      checked={dataAddress.is_main_address}
-                      onChange={e =>
-                        setDataAddress({
-                          ...dataAddress,
-                          is_main_address: !dataAddress.is_main_address
-                        })
-                      }
-                    />
-                    <Form.Check
-                      disabled={loading}
-                      name="type"
-                      className="mt-2"
-                      label="Endereço de Cobrança"
-                      checked={dataAddress.is_billing_address}
-                      onChange={e =>
-                        setDataAddress({
-                          ...dataAddress,
-                          is_billing_address: !dataAddress.is_billing_address
-                        })
-                      }
-                    />
-                  </div>
-                </Form.Group>
+              <div className="flex justify-center mt-6 space-x-4">
+                <button
+                  type="button"
+                  className="primary-btn"
+                  onClick={e => handleSubmit(e)}
+                  disabled={
+                    dataAddress.city === '' ||
+                    dataAddress.label === '' ||
+                    dataAddress.neighborhood === '' ||
+                    dataAddress.street === '' ||
+                    dataAddress.street_number === '' ||
+                    dataAddress.zip_code === '' ||
+                    (!dataAddress.is_billing_address &&
+                      !dataAddress.is_main_address) ||
+                    loading
+                  }
+                >
+                  SALVAR ENDEREÇO
+                </button>
+                <button
+                  type="button"
+                  className="secondary-btn border-blue-500 text-blue-500 hover:border-blue-500 hover:text-blue-500"
+                  disabled={loading}
+                  onClick={resetForm}
+                >
+                  CANCELAR
+                </button>
               </div>
-            </div>
-            <div className="flex justify-center mt-6 space-x-4">
+            </Form>
+          )}
+        </div>
+        <hr />
+        <div id="list">
+          {addresses.map(address => (
+            <div className="item" key={address.id}>
+              <h4>{address.label}</h4>
+              <p>
+                {address.street}, {address.street_number}{' '}
+                {address.street_complement}, {address.zip_code},{' '}
+                {address.neighborhood}, {address.city && address.city.name} -{' '}
+                {address.city && address.city.state && address.city.state.uf}
+              </p>
+              {(address.is_billing_address === 1 ||
+                address.is_billing_address === true) &&
+              (address.is_main_address === 1 ||
+                address.is_main_address === true) ? (
+                <span>Endereço Principal e Cobrança</span>
+              ) : (
+                <>
+                  {(address.is_billing_address === 1 ||
+                    address.is_billing_address === true) && (
+                    <span>Endereço de Cobrança</span>
+                  )}
+                  {(address.is_main_address === 1 ||
+                    address.is_main_address === true) && (
+                    <span>Endereço Principal</span>
+                  )}
+                </>
+              )}
               <button
                 type="button"
-                className="primary-btn"
-                onClick={e => handleSubmit(e)}
-                disabled={
-                  dataAddress.city === '' ||
-                  dataAddress.label === '' ||
-                  dataAddress.neighborhood === '' ||
-                  dataAddress.street === '' ||
-                  dataAddress.street_number === '' ||
-                  dataAddress.zip_code === '' ||
-                  (!dataAddress.is_billing_address &&
-                    !dataAddress.is_main_address) ||
-                  loading
-                }
-              >
-                SALVAR ENDEREÇO
-              </button>
-              <button
-                type="button"
-                className="secondary-btn border-blue-500 text-blue-500 hover:border-blue-500 hover:text-blue-500"
+                className="ml-auto d-block"
                 disabled={loading}
-                onClick={resetForm}
+                onClick={() => handleDelete(address.id)}
               >
-                CANCELAR
+                <FaTrash />
               </button>
             </div>
-          </Form>
-        )}
-      </div>
-      <hr />
-      <div id="list">
-        {addresses.map(address => (
-          <div className="item" key={address.id}>
-            <h4>{address.label}</h4>
-            <p>
-              {address.street}, {address.street_number}{' '}
-              {address.street_complement}, {address.zip_code},{' '}
-              {address.neighborhood}, {address.city && address.city.name} -{' '}
-              {address.city && address.city.state && address.city.state.uf}
-            </p>
-            {(address.is_billing_address === 1 ||
-              address.is_billing_address === true) &&
-            (address.is_main_address === 1 ||
-              address.is_main_address === true) ? (
-              <span>Endereço Principal e Cobrança</span>
-            ) : (
-              <>
-                {(address.is_billing_address === 1 ||
-                  address.is_billing_address === true) && (
-                  <span>Endereço de Cobrança</span>
-                )}
-                {(address.is_main_address === 1 ||
-                  address.is_main_address === true) && (
-                  <span>Endereço Principal</span>
-                )}
-              </>
-            )}
-            <button
-              type="button"
-              className="ml-auto d-block"
-              disabled={loading}
-              onClick={() => handleDelete(address.id)}
-            >
-              <FaTrash />
-            </button>
-          </div>
-        ))}
-      </div>
-    </Container>
+          ))}
+        </div>
+      </Container>
+    </>
   )
 }
 

@@ -55,16 +55,17 @@ const Header: React.FC = () => {
 
   const menuItems = [
     // { name: 'Home', link: '/' },
+    { name: 'Sobre Nós', link: '/#sobre-nos' },
     {
-      name: 'Para correspondentes',
+      name: 'Para Correspondentes',
       link: '/cadastro-advogados-correspondentes-juridicos'
     },
     {
-      name: 'Para departamentos jurídico',
+      name: 'Para Departamentos Jurídicos',
       link: '/cadastro-departamentos-juridico'
     },
-    { name: 'Blog', link: '/' },
-    { name: 'Fale Conosco', link: '/fale-conosco' }
+    { name: 'Blog', link: '/#blog' },
+    { name: 'Fale Conosco', link: '/#fale-conosco' }
     // { name: 'Diretório', link: '/profissionais' }
   ]
 

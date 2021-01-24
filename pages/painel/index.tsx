@@ -44,7 +44,7 @@ const PainelCorrespondente: React.FC = () => {
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-800 text-xl font-semibold trackin-wide px-3 py-12 h-full flex justify-center items-center flex-col rounded-md w-full cursor-pointer">
             <h3>Contabilidade</h3>
             <p className="text-base tracking-wide font-normal text-gray-500">
-              Gestão contábil de suas empresas
+              Gestão contábil de suas empresas.
             </p>
           </a>
         </Link>
@@ -117,7 +117,7 @@ const PainelSolicitante: React.FC = () => {
           <a className="bg-white hover:bg-gray-100 shadow-md text-gray-800 text-xl font-semibold trackin-wide px-3 py-12 h-full flex justify-center items-center flex-col rounded-md w-full cursor-pointer">
             <h3>Contabilidade</h3>
             <p className="text-base tracking-wide font-normal text-gray-500">
-              Gestão contábil de suas empresas
+              Gestão contábil de suas empresas.
             </p>
           </a>
         </Link>

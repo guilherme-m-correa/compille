@@ -1,12 +1,13 @@
-import { useState } from 'react'
 import Container from '../../components/Container'
 
 export default function Contabilidade() {
-  const [open, setOpen] = useState<boolean>(false)
-
   return (
     <Container>
-      <h2 className="text-2xl font-semibold">Contabilidade</h2>
+      <div className="min-h-screen">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-blue-500">
+          Contabilidade
+        </h2>
+      </div>
     </Container>
   )
 }

@@ -4,6 +4,7 @@ import Companies from '../../components/Companies'
 
 import { api } from '../../hooks/fetch'
 import { useAuth } from '../../hooks/auth'
+import CompanyForm from '../../components/CompanyForm'
 
 interface Person {
   id: number
@@ -30,28 +31,65 @@ interface Person {
 export default function Contabilidade() {
   const { user } = useAuth()
   const [person, setPerson] = useState<Person>({} as Person)
+  const [openAddCompany, setOpenAddCompany] = useState(false)
+
+  async function loadData() {
+    try {
+      const response = await api.get(`/comercial/people/user/${user?.id}`)
+
+      if (response.status === 200) {
+        setPerson(response.data)
+      }
+    } catch (error) {
+      //
+    }
+  }
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const response = await api.get(`/comercial/people/user/${user?.id}`)
-
-        if (response.status === 200) {
-          setPerson(response.data)
-        }
-      } catch (error) {
-        //
-      }
-    }
-
     loadData()
-  }, [user?.id])
+  }, [user?.id]) // es-lint-disable-line
 
   return (
     <Container>
-      <h2 className="text-2xl font-semibold my-6">Empresas</h2>
-      {person && <Companies person_id={person.id} />}
-      <div className="mb-72" />
+      <div className="min-h-screen">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-blue-500">
+          Empresas
+        </h2>
+
+        {!openAddCompany &&
+          person.profile_type ===
+            'Faço parte de um escritório de advocacia' && (
+            <button
+              type="button"
+              onClick={() => setOpenAddCompany(true)}
+              className="mt-10 primary-btn"
+            >
+              ADICIONAR NOVA EMPRESA
+            </button>
+          )}
+
+        {!openAddCompany && person && <Companies person_id={person.id} />}
+
+        {openAddCompany && (
+          <div className="bg-white shadow-md rounded-md p-6 mt-10">
+            <div className="py-4 border-b-2 border-gray-100">
+              <h2 className="text-2xl font-semibold">
+                Preencha os dados relacionados a empresa
+              </h2>
+            </div>
+
+            <CompanyForm
+              type="Advogado"
+              user_id={user.id}
+              onFinish={() => {
+                setOpenAddCompany(false)
+                loadData()
+              }}
+              person_id={person.id}
+            />
+          </div>
+        )}
+      </div>
     </Container>
   )
 }

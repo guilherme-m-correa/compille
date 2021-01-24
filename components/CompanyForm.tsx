@@ -94,6 +94,7 @@ function CompanyForm({ type, user_id, onFinish, person_id }) {
           type: 'warning',
           text: response.data.msg
         })
+        onFinish()
       } else {
         setValues({
           commercial_name: '',

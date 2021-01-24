@@ -462,9 +462,13 @@ export default function Painel() {
     <Container>
       <div className="flex flex-col my-10">
         {person.register_finish ? (
-          <h2 className="text-2xl font-semibold">Editar Perfil</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-blue-500">
+            Editar Perfil
+          </h2>
         ) : (
-          <h2 className="text-2xl font-semibold">Cadastrar Perfil</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-blue-500">
+            Cadastrar Perfil
+          </h2>
         )}
         {/* <p className="mt-2 text-base">
           Preencha o seu perfil profissional e receba solicitações de serviços.

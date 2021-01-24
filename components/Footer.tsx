@@ -1,14 +1,14 @@
 const Footer: React.FC = () => {
   return (
-    <footer className="mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white body-font">
+    <footer className="mt-6  bg-blue-500 text-white body-font">
       <div className="container px-5 py-24 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
         <div className="w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
           <a className="flex title-font font-medium items-center md:justify-start justify-center text-white">
             <span className="text-xl">Compille</span>
           </a>
-          <p className="mt-3 text-sm text-white">
+          {/* <p className="mt-3 text-sm text-white">
             Air plant banjo lyft occupy retro adaptogen indego
-          </p>
+          </p> */}
         </div>
         <div className="flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
@@ -22,11 +22,16 @@ const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a className="text-white hover:text-gray-200">Sobre nós</a>
+                <a
+                  href="/#sobre-nos"
+                  className="text-white hover:text-gray-200"
+                >
+                  Sobre Nós
+                </a>
               </li>
               <li>
                 <a
-                  href="/fale-conosco"
+                  href="/#fale-conosco"
                   className="text-white hover:text-gray-200"
                 >
                   Fale Conosco
@@ -60,7 +65,7 @@ const Footer: React.FC = () => {
                   href="/cadastro-departamentos-juridico"
                   className="text-white hover:text-gray-200"
                 >
-                  Para Departamentos Júridico
+                  Para Departamentos Jurídicos
                 </a>
               </li>
               {/* <li>
@@ -97,7 +102,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="bg-gradient-to-r from-blue-500 to-indigo-600">
+      <div className="bg-blue-500">
         <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
           <p className="text-white text-sm text-center sm:text-left">
             © 2020 Compille —

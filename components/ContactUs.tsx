@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { Formik, Form, Field, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { FaSpinner } from 'react-icons/fa'
-import ErrorMessage from '../components/ErrorMessage'
-import ErrorMessageBox from '../components/ErrorMessageBox'
-import SuccessMessageBox from '../components/SuccessMessageBox'
+import ErrorMessage from './ErrorMessage'
+import ErrorMessageBox from './ErrorMessageBox'
+import SuccessMessageBox from './SuccessMessageBox'
 import { api } from '../hooks/fetch'
 import { normalizeTelephone } from '../helpers'
 
@@ -15,13 +15,19 @@ interface FormValues {
   telephone: string
 }
 
-export default function FaleConosco() {
+export default function ContactUs() {
   const [successMsg, setSuccessMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
 
   return (
-    <section className="text-gray-600 body-font relative">
-      <div className="container px-5 py-24 mx-auto flex sm:flex-nowrap flex-wrap">
+    <section
+      id="fale-conosco"
+      className="text-gray-600 py-36 body-font relative"
+    >
+      <div className="flex flex-col justify-between items-center">
+        <h2 className="text-blue-500 font-semibold text-4xl">Fale Conosco</h2>
+      </div>
+      <div className="container mx-auto py-24 flex justify-center items-center">
         {/* <div className="lg:w-2/3 md:w-1/2 bg-gray-300 rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
           <iframe
             width="100%"
@@ -99,13 +105,7 @@ export default function FaleConosco() {
         >
           {({ isSubmitting, errors, touched, values }) => (
             <>
-              <Form className="p-8 rounded-lg lg:w-1/3 md:w-1/2 bg-white flex flex-col mx-auto w-full md:py-8 mt-8 md:mt-0">
-                <h2 className="text-gray-900 text-lg mb-1 font-medium title-font">
-                  Fale Conosco
-                </h2>
-                {/* <p className="leading-relaxed mb-5 text-gray-600">
-                  Post-ironic portland shabby chic echo park, banjo fashion axe
-                </p> */}
+              <Form className="p-8 rounded-md bg-white flex flex-col w-full shadow-xl">
                 {errorMsg && (
                   <div className="my-2">
                     <ErrorMessageBox>{errorMsg}</ErrorMessageBox>
@@ -187,7 +187,7 @@ export default function FaleConosco() {
                     as="textarea"
                     id="message"
                     name="message"
-                    className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out ${
+                    className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out ${
                       errors.message && touched.message && 'border-red-500'
                     }`}
                   />
@@ -195,17 +195,19 @@ export default function FaleConosco() {
                     <ErrorMessage>{errors.message}</ErrorMessage>
                   )}
                 </div>
-                <button
-                  disabled={isSubmitting}
-                  type="submit"
-                  className="mt-6 primary-btn flex justify-center items-center"
-                >
-                  {isSubmitting ? (
-                    <FaSpinner className="animate-spin" size={24} />
-                  ) : (
-                    'ENVIAR'
-                  )}
-                </button>
+                <div className="flex flex-col justify-between items-center">
+                  <button
+                    disabled={isSubmitting}
+                    type="submit"
+                    className="mt-6 w-40 primary-btn flex justify-center items-center"
+                  >
+                    {isSubmitting ? (
+                      <FaSpinner className="animate-spin" size={24} />
+                    ) : (
+                      'ENVIAR'
+                    )}
+                  </button>
+                </div>
 
                 {/* <p className="text-xs text-gray-500 mt-3">
                   Chicharrones blog helvetica normcore iceland tousled brook
