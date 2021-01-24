@@ -107,93 +107,99 @@ export default function ContactUs() {
             <>
               <Form className="p-8 rounded-md bg-white flex flex-col w-full shadow-xl">
                 {errorMsg && (
-                  <div className="my-2">
+                  <div className="mb-6">
                     <ErrorMessageBox>{errorMsg}</ErrorMessageBox>
                   </div>
                 )}
 
                 {successMsg && (
-                  <div className="my-2">
+                  <div className="mb-6">
                     <SuccessMessageBox>{successMsg}</SuccessMessageBox>
                   </div>
                 )}
 
-                <div className="relative mb-4">
-                  <label
-                    htmlFor="name"
-                    className="leading-7 text-sm text-gray-600"
-                  >
-                    Nome
-                  </label>
-                  <Field
-                    type="text"
-                    id="name"
-                    name="name"
-                    className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out ${
-                      errors.name && touched.name && 'border-red-500'
-                    }`}
-                  />
-                  {errors.name && touched.name && (
-                    <ErrorMessage>{errors.name}</ErrorMessage>
-                  )}
-                </div>
-                <div className="relative mb-4">
-                  <label
-                    htmlFor="email"
-                    className="leading-7 text-sm text-gray-600"
-                  >
-                    Email
-                  </label>
-                  <Field
-                    type="email"
-                    id="email"
-                    name="email"
-                    className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out ${
-                      errors.email && touched.email && 'border-red-500'
-                    }`}
-                  />
-                  {errors.email && touched.email && (
-                    <ErrorMessage>{errors.email}</ErrorMessage>
-                  )}
-                </div>
-                <div className="relative mb-4">
-                  <label
-                    htmlFor="telephone"
-                    className="leading-7 text-sm text-gray-600"
-                  >
-                    Telefone (opcional)
-                  </label>
-                  <Field
-                    type="telephone"
-                    id="telephone"
-                    name="telephone"
-                    value={normalizeTelephone(values.telephone)}
-                    className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out ${
-                      errors.telephone && touched.telephone && 'border-red-500'
-                    }`}
-                  />
-                  {errors.telephone && touched.telephone && (
-                    <ErrorMessage>{errors.telephone}</ErrorMessage>
-                  )}
-                </div>
-                <div className="relative mb-4">
-                  <label
-                    htmlFor="message"
-                    className="leading-7 text-sm text-gray-600"
-                  >
-                    Mensagem
-                  </label>
-                  <Field
-                    as="textarea"
-                    id="message"
-                    name="message"
-                    className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out ${
-                      errors.message && touched.message && 'border-red-500'
-                    }`}
-                  />
-                  {errors.message && touched.message && (
-                    <ErrorMessage>{errors.message}</ErrorMessage>
-                  )}
+                <div className="flex space-x-10">
+                  <div>
+                    <div className="relative mb-4">
+                      <label
+                        htmlFor="name"
+                        className="text-black-400 font-semibold"
+                      >
+                        Nome
+                      </label>
+                      <Field
+                        type="text"
+                        id="name"
+                        name="name"
+                        className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out ${
+                          errors.name && touched.name && 'border-red-500'
+                        }`}
+                      />
+                      {errors.name && touched.name && (
+                        <ErrorMessage>{errors.name}</ErrorMessage>
+                      )}
+                    </div>
+                    <div className="relative mb-4">
+                      <label
+                        htmlFor="email"
+                        className="text-black-400 font-semibold"
+                      >
+                        Email
+                      </label>
+                      <Field
+                        type="email"
+                        id="email"
+                        name="email"
+                        className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out ${
+                          errors.email && touched.email && 'border-red-500'
+                        }`}
+                      />
+                      {errors.email && touched.email && (
+                        <ErrorMessage>{errors.email}</ErrorMessage>
+                      )}
+                    </div>
+                    <div className="relative mb-4">
+                      <label
+                        htmlFor="telephone"
+                        className="text-black-400 font-semibold"
+                      >
+                        Telefone (opcional)
+                      </label>
+                      <Field
+                        type="telephone"
+                        id="telephone"
+                        name="telephone"
+                        value={normalizeTelephone(values.telephone)}
+                        className={`w-full bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out ${
+                          errors.telephone &&
+                          touched.telephone &&
+                          'border-red-500'
+                        }`}
+                      />
+                      {errors.telephone && touched.telephone && (
+                        <ErrorMessage>{errors.telephone}</ErrorMessage>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-1 relative mb-4">
+                    <label
+                      htmlFor="message"
+                      className="text-black-400 font-semibold"
+                    >
+                      Mensagem
+                    </label>
+                    <Field
+                      as="textarea"
+                      id="message"
+                      name="message"
+                      className={`w-full h-52 bg-white rounded border border-gray-300 focus:border-blue-500 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out ${
+                        errors.message && touched.message && 'border-red-500'
+                      }`}
+                    />
+                    {errors.message && touched.message && (
+                      <ErrorMessage>{errors.message}</ErrorMessage>
+                    )}
+                  </div>
                 </div>
                 <div className="flex flex-col justify-between items-center">
                   <button
