@@ -110,7 +110,7 @@ const Header: React.FC = () => {
                 aria-labelledby="options-menu"
               >
                 <div className="py-1">
-                  <Link href="#">
+                  <Link href="/#como-funciona">
                     <button
                       type="button"
                       onClick={e => setShowDropdownSolutions(false)}

@@ -3,6 +3,7 @@ import Container from '../components/Container'
 import ContactUs from '../components/ContactUs'
 import AboutUs from '../components/AboutUs'
 import BlogSection from '../components/BlogSection'
+import HowItWorks from '../components/HowItWorks'
 
 interface CardProps {
   headingText: string
@@ -88,6 +89,7 @@ export default function Home() {
       </Container>
 
       <AboutUs />
+      <HowItWorks />
       <BlogSection />
       <ContactUs />
     </div>
