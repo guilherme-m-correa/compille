@@ -5,7 +5,7 @@ import Container from './Container'
 
 const CommunitySection = () => {
   return (
-    <section className="mt-6 bg-gradient-to-b from-blue-500 to-indigo-600 w-full py-36 h-4/5">
+    <section className="mt-6 bg-gradient-to-b from-blue-500 to-indigo-600 w-full py-20 h-4/5">
       <Container>
         <div className="flex flex-col justify-between items-center">
           <h2 className="text-white font-medium text-4xl">

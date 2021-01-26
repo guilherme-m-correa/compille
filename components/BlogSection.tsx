@@ -29,7 +29,7 @@ const BlogArticleCard: React.FC<BlogArticleCardProps> = ({
 
 const BlogSection = () => {
   return (
-    <section id="blog" className="py-36 bg-blue-500 h-4/5">
+    <section id="blog" className="py-20 bg-blue-500 h-4/5">
       <Container>
         <div className="flex flex-col justify-between items-center">
           <h2 className="text-white font-semibold text-4xl">Artigos do Blog</h2>

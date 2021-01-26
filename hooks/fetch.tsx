@@ -2,7 +2,7 @@ import useSWR from 'swr'
 import axios from 'axios'
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_GATEWAY_URL || 'http://localhost:5000/'
+  baseURL: 'https://gateway.compille.com.br/'
 })
 
 export function useFetch<Data = any, Error = any>(url: string) { //eslint-disable-line

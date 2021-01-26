@@ -22,7 +22,7 @@ export default function ContactUs() {
   return (
     <section
       id="fale-conosco"
-      className="text-gray-600 py-36 body-font relative"
+      className="text-gray-600 pt-20 body-font relative"
     >
       <div className="flex flex-col justify-between items-center">
         <h2 className="text-blue-500 font-semibold text-4xl">Fale Conosco</h2>

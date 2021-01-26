@@ -2,7 +2,7 @@ import Container from './Container'
 
 const AboutUsSection = () => {
   return (
-    <section id="sobre-nos" className="mt-6 py-36">
+    <section id="sobre-nos" className="mt-6 py-20">
       <Container>
         <div className="flex flex-col justify-between items-center">
           <h2 className="text-blue-500 font-semibold text-4xl">Sobre Nós</h2>
