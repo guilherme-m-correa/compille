@@ -3,6 +3,15 @@
 // export function parseCookies(req) {
 //   return cookie.parse(req ? req.headers.cookie || '' : document.cookie)
 // }
+import { parse, isDate } from 'date-fns'
+
+export const parseDateString = (value, originalValue) => {
+  const parsedDate = isDate(originalValue)
+    ? originalValue
+    : parse(originalValue, 'dd/MM/yyyy', new Date())
+
+  return parsedDate
+}
 
 export const normalizeCep = value => {
   if (!value) {

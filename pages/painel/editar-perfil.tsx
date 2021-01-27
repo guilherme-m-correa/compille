@@ -14,7 +14,8 @@ import {
   normalizeDate,
   normalizeDDD,
   normalizeTelephoneNumber,
-  normalizeTelephone
+  normalizeTelephone,
+  parseDateString
 } from '../../helpers'
 import CompanyForm from '../../components/CompanyForm'
 import Address from '../../components/Address'
@@ -144,6 +145,8 @@ export default function Painel() {
     'Advogado Autônomo',
     'Faço parte de um escritório de advocacia'
   ]
+
+  const today = new Date()
 
   const states = [
     { cod: 12, name: 'Acre', uf: 'AC' },
@@ -508,9 +511,14 @@ export default function Painel() {
                 }}
                 validationSchema={Yup.object({
                   cpf: Yup.string().required('Número do CPF obrigatório'),
-                  birth_date: Yup.date().required(
-                    'Data de nascimento obrigátorio'
-                  )
+                  birth_date: Yup.date()
+                    .typeError('Data inválida')
+                    .transform(parseDateString)
+                    .max(
+                      today,
+                      'Data de nascimento não deve ser maior que hoje'
+                    )
+                    .required('Data de nascimento obrigátorio')
                 })}
                 onSubmit={async (
                   values: FormCPFValues,
@@ -526,7 +534,7 @@ export default function Painel() {
                       {
                         user_id: user.id,
                         cpf,
-                        birth_date
+                        birth_date: parseDateString(today, birth_date)
                       }
                     )
 
@@ -653,7 +661,7 @@ export default function Painel() {
                   rg_uf: Yup.string().required('Estado do RG obrigatório'),
                   oab: Yup.string().required('Registro obrigatório'),
                   oab_uf: Yup.string().required('Estado obrigatório'),
-                  gender: Yup.string().required('Gênero obrigatório'),
+                  gender: Yup.string().required('Sexo obrigatório'),
                   profile_link: Yup.string().required(
                     'Escolha um link para seu perfil'
                   ),
@@ -905,65 +913,61 @@ export default function Painel() {
                           <ErrorMessage>{errors.rg_uf}</ErrorMessage>
                         )}
                       </div>
+
+                      <div className="lg:w-40">
+                        <label
+                          className="text-black-400 font-semibold"
+                          htmlFor="gender"
+                        >
+                          Sexo
+                        </label>
+                        <Field
+                          id="gender"
+                          name="gender"
+                          type="gender"
+                          as="select"
+                          className={
+                            errors.gender && touched.gender
+                              ? 'select-input mt-2 border-red-500'
+                              : 'select-input mt-2'
+                          }
+                        >
+                          <option disabled selected value="">
+                            Selecione...
+                          </option>
+                          <option value="Masculino">Masculino</option>
+                          <option value="Feminino">Feminino</option>
+                        </Field>
+                        {errors.gender && touched.gender && (
+                          <ErrorMessage>{errors.gender}</ErrorMessage>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex flex-col">
-                      <div>
-                        <label
-                          className="text-black-400 font-semibold"
-                          htmlFor="profile_name"
-                        >
-                          Nome para exibição no perfil{' '}
-                          <span className="text-gray-400 text-sm">
-                            (esse é o nome que será exibido em seu perfil
-                            público. Exemplo: Guilherme e Pablo Advogados
-                            Associados)
-                          </span>
-                        </label>
-                        <Field
-                          id="profile_name"
-                          name="profile_name"
-                          type="profile_name"
-                          className={
-                            errors.profile_name && touched.profile_name
-                              ? 'input mt-2 border-red-500'
-                              : 'input mt-2'
-                          }
-                        />
-                        {errors.profile_name && touched.profile_name && (
-                          <ErrorMessage>{errors.profile_name}</ErrorMessage>
-                        )}
-                      </div>
-
                       <div className="mt-2 flex flex-col lg:flex-row">
                         <div className="flex-1 lg:mr-2">
                           <label
                             className="text-black-400 font-semibold"
-                            htmlFor="gender"
+                            htmlFor="profile_name"
                           >
-                            Gênero
+                            Nome para exibição no perfil
                           </label>
                           <Field
-                            id="gender"
-                            name="gender"
-                            type="gender"
-                            as="select"
+                            id="profile_name"
+                            name="profile_name"
+                            type="profile_name"
                             className={
-                              errors.gender && touched.gender
-                                ? 'select-input mt-2 border-red-500'
-                                : 'select-input mt-2'
+                              errors.profile_name && touched.profile_name
+                                ? 'input mt-2 border-red-500'
+                                : 'input mt-2'
                             }
-                          >
-                            <option disabled selected value="">
-                              Selecione...
-                            </option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Feminino">Feminino</option>
-                          </Field>
-                          {errors.gender && touched.gender && (
-                            <ErrorMessage>{errors.gender}</ErrorMessage>
+                          />
+                          {errors.profile_name && touched.profile_name && (
+                            <ErrorMessage>{errors.profile_name}</ErrorMessage>
                           )}
                         </div>
+
                         <div className="flex-1">
                           <label
                             className="text-black-400 font-semibold"
@@ -985,13 +989,13 @@ export default function Painel() {
                             <option disabled selected value="">
                               Selecione...
                             </option>
-                            <option value="Superior Incompleto">
-                              Superior Incompleto
-                            </option>
                             <option value="Superior Completo">
                               Superior Completo
                             </option>
                             <option value="Pós-Graduação">Pós-Graduação</option>
+                            <option value="Mestrado">Mestrado</option>
+                            <option value="Doutorado">Doutorado</option>
+                            <option value="Pós-Doutorado">Pós-Doutorado</option>
                           </Field>
                           {errors.schoolarity && touched.schoolarity && (
                             <ErrorMessage>{errors.schoolarity}</ErrorMessage>
@@ -1649,7 +1653,7 @@ export default function Painel() {
                   rg: Yup.string().required('RG obrigatório'),
                   rg_exp: Yup.string().required('Orgão expedidor obrigatório'),
                   rg_uf: Yup.string().required('Estado do RG obrigatório'),
-                  gender: Yup.string().required('Gênero obrigatório')
+                  gender: Yup.string().required('Sexo obrigatório')
                 })}
                 onSubmit={async (
                   values: FormCompanyValues,
@@ -1776,7 +1780,7 @@ export default function Painel() {
                           className="text-black-400 font-semibold"
                           htmlFor="gender"
                         >
-                          Gênero
+                          Sexo
                         </label>
                         <Field
                           id="gender"
