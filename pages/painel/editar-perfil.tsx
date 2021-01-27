@@ -989,13 +989,10 @@ export default function Painel() {
                             <option disabled selected value="">
                               Selecione...
                             </option>
-                            <option value="Superior Completo">
-                              Superior Completo
-                            </option>
-                            <option value="Pós-Graduação">Pós-Graduação</option>
-                            <option value="Mestrado">Mestrado</option>
-                            <option value="Doutorado">Doutorado</option>
-                            <option value="Pós-Doutorado">Pós-Doutorado</option>
+                            <option value="Graduado">Graduado</option>
+                            <option value="Pós-Graduado">Pós-Graduado</option>
+                            <option value="Mestre">Mestre</option>
+                            <option value="Doutor">Doutor</option>
                           </Field>
                           {errors.schoolarity && touched.schoolarity && (
                             <ErrorMessage>{errors.schoolarity}</ErrorMessage>
