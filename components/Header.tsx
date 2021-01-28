@@ -249,16 +249,20 @@ const Header: React.FC = () => {
                       Agenda Jurídica
                     </button>
                   </Link>
-                  <Link href="/painel/empresas">
-                    <button
-                      type="button"
-                      onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
-                      role="menuitem"
-                    >
-                      Empresas
-                    </button>
-                  </Link>
+                  {user.type === 'E' ||
+                    (person?.profile_type ===
+                      'Faço parte de um escritório de advocacia' && (
+                      <Link href="/painel/empresas">
+                        <button
+                          type="button"
+                          onClick={e => setShowDropdown(false)}
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
+                          role="menuitem"
+                        >
+                          Empresas
+                        </button>
+                      </Link>
+                    ))}
                   <Link href="/painel/contabilidade">
                     <button
                       type="button"
@@ -385,16 +389,20 @@ const Header: React.FC = () => {
                       Agenda Jurídica
                     </button>
                   </Link>
-                  <Link href="/painel/empresas">
-                    <button
-                      type="button"
-                      onClick={e => setShowDropdown(false)}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
-                      role="menuitem"
-                    >
-                      Empresas
-                    </button>
-                  </Link>
+                  {user.type === 'E' ||
+                    (person?.profile_type ===
+                      'Faço parte de um escritório de advocacia' && (
+                      <Link href="/painel/empresas">
+                        <button
+                          type="button"
+                          onClick={e => setShowDropdown(false)}
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full"
+                          role="menuitem"
+                        >
+                          Empresas
+                        </button>
+                      </Link>
+                    ))}
                   <Link href="/painel/contabilidade">
                     <button
                       type="button"
