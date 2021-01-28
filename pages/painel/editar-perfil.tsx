@@ -123,9 +123,10 @@ export default function Painel() {
   const router = useRouter()
 
   const [msg, setMsg] = useState('')
-  const { user } = useAuth()
+  const { user, updateUser } = useAuth()
   const [step, setStep] = useState(1)
   const [submitError, setSubmitError] = useState('')
+  const [uploadAvatarError, setUploadAvatarError] = useState('')
   const [person, setPerson] = useState<Person>({} as Person)
   const [cities, setCities] = useState([])
   const [stateSelected, setStateSelected] = useState('')
@@ -435,15 +436,47 @@ export default function Painel() {
     }
   }
 
-  const handleAvatarChange = useCallback(async e => {
-    const { files } = e.target
+  const handleAvatarChange = useCallback(
+    async e => {
+      try {
+        setUploadAvatarError('')
 
-    if (files) {
-      const data = new FormData()
-      data.append('avatar', files[0])
-      // TODO: Request para atualizar o avatar
-    }
-  }, [])
+        const { files } = e.target
+
+        if (files) {
+          const sizeInMB = files[0].size / (1024 * 1024)
+
+          if (sizeInMB > 10) {
+            setUploadAvatarError('Tamanho máximo permitido de 10MB')
+            return
+          }
+
+          const data = new FormData()
+          data.append('file', files[0])
+
+          const response = await api.post(`/documentos`, data)
+
+          if (response.status === 200) {
+            const { filename } = response.data
+
+            await api.patch('/authperm/user/mine/avatar', {
+              avatar_url: `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/documentos/${filename}`
+            })
+
+            updateUser({
+              ...user,
+              avatar_url: `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/documentos/${filename}`
+            })
+          }
+        }
+      } catch (err) {
+        setUploadAvatarError(
+          'Ocorreu um erro ao tentar enviar a foto, tente novamente mais tarde'
+        )
+      }
+    },
+    [user, updateUser]
+  )
 
   const formattedActingInstances = useMemo(
     () =>
@@ -1011,22 +1044,49 @@ export default function Painel() {
                         fotos são mais acessados pelos clientes.
                       </p>
 
+                      {uploadAvatarError && (
+                        <div className="mt-6">
+                          <ErrorMessageBox>{uploadAvatarError}</ErrorMessageBox>
+                        </div>
+                      )}
+
                       <div className="mt-6 h-16 w-16 rounded-full overflow-hidden bg-gray-100">
-                        <svg
-                          className="h-full w-full text-gray-300"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
+                        {user.avatar_url ? (
+                          <img
+                            className="h-full w-full"
+                            src={user.avatar_url}
+                            alt="Foto do perfil"
+                          />
+                        ) : (
+                          <svg
+                            className="h-full w-full text-gray-300"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+                        )}
                       </div>
 
-                      <button
-                        type="button"
-                        className="primary-btn mt-6 max-w-max"
-                      >
-                        ALTERAR FOTO
-                      </button>
+                      <label htmlFor="avatar">
+                        <input
+                          id="avatar"
+                          className="hidden"
+                          type="file"
+                          accept="image/x-png,image/jpeg"
+                          onChange={handleAvatarChange}
+                        />
+
+                        <button
+                          type="button"
+                          className="primary-btn mt-6 max-w-max"
+                          onClick={() => {
+                            document.getElementById('avatar').click()
+                          }}
+                        >
+                          ALTERAR FOTO
+                        </button>
+                      </label>
                     </div>
 
                     <div className="py-4 border-b-2 border-gray-100">
