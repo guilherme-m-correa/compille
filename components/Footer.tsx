@@ -46,6 +46,14 @@ const Footer: React.FC = () => {
             <nav className="list-none mb-10">
               <li>
                 <a
+                  href="/#como-funciona"
+                  className="text-white hover:text-gray-200"
+                >
+                  Como Funciona
+                </a>
+              </li>
+              <li>
+                <a
                   href="/cadastro-advogados-correspondentes-juridicos"
                   className="text-white hover:text-gray-200"
                 >
@@ -81,7 +89,9 @@ const Footer: React.FC = () => {
             </h2>
             <nav className="list-none mb-10">
               <li>
-                <a className="text-white hover:text-gray-200">Blog</a>
+                <a href="/#blog" className="text-white hover:text-gray-200">
+                  Blog
+                </a>
               </li>
             </nav>
           </div>
