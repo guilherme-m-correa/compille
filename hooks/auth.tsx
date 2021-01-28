@@ -9,6 +9,15 @@ interface User {
   username: string
   type: string
   active: boolean
+  avatar_url: string
+}
+
+interface AuthResponse {
+  token: {
+    type: string
+    token: string
+  }
+  user: User
 }
 
 interface AuthState {
@@ -50,11 +59,13 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const signIn = useCallback(
     async ({ email, password }) => {
-      const response = await api.post<AuthState>('/authperm/authenticate', {
+      const response = await api.post<AuthResponse>('/authperm/authenticate', {
         email,
         password
       })
-      const { token, user } = response.data
+      const { token: tokenObject, user } = response.data
+
+      const { token } = tokenObject
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('@Compille:token', token)
