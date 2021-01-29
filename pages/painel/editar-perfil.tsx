@@ -127,6 +127,7 @@ export default function Painel() {
   const [step, setStep] = useState(1)
   const [submitError, setSubmitError] = useState('')
   const [uploadAvatarError, setUploadAvatarError] = useState('')
+  const [profileLinkError, setProfileLinkError] = useState('')
   const [person, setPerson] = useState<Person>({} as Person)
   const [cities, setCities] = useState([])
   const [stateSelected, setStateSelected] = useState('')
@@ -242,6 +243,24 @@ export default function Painel() {
 
       setJuridicalAreas(juridicalAreas.filter(l => l.id !== id))
     } catch (err) {
+      //
+    }
+  }
+
+  async function handleVerifyProfileLink(profile_link) {
+    try {
+      setProfileLinkError('')
+
+      const response = await api.get(`/comercial/people/link/${profile_link}`)
+
+      if (response.status === 200) {
+        if (response.data.id !== person.id) {
+          setProfileLinkError(
+            'Este link não está disponível para o uso, por favor escolha um diferente'
+          )
+        }
+      }
+    } catch {
       //
     }
   }
@@ -733,6 +752,10 @@ export default function Painel() {
                   } = values
 
                   try {
+                    if (profileLinkError) {
+                      return
+                    }
+
                     await api.put(`/comercial/people/${person.id}`, {
                       rg,
                       rg_exp,
@@ -1577,6 +1600,11 @@ export default function Painel() {
                       )}
                     </div>
 
+                    {profileLinkError && (
+                      <div>
+                        <ErrorMessageBox>{profileLinkError}</ErrorMessageBox>
+                      </div>
+                    )}
                     <div>
                       <label
                         className="text-black-400 font-semibold"
@@ -1597,6 +1625,10 @@ export default function Painel() {
                           id="profile_link"
                           name="profile_link"
                           type="profile_link"
+                          // disabled={person.register_finish}
+                          onBlur={() =>
+                            handleVerifyProfileLink(values.profile_link)
+                          }
                           className={
                             errors.profile_link && touched.profile_link
                               ? 'input mt-2 border-red-500'
@@ -1716,8 +1748,6 @@ export default function Painel() {
                   values: FormCompanyValues,
                   { setSubmitting }: FormikHelpers<FormCompanyValues>
                 ) => {
-                  setSubmitError('')
-
                   const { rg, rg_exp, rg_uf, gender } = values
 
                   try {
