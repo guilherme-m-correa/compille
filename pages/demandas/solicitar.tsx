@@ -80,7 +80,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
       setToogleAudienceLocalSearch(true)
 
       const { data } = await axios.get(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${address}+em+${selectedCity}&language=pt_br&key=AIzaSyDAjRSRcacpQCEROGB9ZvGztaBdMi7V6n4`
+        `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?query=${address}+em+${selectedCity}&language=pt_br&key=AIzaSyDAjRSRcacpQCEROGB9ZvGztaBdMi7V6n4`
       )
 
       setGoogleResponse(data)
