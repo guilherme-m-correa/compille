@@ -142,7 +142,7 @@ const PainelSolicitante: React.FC = () => {
         <Link href="/demandas/solicitar">
           <a>
             <button type="button" className="primary-btn">
-              ENVIAR NOVA DEMANDA
+              SOLICITAR NOVA AUDIÊNCIA
             </button>
           </a>
         </Link>
@@ -162,7 +162,7 @@ const PainelSolicitante: React.FC = () => {
             <div className="flex flex-col justify-center items-center text-center py-32">
               <p className="text-gray-500">Não encontramos nenhuma demanda.</p>
               <Link href="/demandas/solicitar">
-                <a className="text-blue-500">Enviar nova demanda</a>
+                <a className="text-blue-500">Solicitar nova audiência</a>
               </Link>
             </div>
           </div>
@@ -174,7 +174,7 @@ const PainelSolicitante: React.FC = () => {
             <div className="flex flex-col justify-center items-center text-center py-32">
               <p className="text-gray-500">Não encontramos nenhuma demanda.</p>
               <Link href="/demandas/solicitar">
-                <a className="text-blue-500">Enviar nova demanda</a>
+                <a className="text-blue-500">Solicitar nova audiência</a>
               </Link>
             </div>
           </div>
@@ -186,7 +186,7 @@ const PainelSolicitante: React.FC = () => {
             <div className="flex flex-col justify-center items-center text-center py-32">
               <p className="text-gray-500">Não encontramos nenhuma demanda.</p>
               <Link href="/demandas/solicitar">
-                <a className="text-blue-500">Enviar nova demanda</a>
+                <a className="text-blue-500">Solicitar nova audiência</a>
               </Link>
             </div>
           </div>
