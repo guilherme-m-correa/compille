@@ -1,235 +1,72 @@
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { FaEnvelope, FaPhoneAlt } from 'react-icons/fa'
+import { api } from '../hooks/fetch'
 import Container from '../components/Container'
+import { Person } from '../@types/person'
 
 export default function Profissionais() {
+  const [lawyers, setLawyers] = useState<Person[]>([] as Person[])
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const { data } = await api.get(`/comercial/available-lawyers`)
+
+        setLawyers(data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    loadData()
+  }, [])
+
   return (
     <>
-      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 w-full flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl flex flex-col items-center mx-auto px-4 sm:px-6 md:px-8">
-          <h2 className="text-3xl text-center font-semibold text-white">
-            Diretório de Advogados e Correspondentes Jurídicos em todo o Brasil
-          </h2>
-          <div className="mt-8 grid grid-rows-2 gap-4 grid-cols-1 lg:grid-rows-1 lg:grid-cols-3 lg:gap-0 w-full">
-            <div className="lg:col-span-2">
-              <label htmlFor="email" className="sr-only">
-                Digite uma cidade ou nome do profissional
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="input"
-                placeholder="Digite uma cidade ou nome do profissional"
-              />
-            </div>
-            <button
-              type="button"
-              className="flex justify-center items-center primary-btn focus:border-none focus:outline-none rounded-none "
-            >
-              PESQUISAR
-            </button>
-          </div>
-
-          <Link href="/cadastro-advogados-correspondentes-juridicos">
-            <a className="mt-6 text-center text-sm text-white hover:text-gray-200">
-              Advogado ou Correspondente Jurídico? Cadastre-se e seja
-              encontrado.
-            </a>
-          </Link>
-        </div>
-      </div>
-
       <Container>
+        <h2 className="mt-10 text-3xl text-center font-semibold text-blue-500">
+          Encontramos os seguintes profissionais disponíveis para a audiência
+        </h2>
+
         <ul className="mt-8 divide-y flex flex-col items-center">
-          <li className="flex justify-between items-center bg-white w-full p-6 rounded-md">
-            <div className="flex justify-center items-center">
-              <img
-                className="flex-shrink-0 flex-grow-0 w-24 h-24 rounded-full mr-6 border border-gray-200"
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=60"
-                alt=""
-              />
-              <div>
-                <Link href="/p/guilherme-correa">
-                  <a className="text-blue-500 hover:text-blue-700 font-medium">
-                    Guilherme Corrêa
+          {lawyers.map(lawyer => (
+            <li
+              key={lawyer.id}
+              className="flex justify-between items-center bg-white w-full p-6 rounded-md"
+            >
+              <div className="flex justify-center space-x-4 items-center">
+                <Link href={`/p/${lawyer.profile_link}`}>
+                  <a className="mt-6 h-24 w-24 rounded-full overflow-hidden bg-gray-100">
+                    {lawyer.avatar_url ? (
+                      <img
+                        className="h-full w-full"
+                        src={lawyer.avatar_url}
+                        alt="Foto do perfil"
+                      />
+                    ) : (
+                      <svg
+                        className="h-full w-full text-gray-300"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                    )}
                   </a>
                 </Link>
-                <p className="text-gray-400 text-sm">Advogado, PE</p>
+                <div>
+                  <Link href={`/p/${lawyer.profile_link}`}>
+                    <a className="text-blue-500 hover:text-blue-700 font-bold">
+                      {lawyer.profile_name}
+                    </a>
+                  </Link>
+                </div>
               </div>
-            </div>
-            <div className="hidden lg:flex space-x-2">
-              <button
-                type="button"
-                className="bg-indigo-500 hover:bg-indigo-600 rounded-full shadow-lg h-16 w-16 flex justify-center items-center text-white hover:text-gray-200"
-              >
-                <div>
-                  <FaEnvelope />
-                </div>
-              </button>
-
-              <button
-                type="button"
-                className="bg-green-500 hover:bg-green-600 rounded-full shadow-lg h-16 w-16 flex justify-center items-center text-white hover:text-gray-200"
-              >
-                <div>
-                  <FaPhoneAlt />
-                </div>
-              </button>
-            </div>
-          </li>
-          <li className="flex justify-between items-center bg-white w-full p-6 rounded-md">
-            <div className="flex justify-center items-center">
-              <img
-                className="flex-shrink-0 flex-grow-0 w-24 h-24 rounded-full mr-6 border border-gray-200"
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=60"
-                alt=""
-              />
-              <div>
-                <Link href="/p/guilherme-correa">
-                  <a className="text-blue-500 hover:text-blue-700 font-medium">
-                    Guilherme Corrêa
-                  </a>
-                </Link>
-                <p className="text-gray-400 text-sm">Advogado, PE</p>
-              </div>
-            </div>
-
-            <div className="hidden lg:flex space-x-2">
-              <button
-                type="button"
-                className="bg-indigo-500 hover:bg-indigo-600 rounded-full shadow-lg h-16 w-16 flex justify-center items-center text-white hover:text-gray-200"
-              >
-                <div>
-                  <FaEnvelope />
-                </div>
-              </button>
-
-              <button
-                type="button"
-                className="bg-green-500 hover:bg-green-600 rounded-full shadow-lg h-16 w-16 flex justify-center items-center text-white hover:text-gray-200"
-              >
-                <div>
-                  <FaPhoneAlt />
-                </div>
-              </button>
-            </div>
-          </li>
-          <li className="flex justify-between items-center bg-white w-full p-6 rounded-md">
-            <div className="flex justify-center items-center">
-              <img
-                className="flex-shrink-0 flex-grow-0 w-24 h-24 rounded-full mr-6 border border-gray-200"
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=60"
-                alt=""
-              />
-              <div>
-                <Link href="/p/guilherme-correa">
-                  <a className="text-blue-500 hover:text-blue-700 font-medium">
-                    Guilherme Corrêa
-                  </a>
-                </Link>
-                <p className="text-gray-400 text-sm">Advogado, PE</p>
-              </div>
-            </div>
-
-            <div className="hidden lg:flex space-x-2">
-              <button
-                type="button"
-                className="bg-indigo-500 hover:bg-indigo-600 rounded-full shadow-lg h-16 w-16 flex justify-center items-center text-white hover:text-gray-200"
-              >
-                <div>
-                  <FaEnvelope />
-                </div>
-              </button>
-
-              <button
-                type="button"
-                className="bg-green-500 hover:bg-green-600 rounded-full shadow-lg h-16 w-16 flex justify-center items-center text-white hover:text-gray-200"
-              >
-                <div>
-                  <FaPhoneAlt />
-                </div>
-              </button>
-            </div>
-          </li>
-          <li className="flex justify-between items-center bg-white w-full p-6 rounded-md">
-            <div className="flex justify-center items-center">
-              <img
-                className="flex-shrink-0 flex-grow-0 w-24 h-24 rounded-full mr-6 border border-gray-200"
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=60"
-                alt=""
-              />
-              <div>
-                <Link href="/p/guilherme-correa">
-                  <a className="text-blue-500 hover:text-blue-700 font-medium">
-                    Guilherme Corrêa
-                  </a>
-                </Link>
-                <p className="text-gray-400 text-sm">Advogado, PE</p>
-              </div>
-            </div>
-
-            <div className="hidden lg:flex space-x-2">
-              <button
-                type="button"
-                className="bg-indigo-500 hover:bg-indigo-600 rounded-full shadow-lg h-16 w-16 flex justify-center items-center text-white hover:text-gray-200"
-              >
-                <div>
-                  <FaEnvelope />
-                </div>
-              </button>
-
-              <button
-                type="button"
-                className="bg-green-500 hover:bg-green-600 rounded-full shadow-lg h-16 w-16 flex justify-center items-center text-white hover:text-gray-200"
-              >
-                <div>
-                  <FaPhoneAlt />
-                </div>
-              </button>
-            </div>
-          </li>
-          <li className="flex justify-between items-center bg-white w-full p-6 rounded-md">
-            <div className="flex justify-center items-center">
-              <img
-                className="flex-shrink-0 flex-grow-0 w-24 h-24 rounded-full mr-6 border border-gray-200"
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=60"
-                alt=""
-              />
-              <div>
-                <Link href="/p/guilherme-correa">
-                  <a className="text-blue-500 hover:text-blue-700 font-medium">
-                    Guilherme Corrêa
-                  </a>
-                </Link>
-                <p className="text-gray-400 text-sm">Advogado, PE</p>
-              </div>
-            </div>
-
-            <div className="hidden lg:flex space-x-2">
-              <button
-                type="button"
-                className="bg-indigo-500 hover:bg-indigo-600 rounded-full shadow-lg h-16 w-16 flex justify-center items-center text-white hover:text-gray-200"
-              >
-                <div>
-                  <FaEnvelope />
-                </div>
-              </button>
-
-              <button
-                type="button"
-                className="bg-green-500 hover:bg-green-600 rounded-full shadow-lg h-16 w-16 flex justify-center items-center text-white hover:text-gray-200"
-              >
-                <div>
-                  <FaPhoneAlt />
-                </div>
-              </button>
-            </div>
-          </li>
+            </li>
+          ))}
         </ul>
 
-        <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div className="bg-white  mb-10 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
           <div className="flex-1 flex justify-between sm:hidden">
             <a
               href="#"

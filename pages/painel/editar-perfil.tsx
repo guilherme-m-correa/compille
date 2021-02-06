@@ -482,6 +482,10 @@ export default function Painel() {
               avatar_url: `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/documentos/${filename}`
             })
 
+            await api.put(`/comercial/people/${person.id}`, {
+              avatar_url: `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/documentos/${filename}`
+            })
+
             updateUser({
               ...user,
               avatar_url: `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/documentos/${filename}`
@@ -494,7 +498,7 @@ export default function Painel() {
         )
       }
     },
-    [user, updateUser]
+    [user, updateUser, person.id]
   )
 
   const formattedActingInstances = useMemo(
