@@ -568,7 +568,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         id="certificate_required"
                         name="certificate_required"
                       >
-                        <option value="" defaultValue disabled>
+                        <option value="" disabled>
                           Indiferente
                         </option>
                         <option value="Não">Não</option>
