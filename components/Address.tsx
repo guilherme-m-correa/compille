@@ -226,7 +226,7 @@ function Address({ person_id }) {
                 <div className="col-span-3">
                   <Form.Group>
                     <Form.Label className="text-black-400 font-semibold">
-                      Rua
+                      Logradouro
                     </Form.Label>
                     <Form.Control
                       size="sm"
@@ -404,8 +404,6 @@ function Address({ person_id }) {
                     dataAddress.street === '' ||
                     dataAddress.street_number === '' ||
                     dataAddress.zip_code === '' ||
-                    (!dataAddress.is_billing_address &&
-                      !dataAddress.is_main_address) ||
                     loading
                   }
                 >

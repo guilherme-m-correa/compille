@@ -47,7 +47,6 @@ export default function AtivarConta() {
 
     loadData()
   }, [router, updateUser, token])
-  console.log(error)
   return (
     <Container>
       {error === '' && (

@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { api } from '../hooks/fetch'
+import { useAudience } from '../hooks/audience'
 import Container from '../components/Container'
 import { Person } from '../@types/person'
 
 export default function Profissionais() {
   const [lawyers, setLawyers] = useState<Person[]>([] as Person[])
+  const { audience, updateAudience } = useAudience()
+  const router = useRouter()
 
   useEffect(() => {
     async function loadData() {
@@ -21,6 +24,12 @@ export default function Profissionais() {
     loadData()
   }, [])
 
+  async function handleSelectLawyer(lawyer: Person) {
+    Object.assign(audience, { lawyer })
+    updateAudience(audience)
+    router.push('/demandas/solicitar')
+  }
+
   return (
     <>
       <Container>
@@ -35,32 +44,61 @@ export default function Profissionais() {
               className="flex justify-between items-center bg-white w-full p-6 rounded-md"
             >
               <div className="flex justify-center space-x-4 items-center">
-                <Link href={`/p/${lawyer.profile_link}`}>
-                  <a className="mt-6 h-24 w-24 rounded-full overflow-hidden bg-gray-100">
-                    {lawyer.avatar_url ? (
-                      <img
-                        className="h-full w-full"
-                        src={lawyer.avatar_url}
-                        alt="Foto do perfil"
-                      />
-                    ) : (
-                      <svg
-                        className="h-full w-full text-gray-300"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                      </svg>
-                    )}
-                  </a>
-                </Link>
+                <a
+                  href={`/p/${lawyer.profile_link}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 h-24 w-24 rounded-full overflow-hidden bg-gray-100"
+                >
+                  {lawyer.avatar_url ? (
+                    <img
+                      className="h-full w-full"
+                      src={lawyer.avatar_url}
+                      alt="Foto do perfil"
+                    />
+                  ) : (
+                    <svg
+                      className="h-full w-full text-gray-300"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  )}
+                </a>
                 <div>
-                  <Link href={`/p/${lawyer.profile_link}`}>
-                    <a className="text-blue-500 hover:text-blue-700 font-bold">
-                      {lawyer.profile_name}
-                    </a>
-                  </Link>
+                  <a
+                    href={`/p/${lawyer.profile_link}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-500 hover:text-blue-700 font-bold"
+                  >
+                    {lawyer.profile_name}
+                  </a>
                 </div>
+              </div>
+
+              <div className="flex flex-col space-y-4">
+                <button
+                  type="button"
+                  onClick={() => handleSelectLawyer(lawyer)}
+                  className="primary-btn"
+                >
+                  ENVIAR DEMANDA
+                </button>
+
+                <a
+                  href={`/p/${lawyer.profile_link}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <button
+                    type="button"
+                    className="secondary-btn w-full text-blue-500 border-blue-500 border-2 bg-transparent hover:text-blue-700 hover:border-blue-700"
+                  >
+                    VER PERFIL
+                  </button>
+                </a>
               </div>
             </li>
           ))}

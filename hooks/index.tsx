@@ -1,11 +1,11 @@
-import { CookiesProvider } from 'react-cookie'
 import { AuthProvider } from './auth'
+import { AudienceProvider } from './audience'
 
 const AppProvider: React.FC = ({ children }) => {
   return (
-    <CookiesProvider>
+    <AudienceProvider>
       <AuthProvider>{children}</AuthProvider>
-    </CookiesProvider>
+    </AudienceProvider>
   )
 }
 

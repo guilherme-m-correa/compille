@@ -153,11 +153,13 @@ export default function Login() {
 
         <div className="mt-6 ">
           <h2 className="mb-4 text-center text-sm text-gray-400">
-            Escritório de Advocacia ou Empresa?
+            Departamento Júridico?
           </h2>
 
           <button type="button" className="primary-btn w-full">
-            ENCONTRE PROFISSIONAIS
+            <Link href="/cadastro-departamentos-juridico">
+              <a>ENCONTRE PROFISSIONAIS</a>
+            </Link>
           </button>
         </div>
       </div>

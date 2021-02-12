@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
+// import Link from 'next/link'
 import { FaSearch, FaSpinner } from 'react-icons/fa'
 import { Formik, Form, Field, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
@@ -8,19 +8,22 @@ import axios from 'axios'
 import ErrorMessage from '../../components/ErrorMessage'
 // import ErrorMessageBox from '../../components/ErrorMessageBox'
 import { api } from '../../hooks/fetch'
-import { normalizeDate } from '../../helpers'
+import { useAudience } from '../../hooks/audience'
+import { useAuth } from '../../hooks/auth'
+import { normalizeDate, normalizeHour } from '../../helpers'
 
 interface Values {
   city: string
   area: string
-  tipo_audiencia: string
-  audience_local: string
-  audience_date: string
-  professional_type: string
+  type: string
+  local: string
+  date: string
+  hour_start: string
+  hour_end: string
   process_number: string
+  process_type: string
   certificate_required: string
-  username: string
-  email: string
+  observations: string
 }
 
 interface CityData {
@@ -32,6 +35,22 @@ interface GoogleResult {
   place_id: string
   formatted_address: string
   name: string
+  geometry: {
+    location: {
+      lat: number
+      lng: number
+    }
+    viewport: {
+      northeast: {
+        lat: number
+        lng: number
+      }
+      southwest: {
+        lat: number
+        lng: number
+      }
+    }
+  }
 }
 
 interface GooglePlacesResponse {
@@ -39,13 +58,14 @@ interface GooglePlacesResponse {
 }
 
 export default function CadastroAdvogadosCorrespondentesJuridicos() {
+  const { audience, updateAudience, reset } = useAudience()
+  const { user } = useAuth()
   const router = useRouter()
   const [cities, setCities] = useState<CityData[]>([])
   const [googleResponse, setGoogleResponse] = useState<GooglePlacesResponse>({
     results: []
   })
   const [cityFilter, setCityFilter] = useState('')
-  const [selectedCity, setSelectedCity] = useState('')
   const [toogleCitiesSearch, setToogleCitiesSearch] = useState(false)
   const [toogleAudienceLocalSearch, setToogleAudienceLocalSearch] = useState(
     false
@@ -72,7 +92,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
 
   async function handleSearchGoogle(address: string) {
     try {
-      if (!selectedCity) {
+      if (!audience.city) {
         return
       }
 
@@ -80,7 +100,13 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
       setToogleAudienceLocalSearch(true)
 
       const { data } = await axios.get(
-        `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/textsearch/json?query=${address}+em+${selectedCity}&language=pt_br&key=AIzaSyDAjRSRcacpQCEROGB9ZvGztaBdMi7V6n4`
+        `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/google-places`,
+        {
+          params: {
+            address,
+            city: audience.city
+          }
+        }
       )
 
       setGoogleResponse(data)
@@ -166,49 +192,119 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full">
           <div>
-            <h2 className="mt-6 self-center text-center text-3xl font-extrabold text-blue-500">
-              Encontre Advogados e Profissionais Jurídicos Qualificados
+            <h2 className="mb-6 text-center text-3xl font-extrabold text-blue-500">
+              Solicitar Audiência
             </h2>
           </div>
 
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 md:px-8">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-8 bg-white shadow-lg rounded-md p-6">
             <Formik
               initialValues={{
-                city: '',
-                area: '',
-                tipo_audiencia: '',
-                audience_local: '',
-                professional_type: '',
-                process_number: '',
-                certificate_required: '',
-                username: '',
-                email: '',
-                audience_date: ''
+                city: audience?.city ? audience?.city : '',
+                area: audience?.area ? audience?.area : '',
+                type: audience?.type ? audience?.type : '',
+                local: audience?.local ? audience?.local : '',
+                process_number: audience?.process_number
+                  ? audience?.process_number
+                  : '',
+                process_type: audience?.process_type
+                  ? audience?.process_type
+                  : '',
+                certificate_required: audience?.certificate_required
+                  ? audience?.certificate_required
+                  : '',
+                date: audience?.date ? audience?.date : '',
+                hour_start: audience?.hour_start ? audience?.hour_start : '',
+                hour_end: audience?.hour_end ? audience?.hour_end : '',
+                observations: audience?.observations
+                  ? audience?.observations
+                  : ''
               }}
               validationSchema={Yup.object({
-                username: Yup.string().required('Nome obrigatório'),
-                email: Yup.string()
-                  .email('Endereço de email inválido')
-                  .required('Email obrigátorio')
+                city: Yup.string().required('Cidade obrigatória'),
+                area: Yup.string().required('Área obrigatória'),
+                type: Yup.string().required('Tipo obrigatório'),
+                local: Yup.string().required('Local obrigatório'),
+                date: Yup.string().required('Data obrigatória'),
+                hour_start: Yup.string().required(
+                  'Horário inicial obrigatório'
+                ),
+                hour_end: Yup.string().required('Horário final obrigatório'),
+                process_number: Yup.string(),
+                process_type: Yup.string(),
+                certificate_required: Yup.string(),
+                observations: Yup.string()
               })}
               onSubmit={async (
                 values: Values,
                 { setSubmitting }: FormikHelpers<Values>
               ) => {
-                const { username, email } = values
-
                 try {
-                  const { data } = await api.post('/authperm/register', {
-                    username,
-                    email,
-                    type: 'E'
-                  })
+                  Object.assign(audience, values)
 
-                  router.push({
-                    pathname: '/verificar-email',
-                    query: { token: data.token }
-                  })
+                  updateAudience(audience)
+
+                  if (!audience.lawyer) {
+                    router.push('/profissionais')
+                  }
+
+                  const {
+                    date,
+                    hour_start: hour_start_string,
+                    hour_end: hour_end_string
+                  } = values
+
+                  const [day, month, year] = date.split('/')
+
+                  const [hour_start, minutes_start] = hour_start_string
+                    .replace(/\s/g, '')
+                    .split(':')
+                  const [hour_end, minutes_end] = hour_end_string
+                    .replace(/\s/g, '')
+                    .split(':')
+
+                  const start_date = new Date(
+                    Number(year),
+                    Number(month) + 1,
+                    Number(day),
+                    Number(hour_start),
+                    Number(minutes_start),
+                    0,
+                    0
+                  )
+                  const end_date = new Date(
+                    Number(year),
+                    Number(month) + 1,
+                    Number(day),
+                    Number(hour_end),
+                    Number(minutes_end),
+                    0,
+                    0
+                  )
+
+                  await api.post(
+                    `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments`,
+                    {
+                      correspondent_id: audience.lawyer.id,
+                      requester_id: user.id,
+                      forum_address: audience.forum.formatted_address,
+                      forum_name: audience.forum.name,
+                      forum_lat: audience.forum.geometry.location.lat,
+                      forum_lng: audience.forum.geometry.location.lng,
+                      start_date,
+                      end_date,
+                      area: audience.area,
+                      type: audience.type,
+                      process_type: audience.process_type,
+                      process_number: audience.process_number,
+                      observations: audience.observations
+                    }
+                  )
+
+                  reset()
+                  router.push('/painel')
                 } catch (err) {
+                  console.log(err)
                   if (err.response && err.response.status === 400) {
                     setSubmitError(err.response.data.msg)
                   } else if (err.response && err.response.status === 500) {
@@ -236,6 +332,47 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
               }) => (
                 <Form className="mt-8 space-y-8">
                   <div>
+                    {audience?.lawyer && (
+                      <div>
+                        <span className="text-gray-500 font-medium text-sm">
+                          Enviar solicitação para:
+                        </span>
+                        <div className="mt-2 flex space-x-4 items-center">
+                          <a
+                            href={`/p/${audience.lawyer.profile_link}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="h-16 w-16 rounded-full overflow-hidden bg-gray-100"
+                          >
+                            {audience.lawyer.avatar_url ? (
+                              <img
+                                className="h-full w-full"
+                                src={audience.lawyer.avatar_url}
+                                alt="Foto do perfil"
+                              />
+                            ) : (
+                              <svg
+                                className="h-full w-full text-gray-300"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                              </svg>
+                            )}
+                          </a>
+                          <div>
+                            <a
+                              href={`/p/${audience.lawyer.profile_link}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-blue-500 hover:text-blue-700 font-bold"
+                            >
+                              {audience.lawyer.profile_name}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <div className="mt-4">
                       <label
                         className="text-gray-500 font-medium text-sm"
@@ -266,14 +403,14 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
 
                           if (e.key === 'Enter') {
                             setFieldValue('city', city, false)
-                            setSelectedCity(city)
+                            updateAudience({ ...audience, city })
                             setToogleCitiesSearch(false)
                           }
 
                           if (e.key === 'ArrowDown') {
                             city = formattedCities[cursor + 1]
                             setFieldValue('city', city, false)
-                            setSelectedCity(city)
+                            updateAudience({ ...audience, city })
                             if (cursor < formattedCities.length) {
                               setCursor(state => state + 1)
                             }
@@ -281,7 +418,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                           if (e.key === 'ArrowUp') {
                             city = formattedCities[cursor - 1]
                             setFieldValue('city', city, false)
-                            setSelectedCity(city)
+                            updateAudience({ ...audience, city })
                             if (cursor > 0) {
                               setCursor(state => state - 1)
                             }
@@ -311,7 +448,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                               className="w-full h-full text-left outline-none focus:outline-none"
                               onClick={e => {
                                 setFieldValue('city', city, false)
-                                setSelectedCity(city)
+                                updateAudience({ ...audience, city })
                                 setToogleCitiesSearch(false)
                               }}
                               type="button"
@@ -343,19 +480,22 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         <option value="Trabalhista">Trabalhista</option>
                         <option value="Tributária">Tributária</option>
                       </Field>
+                      {errors.area && touched.area && (
+                        <ErrorMessage>{errors.area}</ErrorMessage>
+                      )}
                     </div>
                     <div className="mt-4">
                       <label
                         className="text-gray-500 font-medium text-sm"
-                        htmlFor="tipo_audiencia"
+                        htmlFor="type"
                       >
                         Tipo de audiência
                       </label>
                       <Field
                         as="select"
                         className="mt-2 select-input"
-                        id="tipo_audiencia"
-                        name="tipo_audiencia"
+                        id="type"
+                        name="type"
                       >
                         <option value="" disabled>
                           Selecione...
@@ -369,18 +509,21 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         <option value="Julgamento">Julgamento</option>
                         <option value="Una">Una</option>
                       </Field>
+                      {errors.type && touched.type && (
+                        <ErrorMessage>{errors.type}</ErrorMessage>
+                      )}
                     </div>
                     <div className="mt-4">
                       <label
                         className="text-gray-500 font-medium text-sm"
-                        htmlFor="audience_local"
+                        htmlFor="local"
                       >
                         Local do serviço (fórum, tribunal, etc)
                       </label>
-                      <div className="flex  mt-2">
+                      <div className="flex mt-2">
                         <Field
-                          id="audience_local"
-                          name="audience_local"
+                          id="local"
+                          name="local"
                           type="text"
                           className="input"
                           placeholder={
@@ -393,13 +536,15 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         <button
                           type="button"
                           className="flex justify-center items-center primary-btn focus:border-none focus:outline-none rounded-none"
-                          onClick={() =>
-                            handleSearchGoogle(values.audience_local)
-                          }
+                          onClick={() => handleSearchGoogle(values.local)}
                         >
                           <FaSearch className="text-white mr-2" /> PESQUISAR
                         </button>
                       </div>
+
+                      {errors.local && touched.local && (
+                        <ErrorMessage>{errors.local}</ErrorMessage>
+                      )}
 
                       {toogleAudienceLocalSearch && (
                         <ul className="mt-1 bg-gray-100 rounded-b-md shadow-lg z-10 max-h-60 overflow-auto divide-y-2 px-2">
@@ -417,12 +562,12 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                               <li className="p-2" key={local.place_id}>
                                 <button
                                   className="w-full flex h-full  items-center justify-between outline-none focus:outline-none"
-                                  onClick={e => {
-                                    setFieldValue(
-                                      'audience_local',
-                                      local.name,
-                                      false
-                                    )
+                                  onClick={() => {
+                                    updateAudience({
+                                      ...audience,
+                                      forum: local
+                                    })
+                                    setFieldValue('local', local.name, false)
                                     setToogleAudienceLocalSearch(false)
                                   }}
                                   type="button"
@@ -456,82 +601,58 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         <div>
                           <label
                             className="text-gray-500 font-medium text-sm"
-                            htmlFor="audience_date"
+                            htmlFor="date"
                           >
                             Data da audiência
                           </label>
                           <Field
-                            id="audience_date"
-                            name="audience_date"
-                            value={normalizeDate(values.audience_date)}
+                            id="date"
+                            name="date"
+                            value={normalizeDate(values.date)}
                             type="text"
                             className="appearance-none mt-2 input"
                           />
+                          {errors.date && touched.date && (
+                            <ErrorMessage>{errors.date}</ErrorMessage>
+                          )}
                         </div>
 
                         <div>
                           <label
                             className="text-gray-500 font-medium text-sm"
-                            htmlFor="audience_hour"
+                            htmlFor="hour"
                           >
-                            Hora
+                            Horário de ínício
                           </label>
                           <Field
-                            as="select"
-                            className="mt-2 select-input"
-                            id="audience_hour"
-                            name="audience_hour"
-                          >
-                            <option value="" disabled>
-                              --
-                            </option>
-                            <option value="06">06</option>
-                            <option value="07">07</option>
-                            <option value="08">08</option>
-                            <option value="09">09</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                            <option value="13">13</option>
-                            <option value="14">14</option>
-                            <option value="15">15</option>
-                            <option value="16">11</option>
-                            <option value="17">17</option>
-                            <option value="18">18</option>
-                            <option value="19">19</option>
-                            <option value="20">20</option>
-                            <option value="21">21</option>
-                            <option value="22">22</option>
-                          </Field>
+                            className="mt-2 input"
+                            id="hour"
+                            placeholder="hora : minutos"
+                            name="hour_start"
+                            value={normalizeHour(values.hour_start)}
+                          />
+                          {errors.hour_start && touched.hour_start && (
+                            <ErrorMessage>{errors.hour_start}</ErrorMessage>
+                          )}
                         </div>
 
                         <div>
                           <label
                             className="text-gray-500 font-medium text-sm"
-                            htmlFor="audience_minutes"
+                            htmlFor="minutes"
                           >
-                            Minutos
+                            Horário de término
                           </label>
                           <Field
-                            as="select"
-                            className="mt-2 select-input"
-                            id="audience_minutes"
-                            name="audience_minutes"
-                          >
-                            <option value="" disabled>
-                              --
-                            </option>
-                            <option value="05">05</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                            <option value="35">35</option>
-                            <option value="40">40</option>
-                            <option value="45">45</option>
-                            <option value="50">50</option>
-                            <option value="55">55</option>
-                          </Field>
+                            className="mt-2 input"
+                            id="hour_end"
+                            placeholder="hora : minutos"
+                            name="hour_end"
+                            value={normalizeHour(values.hour_end)}
+                          />
+                          {errors.hour_end && touched.hour_end && (
+                            <ErrorMessage>{errors.hour_end}</ErrorMessage>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -554,11 +675,14 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         <option value="Eletrônico">Eletrônico</option>
                         <option value="Físico">Físico</option>
                       </Field>
+                      {errors.process_type && touched.process_type && (
+                        <ErrorMessage>{errors.process_type}</ErrorMessage>
+                      )}
                     </div>
                     <div className="mt-4">
                       <label
                         className="text-gray-500 font-medium text-sm"
-                        htmlFor="process_type"
+                        htmlFor="certificate_required"
                       >
                         Profissional com certificado digital? (opcional)
                       </label>
@@ -574,6 +698,12 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         <option value="Não">Não</option>
                         <option value="Sim">Sim</option>
                       </Field>
+                      {errors.certificate_required &&
+                        touched.certificate_required && (
+                          <ErrorMessage>
+                            {errors.certificate_required}
+                          </ErrorMessage>
+                        )}
                     </div>
                     <div className="mt-4">
                       <label
@@ -589,36 +719,38 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         type="text"
                         className="mt-2 input"
                       />
+                      {errors.process_number && touched.process_number && (
+                        <ErrorMessage>{errors.process_number}</ErrorMessage>
+                      )}
                     </div>
                     <div className="mt-4">
                       <label
                         className="text-gray-500 font-medium text-sm"
-                        htmlFor="process_number"
+                        htmlFor="observations"
                       >
                         Observações
                       </label>
                       <Field
-                        id="process_number"
-                        name="process_number"
+                        id="observations"
+                        name="observations"
                         as="textarea"
                         placeholder="Escreva aqui outras informações relevantes..."
                         className="mt-2 h-40 input"
                       />
                     </div>
+                    {errors.observations && touched.observations && (
+                      <ErrorMessage>{errors.observations}</ErrorMessage>
+                    )}
                   </div>
 
                   <div className="mt-4">
-                    <Link href="/profissionais">
-                      <a>
-                        <button
-                          disabled={isSubmitting}
-                          type="submit"
-                          className="primary-btn w-full"
-                        >
-                          CONTINUAR
-                        </button>
-                      </a>
-                    </Link>
+                    <button
+                      disabled={isSubmitting}
+                      type="submit"
+                      className="primary-btn w-full"
+                    >
+                      {audience?.lawyer ? 'CONFIRMAR SOLICITAÇÃO' : 'CONTINUAR'}
+                    </button>
                   </div>
                 </Form>
               )}

@@ -93,6 +93,19 @@ export const normalizeDate = value => {
   return formated
 }
 
+export const normalizeHour = value => {
+  if (!value) {
+    return value
+  }
+
+  const formated = value
+    .replace(/\D/g, '')
+    .replace(/(\d{2})(\d)/, '$1:$2')
+    .slice(0, 5)
+
+  return formated
+}
+
 export const normalizeAccBank = value => {
   if (!value) {
     return value

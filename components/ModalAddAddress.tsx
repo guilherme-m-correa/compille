@@ -363,8 +363,6 @@ function Address({ company_id, open, setOpen, onAdd }) {
                 dataAddress.street === '' ||
                 dataAddress.street_number === '' ||
                 dataAddress.zip_code === '' ||
-                (!dataAddress.is_billing_address &&
-                  !dataAddress.is_main_address) ||
                 loading
               }
             >

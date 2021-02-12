@@ -1,6 +1,7 @@
 import { createContext, useCallback, useState, useContext } from 'react'
 
 import { useRouter } from 'next/router'
+import { useAudience } from './audience'
 import { api } from './fetch'
 
 interface User {
@@ -41,6 +42,7 @@ const Auth = createContext<AuthContextData>({} as AuthContextData)
 
 export const AuthProvider: React.FC = ({ children }) => {
   const router = useRouter()
+  const { reset } = useAudience()
 
   const [data, setData] = useState<AuthState>(() => {
     if (typeof window !== 'undefined') {
@@ -96,9 +98,10 @@ export const AuthProvider: React.FC = ({ children }) => {
         router.push('/painel')
       }
 
+      reset()
       setData({ token, user })
     },
-    [router]
+    [router, reset]
   )
 
   const signOut = useCallback(() => {
@@ -107,8 +110,9 @@ export const AuthProvider: React.FC = ({ children }) => {
       localStorage.removeItem('@Compille:user')
     }
 
+    reset()
     setData({} as AuthState)
-  }, [])
+  }, [reset])
 
   const updateUser = useCallback(
     (user: User) => {
