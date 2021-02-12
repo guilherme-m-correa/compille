@@ -47,7 +47,7 @@ export default function Demandas() {
                     appointments.map(appointment => (
                       <tr className="hover:bg-gray-100">
                         <td className="px-6 py-12 whitespace-nowrap">
-                          <Link href={`/demandas/${appointment.id}`}>
+                          <Link href={`/painel/demandas/${appointment.id}`}>
                             <a>
                               <div className="flex items-center">
                                 <div className="flex-shrink-0 h-24 w-24 mr-2">
