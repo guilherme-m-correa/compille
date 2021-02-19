@@ -710,8 +710,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         className="text-gray-500 font-medium text-sm"
                         htmlFor="process_number"
                       >
-                        Número do processo (será exibido somente ao profissional
-                        contratado)
+                        Número do processo
                       </label>
                       <Field
                         id="process_number"

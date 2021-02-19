@@ -1,6 +1,6 @@
 interface Appointment {
   id: number
-  correspondent_id: number
+  correspondent_id: string
   requester_id: string
   forum_id: number
   appointment_status_id: number
@@ -11,6 +11,7 @@ interface Appointment {
   process_type: string
   process_number: string
   observations: string
+  value: number
   forum: {
     id: number
     address: string

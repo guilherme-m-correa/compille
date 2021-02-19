@@ -364,7 +364,7 @@ export default function Agenda() {
                   </button>
                   <button
                     type="button"
-                    className="secondary-btn border-blue-500 text-blue-500"
+                    className="secondary-btn border-blue-500 text-blue-500  hover:border-blue-500 hover:text-blue-500"
                     onClick={() => setConfirmDelete(false)}
                   >
                     CANCELAR

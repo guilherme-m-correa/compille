@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { FaCalendarAlt } from 'react-icons/fa'
 import { format } from 'date-fns'
 import { api } from '../../../hooks/fetch'
 import { useAuth } from '../../../hooks/auth'
@@ -13,20 +12,32 @@ export default function Demandas() {
   useEffect(() => {
     async function loadData() {
       try {
-        const response = await api.get(`/comercial/people/user/${user?.id}`)
+        if (user.type === 'P') {
+          const { data } = await api.get(
+            `/comercial/correspondents/${user.id}/appointments`
+          )
 
-        const { data } = await api.get(
-          `/comercial/correspondents/${response.data.id}/appointments`
-        )
+          setAppointments(data)
+        }
 
-        setAppointments(data)
+        if (user.type === 'E') {
+          const { data } = await api.get(
+            `/comercial/requesters/${user.id}/appointments`
+          )
+
+          setAppointments(data)
+        }
       } catch (error) {
         console.log(error)
       }
     }
 
+    if (!user.id) {
+      return
+    }
+
     loadData()
-  }, [user?.id])
+  }, [user?.id, user?.type])
 
   return (
     <Container>
@@ -96,9 +107,36 @@ export default function Demandas() {
                               Aguardando sua proposta
                             </span>
                           )}
+                          {appointment.appointment_status_id === 2 && (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              Aguardando contratação
+                            </span>
+                          )}
+                          {appointment.appointment_status_id === 3 && (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              Em execução
+                            </span>
+                          )}
+                          {appointment.appointment_status_id === 4 && (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              Cancelada
+                            </span>
+                          )}
+                          {appointment.appointment_status_id === 5 && (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              Finalizada
+                            </span>
+                          )}
                         </td>
                       </tr>
                     ))}
+                  {appointments.length === 0 && (
+                    <div className="h-96 flex justify-center items-center">
+                      <h3 className="text-gray-500 text-lg tracking-wide">
+                        Não encontramos nenhuma demanda.
+                      </h3>
+                    </div>
+                  )}
                 </tbody>
               </table>
             </div>

@@ -76,26 +76,20 @@ export const AuthProvider: React.FC = ({ children }) => {
 
       api.defaults.headers.authorization = `Bearer ${token}`
 
-      if (user.type === 'P') {
-        try {
-          const { data: person } = await api.get(
-            `/comercial/people/user/${user.id}`
-          )
+      try {
+        const { data: person } = await api.get(
+          `/comercial/people/user/${user.id}`
+        )
 
-          if (person.register_finish) {
-            router.push('/painel')
-          } else {
-            router.push('/painel/editar-perfil')
-          }
-        } catch (error) {
-          if (error.response.status === 404) {
-            router.push('/painel/editar-perfil')
-          }
+        if (person.register_finish) {
+          router.push('/painel')
+        } else {
+          router.push('/painel/editar-perfil')
         }
-      }
-
-      if (user.type === 'E') {
-        router.push('/painel')
+      } catch (error) {
+        if (error.response.status === 404) {
+          router.push('/painel/editar-perfil')
+        }
       }
 
       reset()
