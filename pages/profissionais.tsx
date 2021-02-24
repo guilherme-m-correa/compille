@@ -13,7 +13,49 @@ export default function Profissionais() {
   useEffect(() => {
     async function loadData() {
       try {
-        const { data } = await api.get(`/comercial/available-lawyers`)
+        const {
+          date,
+          hour_start: hour_start_string,
+          hour_end: hour_end_string
+        } = audience
+
+        const [day, month, year] = date.split('/')
+
+        const [hour_start, minutes_start] = hour_start_string
+          .replace(/\s/g, '')
+          .split(':')
+        const [hour_end, minutes_end] = hour_end_string
+          .replace(/\s/g, '')
+          .split(':')
+
+        const start_date = new Date(
+          Number(year),
+          Number(month) + 1,
+          Number(day),
+          Number(hour_start),
+          Number(minutes_start),
+          0,
+          0
+        )
+        const end_date = new Date(
+          Number(year),
+          Number(month) + 1,
+          Number(day),
+          Number(hour_end),
+          Number(minutes_end),
+          0,
+          0
+        )
+
+        const { data } = await api.get(`/comercial/available-lawyers`, {
+          params: {
+            start_date,
+            end_date,
+            latitude: audience.forum.geometry.location.lat,
+            longitude: audience.forum.geometry.location.lng,
+            certificate_required: audience.certificate_required
+          }
+        })
 
         setLawyers(data)
       } catch (error) {
@@ -21,8 +63,12 @@ export default function Profissionais() {
       }
     }
 
+    if (!audience) {
+      return
+    }
+
     loadData()
-  }, [])
+  }, [audience])
 
   async function handleSelectLawyer(lawyer: Person) {
     Object.assign(audience, { lawyer })
@@ -31,14 +77,24 @@ export default function Profissionais() {
   }
 
   return (
-    <>
-      <Container>
-        <h2 className="mt-10 text-3xl text-center font-semibold text-blue-500">
-          Encontramos os seguintes profissionais disponíveis para a audiência
-        </h2>
+    <Container>
+      <h2 className="mt-10 text-3xl text-center font-semibold text-blue-500">
+        Profissionais
+      </h2>
 
-        <ul className="mt-8 divide-y flex flex-col items-center">
-          {lawyers.map(lawyer => (
+      <ul className="mt-8 mb-56 divide-y flex flex-col items-center">
+        {lawyers.length === 0 && (
+          <li>
+            <div className="flex h-screen justify-center items-center">
+              <strong className="text-xl">
+                {' '}
+                Nenhum profissional encontrado
+              </strong>
+            </div>
+          </li>
+        )}
+        {lawyers.length > 0 &&
+          lawyers.map(lawyer => (
             <li
               key={lawyer.id}
               className="flex justify-between items-center bg-white w-full p-6 rounded-md"
@@ -102,117 +158,116 @@ export default function Profissionais() {
               </div>
             </li>
           ))}
-        </ul>
-
-        <div className="bg-white  mb-10 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-          <div className="flex-1 flex justify-between sm:hidden">
-            <a
-              href="#"
-              className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
-            >
-              Anterior
-            </a>
-            <a
-              href="#"
-              className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
-            >
-              Próximo
-            </a>
-          </div>
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">10</span> de{' '}
-                <span className="font-medium">97</span> resultados
-              </p>
-            </div>
-            <div>
-              <nav
-                className="relative z-0 inline-flex shadow-sm -space-x-px"
-                aria-label="Pagination"
-              >
-                <a
-                  href="#"
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                >
-                  <span className="sr-only">Previous</span>
-                  <svg
-                    className="h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </a>
-                <a
-                  href="#"
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  1
-                </a>
-                <a
-                  href="#"
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  2
-                </a>
-                <a
-                  href="#"
-                  className="hidden md:inline-flex relative items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  3
-                </a>
-                <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-                  ...
-                </span>
-                <a
-                  href="#"
-                  className="hidden md:inline-flex relative items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  8
-                </a>
-                <a
-                  href="#"
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  9
-                </a>
-                <a
-                  href="#"
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  10
-                </a>
-                <a
-                  href="#"
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                >
-                  <span className="sr-only">Next</span>
-                  <svg
-                    className="h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </a>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </Container>
-    </>
+      </ul>
+      {/*
+         <div className="bg-white  mb-10 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+           <div className="flex-1 flex justify-between sm:hidden">
+             <a
+               href="#"
+               className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
+             >
+               Anterior
+             </a>
+             <a
+               href="#"
+               className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
+             >
+               Próximo
+             </a>
+           </div>
+           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+             <div>
+               <p className="text-sm text-gray-700">
+                 <span className="font-medium">10</span> de{' '}
+                 <span className="font-medium">97</span> resultados
+               </p>
+             </div>
+             <div>
+               <nav
+                 className="relative z-0 inline-flex shadow-sm -space-x-px"
+                 aria-label="Pagination"
+               >
+                 <a
+                   href="#"
+                   className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                 >
+                   <span className="sr-only">Previous</span>
+                   <svg
+                     className="h-5 w-5"
+                     xmlns="http:www.w3.org/2000/svg"
+                     viewBox="0 0 20 20"
+                     fill="currentColor"
+                     aria-hidden="true"
+                   >
+                     <path
+                       fillRule="evenodd"
+                       d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                       clipRule="evenodd"
+                     />
+                   </svg>
+                 </a>
+                 <a
+                   href="#"
+                   className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                 >
+                   1
+                 </a>
+                 <a
+                   href="#"
+                   className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                 >
+                   2
+                 </a>
+                 <a
+                   href="#"
+                   className="hidden md:inline-flex relative items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                 >
+                   3
+                 </a>
+                 <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                   ...
+                 </span>
+                 <a
+                   href="#"
+                   className="hidden md:inline-flex relative items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                 >
+                   8
+                 </a>
+                 <a
+                   href="#"
+                   className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                 >
+                   9
+                 </a>
+                 <a
+                   href="#"
+                   className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                 >
+                   10
+                 </a>
+                 <a
+                   href="#"
+                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                 >
+                   <span className="sr-only">Next</span>
+                   <svg
+                     className="h-5 w-5"
+                     xmlns="http:www.w3.org/2000/svg"
+                     viewBox="0 0 20 20"
+                     fill="currentColor"
+                     aria-hidden="true"
+                   >
+                     <path
+                       fillRule="evenodd"
+                       d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                       clipRule="evenodd"
+                     />
+                   </svg>
+                 </a>
+               </nav>
+             </div>
+           </div>
+         </div> */}
+    </Container>
   )
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
-// import Link from 'next/link'
+import Link from 'next/link'
 import { FaSearch, FaSpinner } from 'react-icons/fa'
 import { Formik, Form, Field, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
@@ -10,7 +10,7 @@ import ErrorMessage from '../../components/ErrorMessage'
 import { api } from '../../hooks/fetch'
 import { useAudience } from '../../hooks/audience'
 import { useAuth } from '../../hooks/auth'
-import { normalizeDate, normalizeHour } from '../../helpers'
+import { normalizeDate, normalizeHour, parseDateString } from '../../helpers'
 
 interface Values {
   city: string
@@ -225,7 +225,11 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                 area: Yup.string().required('Área obrigatória'),
                 type: Yup.string().required('Tipo obrigatório'),
                 local: Yup.string().required('Local obrigatório'),
-                date: Yup.string().required('Data obrigatória'),
+                date: Yup.date()
+                  .typeError('Data inválida')
+                  .transform(parseDateString)
+                  .min(new Date(), 'Data deve ser maior que hoje')
+                  .required('Data obrigátoria'),
                 hour_start: Yup.string().required(
                   'Horário inicial obrigatório'
                 ),
@@ -371,6 +375,9 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                             </a>
                           </div>
                         </div>
+                        <Link href="/profissionais">
+                          <a>Alterar</a>
+                        </Link>
                       </div>
                     )}
                     <div className="mt-4">

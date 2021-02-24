@@ -725,6 +725,16 @@ export default function AppointmentChat() {
                 </li>
               </ul>
             </div>
+
+            <div className="flex px-6 justify-center">
+              <button
+                type="button"
+                onClick={() => setModalCancelAppointmentOpen(true)}
+                className="mt-10 tertiary-btn w-full"
+              >
+                CANCELAR DEMANDA
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 flex flex-col bg-white">
