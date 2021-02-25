@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { FaSpinner } from 'react-icons/fa'
 import { api } from '../hooks/fetch'
 import { useAudience } from '../hooks/audience'
 import Container from '../components/Container'
@@ -7,12 +8,15 @@ import { Person } from '../@types/person'
 
 export default function Profissionais() {
   const [lawyers, setLawyers] = useState<Person[]>([] as Person[])
+  const [loading, setLoading] = useState(false)
   const { audience, updateAudience } = useAudience()
   const router = useRouter()
 
   useEffect(() => {
     async function loadData() {
       try {
+        setLoading(true)
+
         const {
           date,
           hour_start: hour_start_string,
@@ -53,13 +57,15 @@ export default function Profissionais() {
             end_date,
             latitude: audience.forum.geometry.location.lat,
             longitude: audience.forum.geometry.location.lng,
-            certificate_required: audience.certificate_required
+            certificate_required: audience.certificate_required === 'Sim'
           }
         })
 
         setLawyers(data)
       } catch (error) {
         console.log(error)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -78,6 +84,11 @@ export default function Profissionais() {
 
   return (
     <Container>
+      {loading && (
+        <div className="min-h-screen flex justify-center items-center animate-spin text-blue-500">
+          <FaSpinner className="h-16 w-16" />
+        </div>
+      )}
       <h2 className="mt-10 text-3xl text-center font-semibold text-blue-500">
         Profissionais
       </h2>
