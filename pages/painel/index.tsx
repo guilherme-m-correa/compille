@@ -7,6 +7,7 @@ import { api } from '../../hooks/fetch'
 import { useAuth } from '../../hooks/auth'
 import ModalAppointmentDetails from '../../components/ModalAppointmentDetails'
 import ModalEndAppointment from '../../components/ModalEndAppointment'
+import ModalRateAppointment from '../../components/ModalRateAppointment'
 
 interface Person {
   id: number
@@ -137,6 +138,9 @@ const PainelSolicitante: React.FC = () => {
     {} as Appointment
   )
   const [modalEndAppointmentOpen, setModalEndAppointmentOpen] = useState(false)
+  const [modalRateAppointmentOpen, setModalRateAppointmentOpen] = useState(
+    false
+  )
   const [
     modalAppointmentDetailsOpen,
     setModalAppointmentDetailsOpen
@@ -180,7 +184,7 @@ const PainelSolicitante: React.FC = () => {
           appointment => appointment.id !== appointmentSelected.id
         )
       )
-      toast.success(`Demanda #${appointmentSelected.id} foi finalizada.`)
+      setModalRateAppointmentOpen(true)
     } catch (error) {
       console.log(error)
     }
@@ -188,6 +192,11 @@ const PainelSolicitante: React.FC = () => {
 
   return (
     <div className="flex flex-col mx-auto">
+      <ModalRateAppointment
+        open={modalRateAppointmentOpen}
+        setOpen={setModalRateAppointmentOpen}
+        appointment={appointmentSelected}
+      />
       <ModalAppointmentDetails
         open={modalAppointmentDetailsOpen}
         setOpen={setModalAppointmentDetailsOpen}

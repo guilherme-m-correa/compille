@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { FaMapMarkerAlt, FaCheckSquare } from 'react-icons/fa'
+import { FaMapMarkerAlt, FaCheckSquare, FaStar } from 'react-icons/fa'
 import Container from '../../components/Container'
 import { api } from '../../hooks/fetch'
 import { Person } from '../../@types/person'
@@ -8,6 +8,7 @@ import { Person } from '../../@types/person'
 export default function PublicProfile() {
   const [person, setPerson] = useState<Person>(null)
   const [legalInstances, setLegalInstances] = useState([])
+  const [ratings, setRatings] = useState([])
   const [juridicalAreas, setJuridicalAreas] = useState([])
   const [citiesData, setCitiesData] = useState([])
   const router = useRouter()
@@ -68,11 +69,15 @@ export default function PublicProfile() {
           `/comercial/personcities/${personData.id}`
         )
         setCitiesData(data)
+
+        const { data: ratingsData } = await api.get(
+          `/comercial/ratings?person_id=${personData.id}`
+        )
+        setRatings(ratingsData)
       } catch (error) {
         if (error.response.status === 404) {
           router.push('/404')
         }
-        console.log(error)
       }
     }
 
@@ -81,7 +86,17 @@ export default function PublicProfile() {
     }
 
     loadData()
-  }, [profile_link])
+  }, [profile_link, router])
+
+  const ratingAverage = useMemo(() => {
+    const sum = ratings.reduce((accumulator, rating) => {
+      return accumulator + rating.value
+    }, 0)
+
+    const average = sum / ratings.length
+
+    return average.toFixed(1).replace('.', ',')
+  }, [ratings])
 
   return (
     <>
@@ -109,6 +124,13 @@ export default function PublicProfile() {
             <h2 className="mt-8  text-white text-3xl font-medium">
               {person?.profile_name}
             </h2>
+
+            {ratings.length > 0 && (
+              <div className="mt-2 flex items-center justify-center space-x-2 px-2 py-1 rounded bg-yellow-500 text-white">
+                <FaStar />
+                <strong>{ratingAverage}</strong>
+              </div>
+            )}
 
             <div className="mt-4 flex space-x-4">
               {person?.oab && person?.oab_uf && (

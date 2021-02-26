@@ -45,9 +45,7 @@ const ModalEndAppointment = ({
                 </h3>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
-                    Clique no botão Confirmar para comprovar que o
-                    correspondente terminou o serviço. Após finalizar sua
-                    demanda ela será arquivada.
+                    Clique no botão confirmar para finalizar a demanda.
                   </p>
                 </div>
               </div>
@@ -67,14 +65,14 @@ const ModalEndAppointment = ({
               onClick={() => setOpen(false)}
               className="secondary-btn border-blue-500 text-blue-500  hover:border-blue-500 hover:text-blue-500"
             >
-              VOLTAR
+              CANCELAR
             </button>
             <button
               type="button"
               onClick={() => handleEndAppointment()}
               className="primary-btn"
             >
-              CONFIRMAR
+              FINALIZAR
             </button>
           </div>
         </div>
