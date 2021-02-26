@@ -90,7 +90,8 @@ const ModalEndAppointment = ({
                   className="text-lg  mb-4 text-center leading-6 font-medium text-gray-900"
                   id="modal-headline"
                 >
-                  Qual foi sua experiência com Guilherme Matheus Corrêa?
+                  Qual foi sua experiência com{' '}
+                  {appointment.correspondent.profile_name}?
                 </h3>
 
                 {ratingTypes.map((rating_type, index) => (
