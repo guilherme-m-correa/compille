@@ -3,8 +3,7 @@ import axios from 'axios'
 
 export const api = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_GATEWAY_URL ||
-    'https://gateway.compille.com.br/'
+    process.env.NEXT_PUBLIC_API_GATEWAY_URL || 'https://gw.annexusapp.com/'
 })
 
 export function useFetch<Data = any, Error = any>(url: string) { //eslint-disable-line
