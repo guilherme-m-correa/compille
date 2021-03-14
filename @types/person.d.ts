@@ -2,6 +2,7 @@ import { StringDecoder } from 'string_decoder'
 
 interface Person {
   id: number
+  person_id: number
   user_id: string
   cpf: string
   rg: string

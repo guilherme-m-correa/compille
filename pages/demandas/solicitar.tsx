@@ -289,7 +289,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                   await api.post(
                     `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments`,
                     {
-                      correspondent_id: audience.lawyer.id,
+                      correspondent_id: audience.lawyer.person_id,
                       requester_id: user.id,
                       forum_address: audience.forum.formatted_address,
                       forum_name: audience.forum.name,
