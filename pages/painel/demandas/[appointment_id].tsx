@@ -81,7 +81,19 @@ export default function AppointmentChat() {
       return
     }
 
-    socket.on(`previousMessages_${user.id}`, data => {
+    if (Object.keys(socket).length === 0) {
+      return
+    }
+
+    socket.emit('appointment', { appointment_id, user_id: user.id })
+  }, [socket, user, appointment_id])
+
+  useEffect(() => {
+    if (Object.keys(socket).length === 0) {
+      return
+    }
+
+    socket.on(`previousMessages_${user.id}_${appointment_id}`, data => {
       setMessagesData([
         ...messagesData,
         ...data.filter(msg => msg.appointment_id === Number(appointment_id))
@@ -113,7 +125,7 @@ export default function AppointmentChat() {
     return () => {//eslint-disable-line
       socket.off(`appointment_${appointment_id}`)//eslint-disable-line
     } //eslint-disable-line
-  }, [messagesData, appointment_id]) //eslint-disable-line
+  }, [socket, messagesData, appointment_id, user]) //eslint-disable-line
 
   useEffect(() => {
     async function loadData() {
@@ -140,6 +152,10 @@ export default function AppointmentChat() {
       return
     }
 
+    if (Object.keys(socket).length === 0) {
+      return
+    }
+
     socket.on('receivedOffer', data => {
       if (Number(data.appointment_id) === Number(appointment_id)) {
         loadData()
@@ -147,7 +163,7 @@ export default function AppointmentChat() {
     })
 
     loadData()
-  }, [appointment_id, router, socket])
+  }, [socket, appointment_id, router])
 
   async function handleCancelAppointment() {
     try {
@@ -744,31 +760,33 @@ export default function AppointmentChat() {
                   Negociação
                 </h2>
               </div>
-              <div className="flex space-x-4">
-                <div>
-                  <span className="text-white font-bold mr-2">R$</span>
-                  <input
-                    type="text"
-                    className="input w-24"
-                    value={inputMoneyValue}
-                    onChange={e => {
-                      const value =
-                        Number(e.target.value.replace(/\D/g, '')) / 100
-                      const formattedValue = value.toLocaleString('pt-br', {
-                        minimumFractionDigits: 2
-                      })
-                      setInputMoneyValue(formattedValue)
-                    }}
-                  />
+              {appointment.appointment_status_id < 3 && (
+                <div className="flex space-x-4">
+                  <div>
+                    <span className="text-white font-bold mr-2">R$</span>
+                    <input
+                      type="text"
+                      className="input w-24"
+                      value={inputMoneyValue}
+                      onChange={e => {
+                        const value =
+                          Number(e.target.value.replace(/\D/g, '')) / 100
+                        const formattedValue = value.toLocaleString('pt-br', {
+                          minimumFractionDigits: 2
+                        })
+                        setInputMoneyValue(formattedValue)
+                      }}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setModalConfirmOfferOpen(true)}
+                    className="secondary-btn"
+                  >
+                    ENVIAR PROPOSTA
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setModalConfirmOfferOpen(true)}
-                  className="secondary-btn"
-                >
-                  ENVIAR PROPOSTA
-                </button>
-              </div>
+              )}
             </div>
 
             <div
