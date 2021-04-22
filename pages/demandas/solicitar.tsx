@@ -250,6 +250,8 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
 
                   if (!audience.lawyer) {
                     router.push('/profissionais')
+
+                    return
                   }
 
                   const {
@@ -269,21 +271,30 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
 
                   const start_date = new Date(
                     Number(year),
-                    Number(month) + 1,
+                    Number(month) - 1,
                     Number(day),
                     Number(hour_start),
                     Number(minutes_start),
                     0,
                     0
                   )
+                  console.log(
+                    '🚀 ~ file: solicitar.tsx ~ line 273 ~ CadastroAdvogadosCorrespondentesJuridicos ~ start_date',
+                    start_date
+                  )
+
                   const end_date = new Date(
                     Number(year),
-                    Number(month) + 1,
+                    Number(month) - 1,
                     Number(day),
                     Number(hour_end),
                     Number(minutes_end),
                     0,
                     0
+                  )
+                  console.log(
+                    '🚀 ~ file: solicitar.tsx ~ line 283 ~ CadastroAdvogadosCorrespondentesJuridicos ~ end_date',
+                    end_date
                   )
 
                   await api.post(
@@ -629,13 +640,13 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         <div>
                           <label
                             className="text-gray-500 font-medium text-sm"
-                            htmlFor="hour"
+                            htmlFor="hour_start"
                           >
                             Horário de ínício
                           </label>
                           <Field
                             className="mt-2 input"
-                            id="hour"
+                            id="hour_start"
                             placeholder="hora : minutos"
                             name="hour_start"
                             value={normalizeHour(values.hour_start)}
@@ -648,7 +659,7 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                         <div>
                           <label
                             className="text-gray-500 font-medium text-sm"
-                            htmlFor="minutes"
+                            htmlFor="hour_end"
                           >
                             Horário de término
                           </label>

@@ -162,6 +162,12 @@ export default function AppointmentChat() {
       }
     })
 
+    socket.on('receiveUpdateAppointment', data => {
+      if (Number(data.appointment_id) === Number(appointment_id)) {
+        loadData()
+      }
+    })
+
     loadData()
   }, [socket, appointment_id, router])
 
@@ -173,6 +179,10 @@ export default function AppointmentChat() {
           appointment_status_id: 4
         }
       )
+
+      socket.emit('updateAppointment', {
+        appointment_id: appointment.id
+      })
 
       setModalCancelAppointmentOpen(false)
       router.push('/painel')
@@ -190,7 +200,12 @@ export default function AppointmentChat() {
         }
       )
 
+      socket.emit('updateAppointment', {
+        appointment_id: appointment.id
+      })
+
       setModalAcceptOfferOpen(false)
+
       router.push('/painel')
     } catch (error) {
       console.log(error)
@@ -208,6 +223,12 @@ export default function AppointmentChat() {
           value: parsedValue
         }
       )
+
+      setAppointment({
+        ...appointment,
+        appointment_status_id: 2,
+        value: parsedValue
+      })
 
       setModalConfirmOfferOpen(false)
       toast.success('Sua proposta foi enviada com sucesso!')
@@ -256,8 +277,6 @@ export default function AppointmentChat() {
     async e => {
       try {
         const { files } = e.target
-
-        console.log(files)
 
         if (files) {
           const data = new FormData()
@@ -803,6 +822,16 @@ export default function AppointmentChat() {
                     })}
                   </p>
                 )}
+
+              {appointment.appointment_status_id === 3 && (
+                <p className="text-gray-500 text-center mb-4">
+                  O cliente aceitou sua proposta no valor de{' '}
+                  {appointment.value.toLocaleString('pt-br', {
+                    style: 'currency',
+                    currency: 'BRL'
+                  })}
+                </p>
+              )}
               {messagesData.map(
                 ({
                   message: msg,

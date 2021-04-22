@@ -52,24 +52,23 @@ export default function Agenda() {
     async function loadEvents() {
       try {
         const { data: eventData } = await api.get(
-          `/agenda/compromisses/${user?.id}`
+          `/comercial/appointments/${user?.id}/agenda`
         )
         const data = []
         eventData.forEach(e => {
           data.push({
-            title: e.type.descricao,
-            start: new Date(e.dataInicial),
-            end: new Date(e.dataFinal),
+            title: e.type.description,
+            start: new Date(e.start_date),
+            end: new Date(e.end_date),
             allDay: false,
             resources: {
               id: e.id,
-              advogado: e.id_advogado
+              advogado: e.correspondent_id
                 ? {
-                    name: e.nome_advogado
+                    name: e.correspondent.name
                   }
                 : undefined,
-              description: e.descricao,
-              cor: e.type.cor,
+              description: e.observations,
               ...e
             }
           })
@@ -87,14 +86,16 @@ export default function Agenda() {
   async function handleEdit() {
     setLoading(true)
     try {
-      console.log(editData.start)
-      await api.put(`/agenda/compromisses/${detail.data.resources.id}`, {
-        compromisse_type_id: detail.data.resources.type.id,
-        dataInicial: editData.start,
-        dataFinal: editData.end,
-        descricao: editData.description,
-        id_user: detail.data.resources.user_id
-      })
+      await api.put(
+        `/comercial/appointments/${detail.data.resources.id}/agenda`,
+        {
+          appointment_type_id: detail.data.resources.type.id,
+          start_date: editData.start,
+          end_date: editData.end,
+          observations: editData.description,
+          correspontent_id: detail.data.resources.user_id
+        }
+      )
       setEvents(
         events.map(e => {
           if (e.resources.id === editData.id) {
@@ -141,7 +142,7 @@ export default function Agenda() {
   async function handleDelete() {
     setLoading(true)
     try {
-      await api.delete(`/agenda/compromisses/${detail.data.resources.id}`)
+      await api.delete(`/comercial/appointments/${detail.data.resources.id}`)
       setEditData({
         id: '',
         title: '',
@@ -168,22 +169,22 @@ export default function Agenda() {
           open={add}
           setOpen={() => setAdd(false)}
           onAdd={e => {
+            console.log(e)
             setEvents([
               ...events,
               {
-                title: e.type.descricao,
-                start: new Date(e.dataInicial),
-                end: new Date(e.dataFinal),
+                title: e.type.description,
+                start: new Date(e.start_date),
+                end: new Date(e.end_date),
                 allDay: false,
                 resources: {
                   id: e.id,
-                  advogado: e.id_advogado
+                  advogado: e.correspontent_id
                     ? {
-                        name: e.nome_advogado
+                        name: e.name
                       }
                     : undefined,
-                  description: e.descricao,
-                  cor: e.type.cor,
+                  description: e.observations,
                   ...e
                 }
               }
