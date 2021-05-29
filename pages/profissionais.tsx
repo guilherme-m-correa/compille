@@ -4,7 +4,6 @@ import { FaSpinner } from 'react-icons/fa'
 import { api } from '../hooks/fetch'
 import { useAudience } from '../hooks/audience'
 import Container from '../components/Container'
-import { Person } from '../@types/person'
 
 export default function Profissionais() {
   const [lawyers, setLawyers] = useState<Person[]>([] as Person[])
