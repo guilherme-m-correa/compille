@@ -105,8 +105,9 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
 
     reset()
+    router.push('/')
     setData({} as AuthState)
-  }, [reset])
+  }, [router, reset])
 
   const updateUser = useCallback(
     (user: User) => {

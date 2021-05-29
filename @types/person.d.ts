@@ -1,5 +1,3 @@
-import { StringDecoder } from 'string_decoder'
-
 interface Person {
   id: number
   person_id: number

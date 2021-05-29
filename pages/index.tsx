@@ -28,7 +28,7 @@ const Card: React.FC<CardProps> = ({
       </p>
     </div>
     <Link href={link}>
-      <button type="button" className="primary-btn mt-6 max-w-72 ">
+      <button type="button" className="primary-btn mt-6 max-w-72">
         {buttonText}
       </button>
     </Link>
