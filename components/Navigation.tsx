@@ -130,7 +130,7 @@ const CorrespondenteMenuItems: React.FC<IProps> = ({ toggle }) => {
 
   return (
     <div className="text-white">
-      <div className="flex gap-4 ">
+      {/* <div className="flex gap-4 ">
         <div className="rounded-full bg-black-400 h-8 w-8 flex justify-center items-center text-white">
           {user.avatar_url ? (
             <img
@@ -149,12 +149,14 @@ const CorrespondenteMenuItems: React.FC<IProps> = ({ toggle }) => {
           )}
         </div>
 
-        <div className="flex flex-col">
-          <span>{user.username}</span>
-          <Link href={`/p/${person.profile_link}`}>
-            <a className="text-sm">Acessar meu perfil</a>
-          </Link>
-        </div>
+
+      </div> */}
+
+      <div className="flex flex-col">
+        <span>{user.username}</span>
+        <Link href={`/p/${person.profile_link}`}>
+          <a className="text-sm">Acessar meu perfil</a>
+        </Link>
       </div>
 
       <hr className="my-6" />
@@ -205,7 +207,7 @@ const SolicitanteMenuItems: React.FC<IProps> = ({ toggle }) => {
 
   return (
     <div className="text-white">
-      <div className="flex gap-4 ">
+      {/* <div className="flex gap-4 ">
         <div className="rounded-full bg-black-400 h-8 w-8 flex justify-center items-center text-white">
           {user.avatar_url ? (
             <img
@@ -223,12 +225,10 @@ const SolicitanteMenuItems: React.FC<IProps> = ({ toggle }) => {
             </svg>
           )}
         </div>
-
-        <div className="flex flex-col">
-          <span>{user.username}</span>
-        </div>
+      </div> */}
+      <div className="flex flex-col">
+        <span>{user.username}</span>
       </div>
-
       <hr className="my-6" />
 
       <ul className="space-y-3 font-light">
