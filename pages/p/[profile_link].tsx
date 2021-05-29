@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import { FaMapMarkerAlt, FaCheckSquare, FaStar } from 'react-icons/fa'
 import Container from '../../components/Container'
 import { api } from '../../hooks/fetch'
-import { Person } from '../../@types/person'
 
 export default function PublicProfile() {
   const [person, setPerson] = useState<Person>(null)
