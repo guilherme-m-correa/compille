@@ -1,5 +1,4 @@
 import { createContext, useCallback, useState, useContext } from 'react'
-import { Person } from '../@types/person'
 
 interface Forum {
   place_id: string
