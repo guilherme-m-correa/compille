@@ -18,8 +18,8 @@ import { useAuth } from '../../../hooks/auth'
 import { useSocket } from '../../../hooks/socket'
 
 export interface IMessageData {
-  appointment_id: number
-  correspondent_id: number
+  appointment_id: string
+  correspondent_id: string
   requester_id: string
   message: string
   message_sender: string
@@ -27,16 +27,22 @@ export interface IMessageData {
   file_url: string
 }
 
-export default function AppointmentChat() {
+interface Candidate {
+  id: number
+  offer: number
+  person: Person
+}
+
+const RequesterChat: React.FC = () => {
   const router = useRouter()
   const { socket } = useSocket()
   const { user } = useAuth()
   const { appointment_id } = router.query
   const [appointment, setAppointment] = useState<Appointment>(null)
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate>(null)
   const [message, setMessage] = useState('')
   const [messagesData, setMessagesData] = useState<IMessageData[]>([])
   const [inputMoneyValue, setInputMoneyValue] = useState('0,00')
-  const [modalConfirmOfferOpen, setModalConfirmOfferOpen] = useState(false)
   const [modalAcceptOfferOpen, setModalAcceptOfferOpen] = useState(false)
   const [modalCancelAppointmentOpen, setModalCancelAppointmentOpen] = useState(
     false
@@ -94,6 +100,623 @@ export default function AppointmentChat() {
     }
 
     socket.on(`previousMessages_${user.id}_${appointment_id}`, data => {
+      setMessagesData([...messagesData, ...data])
+
+      const messagesList = document.getElementById('messages')
+      const items = document.querySelectorAll('.chat-message')
+
+      if (items.length > 5) {
+        const last = items[items.length - 1]
+        const topPos = (last as any).offsetTop
+        messagesList.scrollTop = topPos
+      }
+    })
+
+    socket.on(`appointment_${appointment_id}`, data => {
+      setMessagesData([...messagesData, data])
+
+      const messagesList = document.getElementById('messages')
+      const items = document.querySelectorAll('.chat-message')
+
+      if (items.length > 5) {
+        const last = items[items.length - 1]
+        const topPos = (last as any).offsetTop
+        messagesList.scrollTop = topPos
+      }
+    })
+
+    return () => {//eslint-disable-line
+      socket.off(`appointment_${appointment_id}`)//eslint-disable-line
+    } //eslint-disable-line
+  }, [socket, messagesData, appointment_id, user]) //eslint-disable-line
+
+  async function loadData() {
+    try {
+      const { data } = await api.get(
+        `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments/${appointment_id}`
+      )
+
+      setAppointment(data)
+
+      if (selectedCandidate) {
+        const candidateTemp = data.candidates.find(
+          candidate => candidate.id === selectedCandidate.id
+        )
+
+        setSelectedCandidate(candidateTemp)
+        const { offer: value } = candidateTemp
+
+        const formattedValue = value.toLocaleString('pt-br', {
+          minimumFractionDigits: 2
+        })
+
+        setInputMoneyValue(formattedValue)
+      } else if (data.candidates.length > 0) {
+        const candidateTemp = data.candidates[0]
+
+        setSelectedCandidate(candidateTemp)
+        const { offer: value } = candidateTemp
+
+        const formattedValue = value.toLocaleString('pt-br', {
+          minimumFractionDigits: 2
+        })
+
+        setInputMoneyValue(formattedValue)
+      }
+    } catch (error) {
+      if (error?.response?.status === 404) {
+        router.push('/404')
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (!appointment_id) {
+      return
+    }
+
+    if (Object.keys(socket).length === 0) {
+      return
+    }
+
+    socket.on('receivedOffer', data => {
+      if (Number(data.appointment_id) === Number(appointment_id)) {
+        loadData()
+      }
+    })
+
+    socket.on('receiveUpdateAppointment', data => {
+      if (Number(data.appointment_id) === Number(appointment_id)) {
+        loadData()
+      }
+    })
+
+    loadData()
+  }, [socket, appointment_id, router])//eslint-disable-line
+
+  async function handleCancelAppointment() {
+    try {
+      await api.post(
+        `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments/${appointment_id}`,
+        {
+          appointment_status_id: 4
+        }
+      )
+
+      socket.emit('updateAppointment', {
+        appointment_id: appointment.id
+      })
+
+      setModalCancelAppointmentOpen(false)
+      router.push('/painel')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function handleAcceptOffer() {
+    try {
+      await api.post(
+        `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments/${appointment_id}/offers/accept`,
+        {
+          value: selectedCandidate?.offer,
+          correspondent_id: selectedCandidate?.person?.user_id
+        }
+      )
+
+      socket.emit('updateAppointment', {
+        appointment_id: appointment.id
+      })
+
+      setModalAcceptOfferOpen(false)
+
+      router.push('/painel')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function handleSendMessage() {
+    if (!message) {
+      return
+    }
+
+    const messageObject = {
+      appointment_id: appointment.id,
+      correspondent_id: selectedCandidate?.person?.user_id,
+      requester_id: appointment.requester_id,
+      message_type: 'text',
+      message_sender: '',
+      message
+    }
+
+    Object.assign(messageObject, { message_sender: 'requester' })
+
+    socket.emit('sendMessage', messageObject)
+
+    setMessage('')
+  }
+
+  const handleUploadFile = useCallback(
+    async e => {
+      try {
+        const { files } = e.target
+
+        if (files) {
+          const data = new FormData()
+          data.append('file', files[0])
+
+          const response = await api.post(`/documentos`, data)
+
+          if (response.status === 200) {
+            const { filename } = response.data
+
+            const url = `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/documentos/${filename}`
+
+            const messageObject = {
+              appointment_id: appointment.id,
+              correspondent_id: selectedCandidate?.person?.user_id,
+              requester_id: appointment.requester_id,
+              message_type: 'file',
+              message_sender: '',
+              message: files[0].name,
+              file_url: url
+            }
+
+            Object.assign(messageObject, { message_sender: 'requester' })
+
+            socket.emit('sendMessage', messageObject)
+          }
+        }
+      } catch (err) {
+        //
+      }
+    },
+    [appointment, socket, selectedCandidate?.person?.user_id]
+  )
+
+  console.log(appointment)
+
+  return (
+    <div className="px-8">
+      <ModalCancelAppointment
+        open={modalCancelAppointmentOpen}
+        setOpen={setModalCancelAppointmentOpen}
+        handleCancelAppointment={handleCancelAppointment}
+      />
+      <ModalAcceptOffer
+        open={modalAcceptOfferOpen}
+        value={inputMoneyValue}
+        setOpen={setModalAcceptOfferOpen}
+        handleAcceptOffer={handleAcceptOffer}
+      />
+      {appointment && (
+        <div className="flex text-base my-10" style={{ height: '80vh' }}>
+          <div className="flex flex-col w-1/5 bg-white mr-4 overflow-auto">
+            <div className="bg-blue-500">
+              <h3 className="flex justify-center items-center text-white font-medium py-3">
+                Advogados
+              </h3>
+            </div>
+            <ul className="divide-y-2 gap-4">
+              {appointment.candidates.map(candidate => (
+                <li
+                  key={candidate.id}
+                  className={`p-4 ${
+                    selectedCandidate?.id === candidate.id && 'bg-gray-100'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    className="flex items-center gap-4 border-none outline-none focus:outline-none w-full h-full"
+                    onClick={() => {
+                      setSelectedCandidate(candidate)
+
+                      const { offer: value } = candidate
+
+                      const formattedValue = value?.toLocaleString('pt-br', {
+                        minimumFractionDigits: 2
+                      })
+
+                      setInputMoneyValue(formattedValue)
+                    }}
+                  >
+                    <div className="rounded-full h-14 w-14 flex justify-center items-center text-white">
+                      {candidate?.person?.avatar_url ? (
+                        <img
+                          className="h-full w-full rounded-full"
+                          src={candidate?.person?.avatar_url}
+                          alt="Foto do perfil"
+                        />
+                      ) : (
+                        <svg
+                          className="h-full w-full rounded-full text-gray-300"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                      )}
+                    </div>
+
+                    <span className="text-sm">
+                      {candidate.person.profile_name}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex-1 justify-between flex flex-col  bg-white">
+            <div className="flex p-4 items-center justify-between">
+              <div className="flex items-center space-x-4 text-xs font-light">
+                <div className="rounded-full h-14 w-14 flex justify-center items-center text-white">
+                  {selectedCandidate?.person?.avatar_url ? (
+                    <img
+                      className="h-full w-full rounded-full"
+                      src={selectedCandidate?.person?.avatar_url}
+                      alt="Foto do perfil"
+                    />
+                  ) : (
+                    <svg
+                      className="h-full w-full rounded-full text-gray-300"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-semibold">
+                    {selectedCandidate?.person?.profile_name}
+                  </span>
+                  <span>
+                    OAB: {selectedCandidate?.person?.oab}/
+                    {
+                      states.find(
+                        state =>
+                          state.cod ===
+                          Number(selectedCandidate?.person?.oab_uf)
+                      )?.uf
+                    }
+                  </span>
+                </div>
+              </div>
+              <div className="flex space-x-4">
+                {appointment?.appointment_status_id === 2 &&
+                  selectedCandidate?.offer > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setModalAcceptOfferOpen(true)}
+                      className="primary-btn"
+                    >
+                      ACEITAR PROPOSTA
+                    </button>
+                  )}
+              </div>
+            </div>
+
+            <div className="flex p-6 bg-gray-100 sm:items-center justify-between py-3">
+              <div className="flex items-center space-x-4">
+                <h2 className="text-base text-gray-700 text-center font-medium">
+                  Chat
+                </h2>
+              </div>
+            </div>
+
+            <div
+              id="messages"
+              className="h-full flex flex-col space-y-4 p-6 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
+            >
+              {appointment.appointment_status_id === 2 &&
+                selectedCandidate?.offer > 0 && (
+                  <p className="text-gray-500 text-center mb-4">
+                    {selectedCandidate?.person?.profile_name} enviou uma
+                    proposta no valor de{' '}
+                    {selectedCandidate?.offer?.toLocaleString('pt-br', {
+                      style: 'currency',
+                      currency: 'BRL'
+                    })}
+                  </p>
+                )}
+              {selectedCandidate &&
+                messagesData
+                  .filter(
+                    m =>
+                      m.correspondent_id ===
+                      String(selectedCandidate.person.user_id)
+                  )
+                  .map(
+                    ({
+                      message: msg,
+                      message_sender,
+                      message_type,
+                      file_url
+                    }: IMessageData) =>
+                      message_sender === 'correspondent' ? (
+                        <div className="chat-message">
+                          <div className="flex items-end">
+                            <div className="flex flex-col space-y-2 text-sm font-normal max-w-xs mx-2 order-2 items-start">
+                              <div>
+                                <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
+                                  {message_type === 'text' ? (
+                                    <span className="max-w-sm break-words">
+                                      {msg}
+                                    </span>
+                                  ) : (
+                                    <a
+                                      href={file_url}
+                                      className="flex items-center space-x-2 font-extrabold hover:underline"
+                                      target="_blank"
+                                      rel="noreferrer noopener"
+                                    >
+                                      <FaPaperclip className="flex-shrink-0" />{' '}
+                                      <span className="max-w-sm break-words">
+                                        {msg}
+                                      </span>
+                                    </a>
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="chat-message">
+                          <div className="flex items-end justify-end">
+                            <div className="flex flex-col space-y-2 text-sm font-normal max-w-xs mx-2 order-1 items-end">
+                              <div>
+                                <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-500 text-white ">
+                                  {message_type === 'text' ? (
+                                    <span className="max-w-sm break-words">
+                                      {msg}
+                                    </span>
+                                  ) : (
+                                    <a
+                                      href={file_url}
+                                      className="flex items-center space-x-2 font-extrabold hover:underline"
+                                      target="_blank"
+                                      rel="noreferrer noopener"
+                                    >
+                                      <FaPaperclip />{' '}
+                                      <span className="max-w-sm break-words">
+                                        {msg}
+                                      </span>
+                                    </a>
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                  )}
+            </div>
+            <div className="border-t-2 rounded-b-lg border-gray-200 p-4 mb-4 sm:mb-0">
+              <div className="relative flex">
+                <input
+                  type="text"
+                  placeholder="Escreva algo..."
+                  value={message}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      handleSendMessage()
+                    }
+                  }}
+                  onChange={e => setMessage(e.target.value)}
+                  className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-6 bg-gray-200 rounded-full py-3"
+                />
+                <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
+                  <input
+                    id="uploadFileInput"
+                    className="hidden"
+                    type="file"
+                    // accept="image/x-png,image/jpeg"
+                    onChange={handleUploadFile}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      document.getElementById('uploadFileInput').click()
+                    }}
+                    className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      className="h-6 w-6 text-gray-600"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                      />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleSendMessage}
+                    className="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="h-6 w-6 transform rotate-90"
+                    >
+                      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden lg:block w-1/3 bg-white ml-4 overflow-auto">
+            <div className="bg-blue-500">
+              <h3 className="flex justify-center items-center text-white font-medium py-3">
+                Demanda #{appointment_id}
+              </h3>
+
+              <div className="w-full h-72 bg-gray-300 overflow-hidden relative">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  className="absolute inset-0"
+                  frameBorder="0"
+                  title="map"
+                  marginHeight={0}
+                  marginWidth={0}
+                  scrolling="no"
+                  src={`https://maps.google.com/maps?width=100%&height=600&q=${encodeURIComponent(
+                    appointment?.forum?.address
+                  )}J&hl=pt_br&ie=UTF8&t=&z=14&iwloc=B&output=embed`}
+                />
+              </div>
+
+              <ul className="px-6 divide-y divide-white">
+                <li className="text-white flex flex-col font-medium py-4">
+                  <strong>Audiência</strong>
+                  <span>
+                    {appointment?.forum?.city?.name},{' '}
+                    {appointment?.forum?.city?.state?.uf}
+                  </span>
+                </li>
+                <li className="text-white flex flex-col font-medium py-4">
+                  <strong className="font-bold">Status</strong>
+                  <span>{appointment?.status?.description}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-4 px-6">
+              <ul>
+                <li className="text-gray-400 py-2">
+                  <p className="flex items-center space-x-4">
+                    <FaMapMarkerAlt className="text-blue-500" />
+                    <span className="text-gray-700 font-semibold">
+                      Local do serviço:
+                    </span>
+                  </p>
+                  <p className="pl-8 text-sm">
+                    {appointment?.forum?.descricao}
+                  </p>
+                  <p className="pl-8 text-sm">{appointment?.forum?.address}</p>
+                </li>
+
+                <li className="text-gray-400 py-2">
+                  <p className="flex items-center space-x-4">
+                    <FaRegCalendar className="text-blue-500" />
+                    <span className="text-gray-700 font-semibold">Prazo:</span>
+                  </p>
+                  <p className="pl-8 text-sm">
+                    {format(
+                      new Date(appointment?.start_date),
+                      `dd/MM/yyyy 'às' HH':'mm`
+                    )}
+                  </p>
+                </li>
+                <li className="text-gray-400 py-2">
+                  <p className="flex items-center space-x-4">
+                    <FaListUl className="text-blue-500" />
+                    <span className="text-gray-700 font-semibold">
+                      Detalhes do serviço:
+                    </span>
+                  </p>
+                  <p className="pl-8 text-sm">
+                    <strong>Tipo de audiência:</strong> {appointment.type}
+                  </p>
+                  <p className="pl-8 text-sm">
+                    <strong>Área:</strong> {appointment.area}
+                  </p>
+                  <p className="pl-8 text-sm">
+                    <strong>Tipo de processo:</strong>{' '}
+                    {appointment.process_type}
+                  </p>
+                  <p className="pl-8 text-sm">
+                    <strong>Número de processo:</strong>{' '}
+                    {appointment.process_number}
+                  </p>
+                </li>
+              </ul>
+            </div>
+
+            <div className="flex px-6 justify-center">
+              <button
+                type="button"
+                onClick={() => setModalCancelAppointmentOpen(true)}
+                className="mt-10 tertiary-btn w-full"
+              >
+                CANCELAR DEMANDA
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+const CorrespondentChat: React.FC = () => {
+  const router = useRouter()
+  const { socket } = useSocket()
+  const { user } = useAuth()
+  const { appointment_id } = router.query
+  const [candidate, setCandidate] = useState<Candidate>(null)
+  const [appointment, setAppointment] = useState<Appointment>(null)
+  const [message, setMessage] = useState('')
+  const [messagesData, setMessagesData] = useState<IMessageData[]>([])
+  const [inputMoneyValue, setInputMoneyValue] = useState('0,00')
+  const [modalConfirmOfferOpen, setModalConfirmOfferOpen] = useState(false)
+
+  useEffect(() => {
+    if (!appointment_id) {
+      return
+    }
+
+    if (!user.id) {
+      return
+    }
+
+    if (Object.keys(socket).length === 0) {
+      return
+    }
+
+    socket.emit('appointment', { appointment_id, user_id: user.id })
+  }, [socket, user, appointment_id])
+
+  useEffect(() => {
+    if (Object.keys(socket).length === 0) {
+      return
+    }
+
+    socket.on(`previousMessages_${user.id}_${appointment_id}`, data => {
       setMessagesData([
         ...messagesData,
         ...data.filter(msg => msg.appointment_id === Number(appointment_id))
@@ -127,27 +750,35 @@ export default function AppointmentChat() {
     } //eslint-disable-line
   }, [socket, messagesData, appointment_id, user]) //eslint-disable-line
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const { data } = await api.get(
-          `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments/${appointment_id}`
-        )
+  async function loadData() {
+    try {
+      const { data } = await api.get(
+        `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments/${appointment_id}`
+      )
 
-        setAppointment(data)
-        const { value } = data
-        const formattedValue = value.toLocaleString('pt-br', {
-          minimumFractionDigits: 2
-        })
-        setInputMoneyValue(formattedValue)
-      } catch (error) {
-        if (error.response.status === 404) {
-          router.push('/404')
-        }
-        console.log(error)
+      setAppointment(data)
+
+      const { data: dataCandidate } = await api.get(
+        `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/candidates/${appointment_id}/${user?.id}`
+      )
+
+      setCandidate(dataCandidate)
+
+      const { offer: value } = dataCandidate
+
+      const formattedValue = value.toLocaleString('pt-br', {
+        minimumFractionDigits: 2
+      })
+
+      setInputMoneyValue(formattedValue)
+    } catch (error) {
+      if (error?.response?.status === 404) {
+        router.push('/404')
       }
     }
+  }
 
+  useEffect(() => {
     if (!appointment_id) {
       return
     }
@@ -156,91 +787,35 @@ export default function AppointmentChat() {
       return
     }
 
-    socket.on('receivedOffer', data => {
-      if (Number(data.appointment_id) === Number(appointment_id)) {
-        loadData()
-      }
-    })
-
     socket.on('receiveUpdateAppointment', data => {
+      console.log(data)
       if (Number(data.appointment_id) === Number(appointment_id)) {
         loadData()
       }
     })
 
     loadData()
-  }, [socket, appointment_id, router])
-
-  async function handleCancelAppointment() {
-    try {
-      await api.put(
-        `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments/${appointment_id}`,
-        {
-          appointment_status_id: 4
-        }
-      )
-
-      socket.emit('updateAppointment', {
-        appointment_id: appointment.id
-      })
-
-      setModalCancelAppointmentOpen(false)
-      router.push('/painel')
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  async function handleAcceptOffer() {
-    try {
-      await api.put(
-        `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments/${appointment_id}`,
-        {
-          appointment_status_id: 3
-        }
-      )
-
-      socket.emit('updateAppointment', {
-        appointment_id: appointment.id
-      })
-
-      setModalAcceptOfferOpen(false)
-
-      router.push('/painel')
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  }, [socket, appointment_id, router])//eslint-disable-line
 
   async function handleUpdateOffer() {
     try {
       const parsedValue = Number(inputMoneyValue.replace(/\D/g, '')) / 100
 
-      await api.put(
-        `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments/${appointment_id}`,
+      await api.post(
+        `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments/${appointment_id}/offers`,
         {
-          appointment_status_id: 2,
+          correspondent_id: user?.id,
           value: parsedValue
         }
       )
 
-      setAppointment({
-        ...appointment,
-        appointment_status_id: 2,
-        value: parsedValue
-      })
-
+      loadData()
       setModalConfirmOfferOpen(false)
       toast.success('Sua proposta foi enviada com sucesso!')
 
-      const offerObject = {
-        appointment_id: appointment.id,
-        correspondent_id: appointment.correspondent_id,
-        requester_id: appointment.requester_id,
-        value: Number(inputMoneyValue.replace(/\D/g, '')) / 100
-      }
-
-      socket.emit('sendOffer', offerObject)
+      socket.emit('updateAppointment', {
+        appointment_id: appointment.id
+      })
     } catch (error) {
       console.log(error)
     }
@@ -253,22 +828,16 @@ export default function AppointmentChat() {
 
     const messageObject = {
       appointment_id: appointment.id,
-      correspondent_id: appointment.correspondent_id,
+      correspondent_id: user?.id,
       requester_id: appointment.requester_id,
       message_type: 'text',
       message_sender: '',
       message
     }
 
-    if (user?.type === 'E') {
-      Object.assign(messageObject, { message_sender: 'requester' })
+    Object.assign(messageObject, { message_sender: 'correspondent' })
 
-      socket.emit('sendMessage', messageObject)
-    } else {
-      Object.assign(messageObject, { message_sender: 'correspondent' })
-
-      socket.emit('sendMessage', messageObject)
-    }
+    socket.emit('sendMessage', messageObject)
 
     setMessage('')
   }
@@ -291,7 +860,7 @@ export default function AppointmentChat() {
 
             const messageObject = {
               appointment_id: appointment.id,
-              correspondent_id: appointment.correspondent_id,
+              correspondent_id: user?.id,
               requester_id: appointment.requester_id,
               message_type: 'file',
               message_sender: '',
@@ -299,351 +868,18 @@ export default function AppointmentChat() {
               file_url: url
             }
 
-            if (user?.type === 'E') {
-              Object.assign(messageObject, { message_sender: 'requester' })
+            Object.assign(messageObject, { message_sender: 'correspondent' })
 
-              socket.emit('sendMessage', messageObject)
-            } else {
-              Object.assign(messageObject, { message_sender: 'correspondent' })
-
-              socket.emit('sendMessage', messageObject)
-            }
+            socket.emit('sendMessage', messageObject)
           }
         }
       } catch (err) {
         //
       }
     },
-    [appointment, socket, user?.type]
+    [appointment, socket, user?.id]
   )
 
-  if (user?.type === 'E') {
-    return (
-      <Container>
-        <ModalCancelAppointment
-          open={modalCancelAppointmentOpen}
-          setOpen={setModalCancelAppointmentOpen}
-          handleCancelAppointment={handleCancelAppointment}
-        />
-        <ModalAcceptOffer
-          open={modalAcceptOfferOpen}
-          value={inputMoneyValue}
-          setOpen={setModalAcceptOfferOpen}
-          handleAcceptOffer={handleAcceptOffer}
-        />
-        {appointment && (
-          <div className="flex text-base my-10" style={{ height: '80vh' }}>
-            <div className="hidden lg:block w-1/3 bg-white mr-4 overflow-auto">
-              <div className="bg-blue-500">
-                <h3 className="flex justify-center items-center text-white font-medium py-3">
-                  Demanda #{appointment_id}
-                </h3>
-
-                <div className="w-full h-72 bg-gray-300 overflow-hidden relative">
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    className="absolute inset-0"
-                    frameBorder="0"
-                    title="map"
-                    marginHeight={0}
-                    marginWidth={0}
-                    scrolling="no"
-                    src={`https://maps.google.com/maps?width=100%&height=600&q=${encodeURIComponent(
-                      appointment?.forum?.address
-                    )}J&hl=pt_br&ie=UTF8&t=&z=14&iwloc=B&output=embed`}
-                  />
-                </div>
-
-                <ul className="px-6 divide-y divide-white">
-                  <li className="text-white flex flex-col font-medium py-4">
-                    <strong>Audiência</strong>
-                    <span>
-                      {appointment?.forum?.city?.name},{' '}
-                      {appointment?.forum?.city?.state?.uf}
-                    </span>
-                  </li>
-                  <li className="text-white flex flex-col font-medium py-4">
-                    <strong className="font-bold">Status</strong>
-                    <span>{appointment?.status?.description}</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="mt-4 px-6">
-                <ul>
-                  <li className="text-gray-400 py-2">
-                    <p className="flex items-center space-x-4">
-                      <FaMapMarkerAlt className="text-blue-500" />
-                      <span className="text-gray-700 font-semibold">
-                        Local do serviço:
-                      </span>
-                    </p>
-                    <p className="pl-8 text-sm">
-                      {appointment?.forum?.descricao}
-                    </p>
-                    <p className="pl-8 text-sm">
-                      {appointment?.forum?.address}
-                    </p>
-                  </li>
-
-                  <li className="text-gray-400 py-2">
-                    <p className="flex items-center space-x-4">
-                      <FaRegCalendar className="text-blue-500" />
-                      <span className="text-gray-700 font-semibold">
-                        Prazo:
-                      </span>
-                    </p>
-                    <p className="pl-8 text-sm">
-                      {format(
-                        new Date(appointment?.start_date),
-                        `dd/MM/yyyy 'às' HH':'mm`
-                      )}
-                    </p>
-                  </li>
-                  <li className="text-gray-400 py-2">
-                    <p className="flex items-center space-x-4">
-                      <FaListUl className="text-blue-500" />
-                      <span className="text-gray-700 font-semibold">
-                        Detalhes do serviço:
-                      </span>
-                    </p>
-                    <p className="pl-8 text-sm">
-                      <strong>Tipo de audiência:</strong> {appointment.type}
-                    </p>
-                    <p className="pl-8 text-sm">
-                      <strong>Área:</strong> {appointment.area}
-                    </p>
-                    <p className="pl-8 text-sm">
-                      <strong>Tipo de processo:</strong>{' '}
-                      {appointment.process_type}
-                    </p>
-                    <p className="pl-8 text-sm">
-                      <strong>Número de processo:</strong>{' '}
-                      {appointment.process_number}
-                    </p>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="flex px-6 justify-center">
-                <button
-                  type="button"
-                  onClick={() => setModalCancelAppointmentOpen(true)}
-                  className="mt-10 tertiary-btn w-full"
-                >
-                  CANCELAR DEMANDA
-                </button>
-              </div>
-            </div>
-
-            <div className="flex-1 justify-between flex flex-col  bg-white">
-              <div className="flex p-4 items-center justify-between">
-                <div className="flex items-center space-x-4 text-xs font-light">
-                  <div className="rounded-full h-14 w-14 flex justify-center items-center text-white">
-                    {appointment.correspondent.avatar_url ? (
-                      <img
-                        className="h-full w-full rounded-full"
-                        src={appointment.correspondent.avatar_url}
-                        alt="Foto do perfil"
-                      />
-                    ) : (
-                      <svg
-                        className="h-full w-full rounded-full text-gray-300"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                      </svg>
-                    )}
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-semibold">
-                      {appointment.correspondent.profile_name}
-                    </span>
-                    <span>
-                      OAB: {appointment.correspondent.oab}/
-                      {
-                        states.find(
-                          state =>
-                            state.cod ===
-                            Number(appointment.correspondent.oab_uf)
-                        )?.uf
-                      }
-                    </span>
-                  </div>
-                </div>
-                <div className="flex space-x-4">
-                  {appointment.appointment_status_id === 2 &&
-                    appointment.value > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setModalAcceptOfferOpen(true)}
-                        className="primary-btn"
-                      >
-                        ACEITAR PROPOSTA
-                      </button>
-                    )}
-                </div>
-              </div>
-
-              <div className="flex p-6 bg-gray-100 sm:items-center justify-between py-3">
-                <div className="flex items-center space-x-4">
-                  <h2 className="text-base text-gray-700 text-center font-medium">
-                    Chat
-                  </h2>
-                </div>
-              </div>
-
-              <div
-                id="messages"
-                className="h-full flex flex-col space-y-4 p-6 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
-              >
-                {appointment.appointment_status_id === 2 &&
-                  appointment.value > 0 && (
-                    <p className="text-gray-500 text-center mb-4">
-                      {appointment.correspondent.profile_name} enviou uma
-                      proposta no valor de{' '}
-                      {appointment.value.toLocaleString('pt-br', {
-                        style: 'currency',
-                        currency: 'BRL'
-                      })}
-                    </p>
-                  )}
-                {messagesData.map(
-                  ({
-                    message: msg,
-                    message_sender,
-                    message_type,
-                    file_url
-                  }: IMessageData) =>
-                    message_sender === 'correspondent' ? (
-                      <div className="chat-message">
-                        <div className="flex items-end">
-                          <div className="flex flex-col space-y-2 text-sm font-normal max-w-xs mx-2 order-2 items-start">
-                            <div>
-                              <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
-                                {message_type === 'text' ? (
-                                  <span className="max-w-sm break-words">
-                                    {msg}
-                                  </span>
-                                ) : (
-                                  <a
-                                    href={file_url}
-                                    className="flex items-center space-x-2 font-extrabold hover:underline"
-                                    target="_blank"
-                                    rel="noreferrer noopener"
-                                  >
-                                    <FaPaperclip className="flex-shrink-0" />{' '}
-                                    <span className="max-w-sm break-words">
-                                      {msg}
-                                    </span>
-                                  </a>
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="chat-message">
-                        <div className="flex items-end justify-end">
-                          <div className="flex flex-col space-y-2 text-sm font-normal max-w-xs mx-2 order-1 items-end">
-                            <div>
-                              <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-500 text-white ">
-                                {message_type === 'text' ? (
-                                  <span className="max-w-sm break-words">
-                                    {msg}
-                                  </span>
-                                ) : (
-                                  <a
-                                    href={file_url}
-                                    className="flex items-center space-x-2 font-extrabold hover:underline"
-                                    target="_blank"
-                                    rel="noreferrer noopener"
-                                  >
-                                    <FaPaperclip />{' '}
-                                    <span className="max-w-sm break-words">
-                                      {msg}
-                                    </span>
-                                  </a>
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                )}
-              </div>
-              <div className="border-t-2 rounded-b-lg border-gray-200 p-4 mb-4 sm:mb-0">
-                <div className="relative flex">
-                  <input
-                    type="text"
-                    placeholder="Escreva algo..."
-                    value={message}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') {
-                        handleSendMessage()
-                      }
-                    }}
-                    onChange={e => setMessage(e.target.value)}
-                    className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-6 bg-gray-200 rounded-full py-3"
-                  />
-                  <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
-                    <input
-                      id="uploadFileInput"
-                      className="hidden"
-                      type="file"
-                      // accept="image/x-png,image/jpeg"
-                      onChange={handleUploadFile}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        document.getElementById('uploadFileInput').click()
-                      }}
-                      className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        className="h-6 w-6 text-gray-600"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                        />
-                      </svg>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleSendMessage}
-                      className="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        className="h-6 w-6 transform rotate-90"
-                      >
-                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </Container>
-    )
-  }
   return (
     <Container>
       <ModalConfirmOffer
@@ -761,7 +997,7 @@ export default function AppointmentChat() {
               </ul>
             </div>
 
-            <div className="flex px-6 justify-center">
+            {/* <div className="flex px-6 justify-center">
               <button
                 type="button"
                 onClick={() => setModalCancelAppointmentOpen(true)}
@@ -769,7 +1005,7 @@ export default function AppointmentChat() {
               >
                 CANCELAR DEMANDA
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex-1 flex flex-col bg-white">
@@ -812,87 +1048,89 @@ export default function AppointmentChat() {
               id="messages"
               className="h-full flex flex-col space-y-4 p-6 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
             >
-              {appointment.appointment_status_id === 2 &&
-                appointment.value > 0 && (
-                  <p className="text-gray-500 text-center mb-4">
-                    Você enviou uma proposta no valor de{' '}
-                    {appointment.value.toLocaleString('pt-br', {
-                      style: 'currency',
-                      currency: 'BRL'
-                    })}
-                  </p>
-                )}
-
-              {appointment.appointment_status_id === 3 && (
+              {candidate && candidate.offer > 0 && (
                 <p className="text-gray-500 text-center mb-4">
-                  O cliente aceitou sua proposta no valor de{' '}
-                  {appointment.value.toLocaleString('pt-br', {
+                  Você enviou uma proposta no valor de{' '}
+                  {candidate.offer.toLocaleString('pt-br', {
                     style: 'currency',
                     currency: 'BRL'
                   })}
                 </p>
               )}
-              {messagesData.map(
-                ({
-                  message: msg,
-                  message_sender,
-                  message_type,
-                  file_url
-                }: IMessageData) =>
-                  message_sender === 'requester' ? (
-                    <div className="chat-message">
-                      <div className="flex items-end">
-                        <div className="flex flex-col space-y-2 text-sm font-normal max-w-xs mx-2 order-2 items-start">
-                          <div>
-                            <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
-                              {message_type === 'text' ? (
-                                msg
-                              ) : (
-                                <a
-                                  href={file_url}
-                                  className="flex items-center space-x-2 font-extrabold"
-                                  target="_blank"
-                                  rel="noreferrer noopener"
-                                >
-                                  <FaPaperclip />{' '}
-                                  <span className="max-w-sm break-words">
-                                    {msg}
-                                  </span>
-                                </a>
-                              )}
-                            </span>
+
+              {appointment.appointment_status_id === 3 &&
+                appointment.correspondent_id === user.id && (
+                  <p className="text-gray-500 text-center mb-4">
+                    O cliente aceitou sua proposta no valor de{' '}
+                    {candidate.offer.toLocaleString('pt-br', {
+                      style: 'currency',
+                      currency: 'BRL'
+                    })}
+                  </p>
+                )}
+              {messagesData
+                .filter(m => m.correspondent_id === user.id)
+                .map(
+                  ({
+                    message: msg,
+                    message_sender,
+                    message_type,
+                    file_url
+                  }: IMessageData) =>
+                    message_sender === 'requester' ? (
+                      <div className="chat-message">
+                        <div className="flex items-end">
+                          <div className="flex flex-col space-y-2 text-sm font-normal max-w-xs mx-2 order-2 items-start">
+                            <div>
+                              <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
+                                {message_type === 'text' ? (
+                                  msg
+                                ) : (
+                                  <a
+                                    href={file_url}
+                                    className="flex items-center space-x-2 font-extrabold"
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                  >
+                                    <FaPaperclip />{' '}
+                                    <span className="max-w-sm break-words">
+                                      {msg}
+                                    </span>
+                                  </a>
+                                )}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="chat-message">
-                      <div className="flex items-end justify-end">
-                        <div className="flex flex-col space-y-2 text-sm font-normal max-w-xs mx-2 order-1 items-end">
-                          <div>
-                            <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-500 text-white ">
-                              {message_type === 'text' ? (
-                                msg
-                              ) : (
-                                <a
-                                  href={file_url}
-                                  className="flex items-center space-x-2 font-extrabold"
-                                  target="_blank"
-                                  rel="noreferrer noopener"
-                                >
-                                  <FaPaperclip />{' '}
-                                  <span className="max-w-sm break-words">
-                                    {msg}
-                                  </span>
-                                </a>
-                              )}
-                            </span>
+                    ) : (
+                      <div className="chat-message">
+                        <div className="flex items-end justify-end">
+                          <div className="flex flex-col space-y-2 text-sm font-normal max-w-xs mx-2 order-1 items-end">
+                            <div>
+                              <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-500 text-white ">
+                                {message_type === 'text' ? (
+                                  msg
+                                ) : (
+                                  <a
+                                    href={file_url}
+                                    className="flex items-center space-x-2 font-extrabold"
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                  >
+                                    <FaPaperclip />{' '}
+                                    <span className="max-w-sm break-words">
+                                      {msg}
+                                    </span>
+                                  </a>
+                                )}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )
-              )}
+                    )
+                )}
             </div>
             <div className="border-t-2 rounded-b-lg border-gray-200 p-4 mb-4 sm:mb-0">
               <div className="relative flex">
@@ -960,4 +1198,18 @@ export default function AppointmentChat() {
       )}
     </Container>
   )
+}
+
+export default function Chat() {
+  const { user } = useAuth()
+
+  if (!user) {
+    return <></>
+  }
+
+  if (user?.type === 'E') {
+    return <RequesterChat />
+  }
+
+  return <CorrespondentChat />
 }

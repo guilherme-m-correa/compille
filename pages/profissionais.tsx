@@ -1,62 +1,28 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 import { FaSpinner } from 'react-icons/fa'
 import { api } from '../hooks/fetch'
-import { useAudience } from '../hooks/audience'
 import Container from '../components/Container'
 
 export default function Profissionais() {
   const [lawyers, setLawyers] = useState<Person[]>([] as Person[])
+  const [selectedLawyers, setSelectedLawyers] = useState<Person[]>(
+    [] as Person[]
+  )
   const [loading, setLoading] = useState(false)
-  const { audience, updateAudience } = useAudience()
   const router = useRouter()
+
+  const { appointment_id } = router.query
 
   useEffect(() => {
     async function loadData() {
       try {
         setLoading(true)
 
-        const {
-          date,
-          hour_start: hour_start_string,
-          hour_end: hour_end_string
-        } = audience
-
-        const [day, month, year] = date.split('/')
-
-        const [hour_start, minutes_start] = hour_start_string
-          .replace(/\s/g, '')
-          .split(':')
-        const [hour_end, minutes_end] = hour_end_string
-          .replace(/\s/g, '')
-          .split(':')
-
-        const start_date = new Date(
-          Number(year),
-          Number(month) + 1,
-          Number(day),
-          Number(hour_start),
-          Number(minutes_start),
-          0,
-          0
-        )
-        const end_date = new Date(
-          Number(year),
-          Number(month) + 1,
-          Number(day),
-          Number(hour_end),
-          Number(minutes_end),
-          0,
-          0
-        )
-
-        const { data } = await api.get(`/comercial/available-lawyers`, {
+        const { data } = await api.get(`/comercial/appointment-matches`, {
           params: {
-            start_date,
-            end_date,
-            latitude: audience.forum.geometry.location.lat,
-            longitude: audience.forum.geometry.location.lng,
-            certificate_required: audience.certificate_required === 'Sim'
+            appointment_id
           }
         })
 
@@ -68,17 +34,47 @@ export default function Profissionais() {
       }
     }
 
-    if (!audience) {
+    if (!appointment_id) {
       return
     }
 
     loadData()
-  }, [audience])
+  }, [appointment_id])
 
   async function handleSelectLawyer(lawyer: Person) {
-    Object.assign(audience, { lawyer })
-    updateAudience(audience)
-    router.push('/demandas/solicitar')
+    setSelectedLawyers([...selectedLawyers, lawyer])
+  }
+
+  async function handleRemoveLawyer(lawyer: Person) {
+    setSelectedLawyers(selectedLawyers.filter(l => l.id !== lawyer.id))
+  }
+
+  async function handleRequestDemand() {
+    try {
+      if (!appointment_id) {
+        return
+      }
+
+      const candidates = selectedLawyers.map(l => l.id)
+
+      if (candidates.length === 0) {
+        toast.error(
+          'Selecione pelo menos um profissional para enviar a demanda'
+        )
+      }
+
+      await api.post(`/comercial/appointments/${appointment_id}/confirm`, {
+        candidates
+      })
+
+      toast.success(
+        'Sua demanda foi enviada aos profissionais. Em breve entrarão em contato com você.'
+      )
+
+      router.push('/painel')
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -92,83 +88,115 @@ export default function Profissionais() {
         Profissionais
       </h2>
 
+      {lawyers.length === 0 ? (
+        <div className="flex h-screen justify-center items-center">
+          <strong className="text-xl">Nenhum profissional encontrado</strong>
+        </div>
+      ) : (
+        <div className="mt-6 flex justify-between items-center">
+          <strong className="text-xl">
+            Selecione os profissionais que deseja pedir orçamento
+          </strong>
+
+          <div className="flex flex-col gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                handleRequestDemand()
+              }}
+              className="primary-btn"
+            >
+              ENVIAR DEMANDA
+            </button>
+
+            {/* <button
+              type="button"
+              onClick={() => {
+                handleRequestDemand()
+              }}
+              className="primary-btn"
+            >
+              ENVIAR PARA TODOS
+            </button> */}
+          </div>
+        </div>
+      )}
+
       <ul className="mt-8 mb-56 divide-y flex flex-col items-center">
-        {lawyers.length === 0 && (
-          <li>
-            <div className="flex h-screen justify-center items-center">
-              <strong className="text-xl">
-                {' '}
-                Nenhum profissional encontrado
-              </strong>
-            </div>
-          </li>
-        )}
         {lawyers.length > 0 &&
           lawyers.map(lawyer => (
             <li
               key={lawyer.id}
-              className="flex justify-between items-center bg-white w-full p-6 rounded-md"
+              className="flex gap-6 items-center bg-white w-full p-6 rounded-md"
             >
-              <div className="flex justify-center space-x-4 items-center">
-                <a
-                  href={`/p/${lawyer.profile_link}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-6 h-24 w-24 rounded-full overflow-hidden bg-gray-100"
-                >
-                  {lawyer.avatar_url ? (
-                    <img
-                      className="h-full w-full"
-                      src={lawyer.avatar_url}
-                      alt="Foto do perfil"
-                    />
-                  ) : (
-                    <svg
-                      className="h-full w-full text-gray-300"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                  )}
-                </a>
-                <div>
+              <input
+                type="checkbox"
+                className="h-5 w-5 text-blue-500 rounded"
+                checked={selectedLawyers.includes(lawyer)}
+                onChange={() => {
+                  if (!selectedLawyers.includes(lawyer)) {
+                    handleSelectLawyer(lawyer)
+                  } else {
+                    handleRemoveLawyer(lawyer)
+                  }
+                }}
+              />
+
+              <div className="flex justify-between items-center flex-1">
+                <div className="flex justify-center space-x-4 items-center">
                   <a
                     href={`/p/${lawyer.profile_link}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-blue-500 hover:text-blue-700 font-bold"
+                    className="mt-6 h-24 w-24 rounded-full overflow-hidden bg-gray-100"
                   >
-                    {lawyer.profile_name}
+                    {lawyer.avatar_url ? (
+                      <img
+                        className="h-full w-full"
+                        src={lawyer.avatar_url}
+                        alt="Foto do perfil"
+                      />
+                    ) : (
+                      <svg
+                        className="h-full w-full text-gray-300"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                    )}
+                  </a>
+                  <div>
+                    <a
+                      href={`/p/${lawyer.profile_link}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-500 hover:text-blue-700 font-bold"
+                    >
+                      {lawyer.profile_name}
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex flex-col space-y-4">
+                  <a
+                    href={`/p/${lawyer.profile_link}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <button
+                      type="button"
+                      className="secondary-btn w-full text-blue-500 border-blue-500 border-2 bg-transparent hover:text-blue-700 hover:border-blue-700"
+                    >
+                      VER PERFIL
+                    </button>
                   </a>
                 </div>
-              </div>
-
-              <div className="flex flex-col space-y-4">
-                <button
-                  type="button"
-                  onClick={() => handleSelectLawyer(lawyer)}
-                  className="primary-btn"
-                >
-                  ENVIAR DEMANDA
-                </button>
-
-                <a
-                  href={`/p/${lawyer.profile_link}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <button
-                    type="button"
-                    className="secondary-btn w-full text-blue-500 border-blue-500 border-2 bg-transparent hover:text-blue-700 hover:border-blue-700"
-                  >
-                    VER PERFIL
-                  </button>
-                </a>
               </div>
             </li>
           ))}
       </ul>
+
       {/*
          <div className="bg-white  mb-10 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
            <div className="flex-1 flex justify-between sm:hidden">

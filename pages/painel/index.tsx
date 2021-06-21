@@ -233,7 +233,7 @@ const PainelSolicitante: React.FC = () => {
         <div className="mt-10 flex justify-center space-x-4">
           <div className="bg-white rounded-mb shadow-lg px-6 py-4 w-80">
             <h3 className="text-center text-lg tracking-wide font-semibold text-gray-700 py-6 border-gray-200 border-b-2">
-              Aguardando proposta
+              Aguardando propostas
             </h3>
 
             <div className="mt-4 text-gray-700">
@@ -268,12 +268,12 @@ const PainelSolicitante: React.FC = () => {
                                 </span>
                               </div>
                             </div>
-                            <div className="flex p-4 items-center space-x-4 text-xs font-light">
+                            {/* <div className="flex p-4 items-center space-x-4 text-xs font-light">
                               <div className="rounded-full h-8 w-8 flex justify-center items-center text-white">
-                                {appointment.correspondent.avatar_url ? (
+                                {appointment.correspondent?.avatar_url ? (
                                   <img
                                     className="h-full w-full rounded-full"
-                                    src={appointment.correspondent.avatar_url}
+                                    src={appointment.correspondent?.avatar_url}
                                     alt="Foto do perfil"
                                   />
                                 ) : (
@@ -289,10 +289,10 @@ const PainelSolicitante: React.FC = () => {
                               <div className="flex flex-col">
                                 <span>Advogado:</span>
                                 <span className="font-semibold">
-                                  {appointment.correspondent.profile_name}
+                                  {appointment.correspondent?.profile_name}
                                 </span>
                               </div>
-                            </div>
+                            </div> */}
                           </a>
                         </Link>
                         <div className="px-4 py-2">
@@ -359,12 +359,12 @@ const PainelSolicitante: React.FC = () => {
                                 </span>
                               </div>
                             </div>
-                            <div className="flex p-4 items-center space-x-4 text-xs font-light">
+                            {/* <div className="flex p-4 items-center space-x-4 text-xs font-light">
                               <div className="rounded-full h-8 w-8 flex justify-center items-center text-white">
-                                {appointment.correspondent.avatar_url ? (
+                                {appointment.correspondent?.avatar_url ? (
                                   <img
                                     className="h-full w-full rounded-full"
-                                    src={appointment.correspondent.avatar_url}
+                                    src={appointment.correspondent?.avatar_url}
                                     alt="Foto do perfil"
                                   />
                                 ) : (
@@ -380,10 +380,10 @@ const PainelSolicitante: React.FC = () => {
                               <div className="flex flex-col">
                                 <span>Advogado:</span>
                                 <span className="font-semibold">
-                                  {appointment.correspondent.profile_name}
+                                  {appointment.correspondent?.profile_name}
                                 </span>
                               </div>
-                            </div>
+                            </div> */}
                           </a>
                         </Link>
                         <div className="px-4 py-2">
@@ -452,10 +452,10 @@ const PainelSolicitante: React.FC = () => {
                             </div>
                             <div className="flex p-4 items-center space-x-4 text-xs font-light">
                               <div className="rounded-full h-8 w-8 flex justify-center items-center text-white">
-                                {appointment.correspondent.avatar_url ? (
+                                {appointment.correspondent?.avatar_url ? (
                                   <img
                                     className="h-full w-full rounded-full"
-                                    src={appointment.correspondent.avatar_url}
+                                    src={appointment.correspondent?.avatar_url}
                                     alt="Foto do perfil"
                                   />
                                 ) : (
@@ -471,7 +471,7 @@ const PainelSolicitante: React.FC = () => {
                               <div className="flex flex-col">
                                 <span>Advogado:</span>
                                 <span className="font-semibold">
-                                  {appointment.correspondent.profile_name}
+                                  {appointment.correspondent?.profile_name}
                                 </span>
                               </div>
                             </div>

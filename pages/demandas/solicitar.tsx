@@ -248,12 +248,6 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
 
                   updateAudience(audience)
 
-                  if (!audience.lawyer) {
-                    router.push('/profissionais')
-
-                    return
-                  }
-
                   const {
                     date,
                     hour_start: hour_start_string,
@@ -278,10 +272,6 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                     0,
                     0
                   )
-                  console.log(
-                    '🚀 ~ file: solicitar.tsx ~ line 273 ~ CadastroAdvogadosCorrespondentesJuridicos ~ start_date',
-                    start_date
-                  )
 
                   const end_date = new Date(
                     Number(year),
@@ -292,15 +282,10 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                     0,
                     0
                   )
-                  console.log(
-                    '🚀 ~ file: solicitar.tsx ~ line 283 ~ CadastroAdvogadosCorrespondentesJuridicos ~ end_date',
-                    end_date
-                  )
 
-                  await api.post(
+                  const { data: createdAppointment } = await api.post(
                     `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/comercial/appointments`,
                     {
-                      correspondent_id: audience.lawyer.person_id,
                       requester_id: user.id,
                       forum_address: audience.forum.formatted_address,
                       forum_name: audience.forum.name,
@@ -316,10 +301,11 @@ export default function CadastroAdvogadosCorrespondentesJuridicos() {
                     }
                   )
 
-                  reset()
-                  router.push('/painel')
+                  router.push({
+                    pathname: '/profissionais',
+                    query: { appointment_id: createdAppointment.id }
+                  })
                 } catch (err) {
-                  console.log(err)
                   if (err.response && err.response.status === 400) {
                     setSubmitError(err.response.data.msg)
                   } else if (err.response && err.response.status === 500) {

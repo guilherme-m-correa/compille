@@ -1,3 +1,9 @@
+interface Candidate {
+  id: number
+  offer: number
+  person: Person
+}
+
 interface Appointment {
   id: number
   correspondent_id: string
@@ -59,25 +65,9 @@ interface Appointment {
     schoolarity: null
     avatar_url: string
   }
-  correspondent: {
-    id: number
-    user_id: string
-    cpf: string
-    rg: string
-    rg_exp: string
-    rg_uf: string
-    oab: string
-    oab_uf: string
-    gender: string
-    birth_date: string
-    profile_name: string
-    profile_link: string
-    curriculum: string
-    has_certificate: boolean
-    profile_type: string
-    schoolarity: string
-    avatar_url: string
-  }
+  correspondent: Person
+  matches: [{ person: Person }]
+  candidates: Candidate[]
   status: {
     id: number
     description: string
