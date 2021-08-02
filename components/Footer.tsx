@@ -57,7 +57,7 @@ const Footer: React.FC = () => {
                   href="/cadastro-advogados-correspondentes-juridicos"
                   className="text-white hover:text-gray-200"
                 >
-                  Para Correspondentes Autônomos
+                  Para Advogados Autônomos
                 </a>
               </li>
               <li>
