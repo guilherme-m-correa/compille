@@ -259,7 +259,7 @@ export default function Example() {
                       {section.name}
                     </th>
                   </tr>
-                  {section.features.map(feature => (
+                  {section.features.map((feature: any) => (
                     <tr key={feature.name}>
                       <th
                         className="py-5 px-6 text-sm font-normal text-gray-500 text-left"
