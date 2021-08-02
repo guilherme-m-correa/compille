@@ -131,7 +131,7 @@ export default function Example() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {section.features.map(feature => (
+                    {section.features.map((feature: any) => (
                       <tr
                         key={feature.name}
                         className="border-t border-gray-200"
