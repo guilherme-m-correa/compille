@@ -63,7 +63,7 @@ export default function Home() {
   return (
     <div>
       <section
-        className="py-24 bg-local bg-no-repeat bg-cover"
+        className="py-24 bg-local bg-no-repeat sm:bg-cover"
         style={{
           backgroundImage:
             "linear-gradient(to bottom, rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.5) 100%), url('/img/hero.jpg')"
@@ -118,7 +118,7 @@ export default function Home() {
           </div>
 
           <p className="mt-12 text-white text-lg">
-            A compile nasce com o propósito de encurtar distâncias e criar uma{' '}
+            A Compille nasce com o propósito de encurtar distâncias e criar uma{' '}
             <strong>grande</strong> rede de profissionais da área jurídica.
           </p>
           <p className="mt-4 text-white text-lg">
